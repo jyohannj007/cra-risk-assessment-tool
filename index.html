@@ -335,14 +335,13 @@
       <div class="nav-item active" data-s="0" onclick="go(0)"><div class="step-num">1</div>Product Identity</div>
       <div class="nav-item" data-s="1" onclick="go(1)"><div class="step-num">2</div>Intended Use</div>
       <div class="nav-item" data-s="2" onclick="go(2)"><div class="step-num">3</div>Foreseeable Misuse</div>
-      <div class="nav-item" data-s="3" onclick="go(3)"><div class="step-num">4</div>Operational Environment</div>
-      <div class="nav-item" data-s="4" onclick="go(4)"><div class="step-num">5</div>Attack Surface</div>
-      <div class="nav-item" data-s="5" onclick="go(5)"><div class="step-num">6</div>Data &amp; Assets</div>
-      <div class="nav-item" data-s="6" onclick="go(6)"><div class="step-num">7</div>Authentication</div>
-      <div class="nav-item" data-s="7" onclick="go(7)"><div class="step-num">8</div>Availability</div>
-      <div class="nav-item" data-s="8" onclick="go(8)"><div class="step-num">9</div>Security Logging</div>
-      <div class="nav-item" data-s="9" onclick="go(9)"><div class="step-num">10</div>Updates &amp; Patches</div>
-      <div class="nav-item" data-s="10" onclick="go(10)"><div class="step-num">11</div>Review &amp; Generate</div>
+      <div class="nav-item" data-s="3" onclick="go(3)"><div class="step-num">4</div>Connectivity &amp; Environment</div>
+      <div class="nav-item" data-s="4" onclick="go(4)"><div class="step-num">5</div>Data &amp; Assets</div>
+      <div class="nav-item" data-s="5" onclick="go(5)"><div class="step-num">6</div>Authentication</div>
+      <div class="nav-item" data-s="6" onclick="go(6)"><div class="step-num">7</div>Availability</div>
+      <div class="nav-item" data-s="7" onclick="go(7)"><div class="step-num">8</div>Security Logging</div>
+      <div class="nav-item" data-s="8" onclick="go(8)"><div class="step-num">9</div>Updates &amp; Patches</div>
+      <div class="nav-item" data-s="9" onclick="go(9)"><div class="step-num">10</div>Review &amp; Generate</div>
     </div>
     <div class="sidebar-footer">
       <div class="api-note" style="font-size:12px;color:var(--text3);line-height:1.6;">
@@ -492,18 +491,14 @@
       <div class="form-nav"><button class="btn btn-ghost" onclick="prev()">← Back</button><button class="btn btn-next" onclick="next()">Continue →</button></div>
     </div>
 
-    <!-- D: Operational Environment -->
+    <!-- D+E: Connectivity & Environment (merged) -->
     <div class="section" id="s3">
       <div class="section-badge">Section D</div>
-      <h2 class="section-title">Operational environment</h2>
-      <p class="section-desc">Article 13(3) requires the risk assessment to reflect actual conditions of use — not a generic environment.</p>
+      <h2 class="section-title">Connectivity &amp; environment</h2>
+      <p class="section-desc">Article 13(3) and Annex I §3(h) — the risk assessment must reflect actual conditions of use and map what an attacker could target.</p>
       <div class="field-card">
         <div class="field">
-          <div class="field-label">How is the product connected to networks?</div>
-          <select id="d1"><option value="">Select connectivity…</option><option>Always connected</option><option>Intermittently connected</option><option>Offline only</option><option>Both online and offline modes</option><option>Unknown</option></select>
-        </div>
-        <div class="field">
-          <div class="field-label">Which network types does it connect to?</div>
+          <div class="field-label">Which network types does the product connect to?</div>
           <div class="ms" id="d2">
             <label class="ms-opt"><input type="checkbox" value="Public internet"><div class="ms-box"></div><span class="ms-lbl">Public internet</span></label>
             <label class="ms-opt"><input type="checkbox" value="Private LAN / corporate network"><div class="ms-box"></div><span class="ms-lbl">Private LAN / corporate network</span></label>
@@ -516,25 +511,6 @@
             <label class="ms-opt"><input type="checkbox" value="Unknown"><div class="ms-box"></div><span class="ms-lbl">Unknown / Not sure</span></label>
           </div>
         </div>
-        <div class="field">
-          <div class="field-label">Does the product operate in a safety-critical environment? <div class="tip"><span class="tip-icon">i</span><div class="tip-box">e.g. Healthcare monitoring, industrial automation, vehicle control, water treatment</div></div></div>
-          <div class="pills"><label class="pill" onclick="pick('d3','Yes');tog('d3x',true)"><input type="radio" name="d3" value="Yes">Yes</label><label class="pill" onclick="pick('d3','No');tog('d3x',false)"><input type="radio" name="d3" value="No">No</label><label class="pill" onclick="pick('d3','Unknown');tog('d3x',false)"><input type="radio" name="d3" value="Unknown">Unknown</label></div>
-          <div class="cond" id="d3x"><input type="text" id="d3d" placeholder="Describe the safety-critical context"></div>
-        </div>
-        <div class="field">
-          <div class="field-label">Who can physically access the device?</div>
-          <select id="d4"><option value="">Select physical access level…</option><option>Device is physically accessible to the public</option><option>Device is accessible to authorised personnel only</option><option>Device is in a controlled / locked facility</option><option>Device is embedded and not physically accessible</option><option>Unknown</option></select>
-        </div>
-      </div>
-      <div class="form-nav"><button class="btn btn-ghost" onclick="prev()">← Back</button><button class="btn btn-next" onclick="next()">Continue →</button></div>
-    </div>
-
-    <!-- E: Attack Surface -->
-    <div class="section" id="s4">
-      <div class="section-badge">Section E</div>
-      <h2 class="section-title">Connectivity &amp; attack surface</h2>
-      <p class="section-desc">Annex I §3(h) requires products to limit attack surfaces including external interfaces. This section maps what an attacker could target.</p>
-      <div class="field-card">
         <div class="field">
           <div class="field-label">Which external interfaces does the product expose?</div>
           <div class="ms" id="e1">
@@ -558,20 +534,27 @@
           <div class="pills"><label class="pill" onclick="pick('e2','Yes')"><input type="radio" name="e2" value="Yes">Yes</label><label class="pill" onclick="pick('e2','No')"><input type="radio" name="e2" value="No">No</label><label class="pill" onclick="pick('e2','Unknown')"><input type="radio" name="e2" value="Unknown">Unknown</label></div>
         </div>
         <div class="field">
-          <div class="field-label">Does the product have a companion app?</div>
-          <select id="e3"><option value="">Select…</option><option>No companion app</option><option>Mobile app only</option><option>Web interface only</option><option>Both mobile and web</option><option>Unknown</option></select>
-        </div>
-        <div class="field">
           <div class="field-label">Does the product expose a remote management interface? <div class="tip"><span class="tip-icon">i</span><div class="tip-box">e.g. SSH, Telnet, web admin panel, cloud management console, SNMP</div></div></div>
           <div class="pills"><label class="pill" onclick="pick('e4','Yes');tog('e4x',true)"><input type="radio" name="e4" value="Yes">Yes</label><label class="pill" onclick="pick('e4','No');tog('e4x',false)"><input type="radio" name="e4" value="No">No</label><label class="pill" onclick="pick('e4','Unknown');tog('e4x',false)"><input type="radio" name="e4" value="Unknown">Unknown</label></div>
           <div class="cond" id="e4x"><input type="text" id="e4d" placeholder="e.g. SSH on port 22, cloud admin console"></div>
+        </div>
+      </div>
+      <div class="field-card">
+        <div class="field">
+          <div class="field-label">Does the product operate in a safety-critical environment? <div class="tip"><span class="tip-icon">i</span><div class="tip-box">e.g. Healthcare monitoring, industrial automation, vehicle control, water treatment</div></div></div>
+          <div class="pills"><label class="pill" onclick="pick('d3','Yes');tog('d3x',true)"><input type="radio" name="d3" value="Yes">Yes</label><label class="pill" onclick="pick('d3','No');tog('d3x',false)"><input type="radio" name="d3" value="No">No</label><label class="pill" onclick="pick('d3','Unknown');tog('d3x',false)"><input type="radio" name="d3" value="Unknown">Unknown</label></div>
+          <div class="cond" id="d3x"><input type="text" id="d3d" placeholder="Describe the safety-critical context"></div>
+        </div>
+        <div class="field">
+          <div class="field-label">Who can physically access the device?</div>
+          <select id="d4"><option value="">Select physical access level…</option><option>Device is physically accessible to the public</option><option>Device is accessible to authorised personnel only</option><option>Device is in a controlled / locked facility</option><option>Device is embedded and not physically accessible</option><option>Unknown</option></select>
         </div>
       </div>
       <div class="form-nav"><button class="btn btn-ghost" onclick="prev()">← Back</button><button class="btn btn-next" onclick="next()">Continue →</button></div>
     </div>
 
     <!-- F: Data & Assets -->
-    <div class="section" id="s5">
+    <div class="section" id="s4">
       <div class="section-badge">Section F</div>
       <h2 class="section-title">Data &amp; assets</h2>
       <p class="section-desc">Article 13(3) requires identification of assets to be protected. The type of data handled determines the severity of a breach and which Annex I controls apply.</p>
@@ -625,7 +608,7 @@
     </div>
 
     <!-- G: Authentication -->
-    <div class="section" id="s6">
+    <div class="section" id="s5">
       <div class="section-badge">Section G</div>
       <h2 class="section-title">Authentication &amp; access control</h2>
       <p class="section-desc">Annex I §3(a)(b) — products must be secure by default and protect against unauthorised access. One of the most frequently audited areas under CRA.</p>
@@ -652,7 +635,7 @@
     </div>
 
     <!-- H: Availability -->
-    <div class="section" id="s7">
+    <div class="section" id="s6">
       <div class="section-badge">Section H</div>
       <h2 class="section-title">Availability &amp; resilience</h2>
       <p class="section-desc">Annex I §3(f) — products must protect the availability of essential functions, including resilience against denial of service attacks.</p>
@@ -680,7 +663,7 @@
     </div>
 
     <!-- I: Logging -->
-    <div class="section" id="s8">
+    <div class="section" id="s7">
       <div class="section-badge">Section I</div>
       <h2 class="section-title">Security logging &amp; monitoring</h2>
       <p class="section-desc">Annex I §3(j) — products must record relevant internal activity, including access to or modification of data, services or functions.</p>
@@ -715,7 +698,7 @@
     </div>
 
     <!-- J: Updates -->
-    <div class="section" id="s9">
+    <div class="section" id="s8">
       <div class="section-badge">Section J</div>
       <h2 class="section-title">Updates &amp; patch management</h2>
       <p class="section-desc">Annex I §3(k) and Part II §2,7 — products must support security updates, and manufacturers must have a timely, defined patch process.</p>
@@ -742,7 +725,7 @@
     </div>
 
     <!-- Review & Generate -->
-    <div class="section" id="s10">
+    <div class="section" id="s9">
       <div class="section-badge">Final Step</div>
       <h2 class="section-title">Review &amp; generate</h2>
       <p class="section-desc">Check your answers below, then click Generate. Claude will produce a full CRA-aligned risk assessment using the ISO 27005 methodology — this takes about 20–40 seconds.</p>
@@ -787,8 +770,8 @@
 <script>
 const VERSION = 'v1.0';
 let cur = 0;
-const TOTAL = 11;
-const TITLES = ['Product Identity','Intended Use','Foreseeable Misuse','Operational Environment','Attack Surface','Data & Assets','Authentication','Availability','Security Logging','Updates & Patches','Review & Generate'];
+const TOTAL = 10;
+const TITLES = ['Product Identity','Intended Use','Foreseeable Misuse','Connectivity & Environment','Data & Assets','Authentication','Availability','Security Logging','Updates & Patches','Review & Generate'];
 
 function go(n) {
   document.getElementById('s'+cur).classList.remove('active');
@@ -799,7 +782,7 @@ function go(n) {
   document.getElementById('pTitle').textContent = TITLES[cur];
   document.getElementById('pStep').textContent = 'Step '+(cur+1)+' of '+TOTAL;
   document.getElementById('pFill').style.width = Math.round((cur+1)/TOTAL*100)+'%';
-  if (n===10) buildReview();
+  if (n===9) buildReview();
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
@@ -836,8 +819,8 @@ function collect() {
     a1:g('a1'),a2:g('a2'),a3:g('a3'),a4:g('a4'),
     b1:g('b1'),b2:getMS('b2'),b3:getMS('b3'),b4:g('b4'),
     c1:radio('c1'),c1d:g('c1d'),c2:radio('c2'),c3:radio('c3'),c3d:g('c3d'),c4:radio('c4'),
-    d1:g('d1'),d2:getMS('d2'),d3:radio('d3'),d3d:g('d3d'),d4:g('d4'),
-    e1:getMS('e1'),e2:radio('e2'),e3:g('e3'),e4:radio('e4'),e4d:g('e4d'),
+    d2:getMS('d2'),d3:radio('d3'),d3d:g('d3d'),d4:g('d4'),
+    e1:getMS('e1'),e2:radio('e2'),e4:radio('e4'),e4d:g('e4d'),
     f1:getMS('f1'),f2:getMS('f2'),f3:radio('f3'),f3d:g('f3d'),f4:radio('f4'),f4d:g('f4d'),f5:getMS('f5'),
     g1:g('g1'),g2:g('g2'),g3:radio('g3'),g4:radio('g4'),g4d:g('g4d'),
     h1:radio('h1'),h1d:g('h1d'),h2:g('h2'),h3:g('h3'),h4:radio('h4'),h4d:g('h4d'),
@@ -1142,16 +1125,12 @@ SECTION C — FORESEEABLE MISUSE
 - Harmful functions if exploited: ${det(a.c3||'Not answered',a.c3d)}
 - Non-technical bypass risk: ${a.c4||'Not answered'}
 
-SECTION D — OPERATIONAL ENVIRONMENT
-- Connectivity: ${a.d1||'Not specified'}
+SECTION D — CONNECTIVITY & ENVIRONMENT
 - Network types: ${ms(a.d2)}
 - Safety-critical: ${det(a.d3||'Not answered',a.d3d)}
 - Physical access: ${a.d4||'Not specified'}
-
-SECTION E — ATTACK SURFACE
 - External interfaces: ${ms(a.e1)}
 - Internet-exposed interface: ${a.e2||'Not answered'}
-- Companion app: ${a.e3||'Not specified'}
 - Remote management: ${det(a.e4||'Not answered',a.e4d)}
 
 SECTION F — DATA & ASSETS
@@ -1343,7 +1322,6 @@ function prefillDemo() {
   pick('c4', 'Yes');
 
   // Section D
-  set('d1', 'Always connected');
   checkMS('d2', ['Public internet', 'Wi-Fi', 'Bluetooth', 'Mobile network (4G/5G)']);
   pick('d3', 'No');
   set('d4', 'Device is physically accessible to the public');
@@ -1351,7 +1329,6 @@ function prefillDemo() {
   // Section E
   checkMS('e1', ['Mobile app interface', 'Bluetooth', 'Wi-Fi', 'REST / GraphQL API']);
   pick('e2', 'Yes');
-  set('e3', 'Both mobile and web');
   pick('e4', 'Yes'); tog('e4x', true); set('e4d', 'Cloud admin console for remote lock/unlock and access log review');
 
   // Section F
@@ -1386,7 +1363,7 @@ function prefillDemo() {
   pick('j4', 'No');
 
   // Mark all sections as done in sidebar
-  for (let n = 0; n < 10; n++) {
+  for (let n = 0; n < 9; n++) {
     document.querySelector(`[data-s="${n}"]`).classList.add('done');
   }
 }
