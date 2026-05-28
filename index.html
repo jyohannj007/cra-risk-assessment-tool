@@ -98,20 +98,20 @@
   .progress-info { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
   .progress-title { font-family: 'Fraunces', serif; font-size: 22px; color: var(--text); font-weight: 600; }
   .progress-step { font-size: 12px; color: var(--text3); font-weight: 500; }
-  .progress-bar { height: 4px; background: var(--sand2); border-radius: 4px; overflow: hidden; }
-  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 4px; transition: width .4s ease; }
+  .progress-bar { height: 6px; background: var(--sand2); border-radius: 6px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 6px; transition: width .4s ease; }
+  .progress-meta { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+  .save-indicator { font-size: 11px; color: var(--accent); opacity: 0; transition: opacity .4s; display: flex; align-items: center; gap: 4px; }
+  .save-indicator.visible { opacity: 1; }
 
-  /* Notice */
-  .notice {
-    background: var(--accent3); border: 1.5px solid rgba(47,107,79,.15);
-    border-radius: var(--radius); padding: 12px 16px;
-    font-size: 13px; color: var(--accent); margin-bottom: 2rem;
-    display: flex; gap: 10px; align-items: flex-start; line-height: 1.5;
-  }
+  /* Form hint */
+  .form-hint { font-size: 12px; color: var(--text3); margin-bottom: 1.75rem; line-height: 1.6; }
+  .form-hint strong { color: var(--text2); }
 
   /* Sections */
   .section { display: none; }
-  .section.active { display: block; }
+  @keyframes fadeSlide { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  .section.active { display: block; animation: fadeSlide .2s ease; }
   .section-badge {
     display: inline-block; font-size: 11px; font-weight: 600;
     color: var(--accent); background: var(--accent3);
@@ -347,6 +347,7 @@
       <div class="api-note" style="font-size:12px;color:var(--text3);line-height:1.6;">
         🔒 API calls are handled securely server-side. No key required.
       </div>
+      <button class="btn-new-assess" onclick="clearProgress()" style="margin-top:12px;width:100%;padding:8px;border-radius:var(--radius);background:transparent;border:1.5px solid var(--sand3);color:var(--text3);font-size:12px;font-family:'Inter',sans-serif;cursor:pointer;transition:all .15s;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--sand3)';this.style.color='var(--text3)'">↺ New Assessment</button>
     </div>
   </aside>
 
@@ -355,13 +356,13 @@
     <div class="progress-wrap">
       <div class="progress-info">
         <div class="progress-title" id="pTitle">Product Identity</div>
-        <div class="progress-step" id="pStep">Step 1 of 11</div>
+        <div class="progress-step" id="pStep">Step 1 of 10</div>
       </div>
-      <div class="progress-bar"><div class="progress-fill" id="pFill" style="width:9%"></div></div>
-    </div>
-
-    <div class="notice">
-      💡&nbsp; Answer as accurately as possible. <strong>Unknown / Not sure</strong> is always an option and will be flagged as an information gap in the draft. Fields marked <strong style="color:var(--accent)">*</strong> are required.
+      <div class="progress-bar"><div class="progress-fill" id="pFill" style="width:10%"></div></div>
+      <div class="progress-meta">
+        <p class="form-hint">💡 <strong>Unknown / Not sure</strong> is always an option — it will be flagged as an information gap. Fields marked <strong style="color:var(--accent)">*</strong> are required.</p>
+        <span class="save-indicator" id="saveIndicator">✓ Saved</span>
+      </div>
     </div>
 
     <!-- A: Product Identity -->
@@ -786,8 +787,62 @@ function go(n) {
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
-function next() { if (!validate()) return; markDone(cur); go(Math.min(cur+1,TOTAL-1)); }
-function prev() { go(Math.max(cur-1,0)); }
+function next() { if (!validate()) return; markDone(cur); go(Math.min(cur+1,TOTAL-1)); saveProgress(); }
+function prev() { go(Math.max(cur-1,0)); saveProgress(); }
+
+// ── Save / Resume (localStorage — stays on this device only) ──
+function saveProgress() {
+  const data = { cur, done: [] };
+  document.querySelectorAll('input[type="text"][id], textarea[id]').forEach(el => { data[el.id] = el.value; });
+  document.querySelectorAll('select[id]').forEach(el => { data[el.id] = el.value; });
+  const names = new Set(Array.from(document.querySelectorAll('input[type="radio"]')).map(el => el.name));
+  names.forEach(name => {
+    const checked = document.querySelector(`input[name="${name}"]:checked`);
+    data['r_' + name] = checked ? checked.value : '';
+  });
+  document.querySelectorAll('.ms[id]').forEach(c => {
+    data['cb_' + c.id] = Array.from(c.querySelectorAll('input:checked')).map(cb => cb.value);
+  });
+  document.querySelectorAll('.nav-item.done').forEach(el => data.done.push(parseInt(el.getAttribute('data-s'))));
+  localStorage.setItem('cra-progress', JSON.stringify(data));
+  showSaved();
+}
+
+function loadProgress() {
+  const raw = localStorage.getItem('cra-progress');
+  if (!raw) return false;
+  try {
+    const data = JSON.parse(raw);
+    document.querySelectorAll('input[type="text"][id], textarea[id]').forEach(el => { if (data[el.id] !== undefined) el.value = data[el.id]; });
+    document.querySelectorAll('select[id]').forEach(el => { if (data[el.id] !== undefined) el.value = data[el.id]; });
+    const conds = { c1:'c1x', c3:'c3x', d3:'d3x', e4:'e4x', f3:'f3x', f4:'f4x', g4:'g4x', h1:'h1x', h4:'h4x', j4:'j4x' };
+    Object.keys(data).filter(k => k.startsWith('r_')).forEach(key => {
+      const name = key.slice(2), val = data[key];
+      if (val) { pick(name, val); if (conds[name]) tog(conds[name], val === 'Yes'); }
+    });
+    Object.keys(data).filter(k => k.startsWith('cb_')).forEach(key => {
+      const vals = data[key] || [];
+      document.querySelectorAll(`#${key.slice(3)} input[type="checkbox"]`).forEach(cb => { cb.checked = vals.includes(cb.value); });
+    });
+    (data.done || []).forEach(n => { const el = document.querySelector(`[data-s="${n}"]`); if (el) el.classList.add('done'); });
+    if (data.cur > 0) go(data.cur);
+    return true;
+  } catch(e) { return false; }
+}
+
+function clearProgress() {
+  if (!confirm('Start a new assessment? Your current answers will be cleared.')) return;
+  localStorage.removeItem('cra-progress');
+  location.reload();
+}
+
+function showSaved() {
+  const el = document.getElementById('saveIndicator');
+  if (!el) return;
+  el.classList.add('visible');
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.remove('visible'), 2000);
+}
 
 function markDone(n) { document.querySelector('[data-s="'+n+'"]').classList.add('done'); }
 
@@ -1379,9 +1434,10 @@ function checkMS(id, values) {
   });
 }
 
-// Run prefill on page load
+// Run prefill on page load (skip if saved progress exists)
 window.addEventListener('DOMContentLoaded', () => {
-  prefillDemo();
+  const resumed = loadProgress();
+  if (!resumed) prefillDemo();
   document.getElementById('version-label').textContent = VERSION;
 });
 </script>
