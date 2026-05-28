@@ -769,12 +769,13 @@
         <div class="footer-name">Jyohan Joglekar</div>
         <div class="footer-email">Safety Consultant · jyohannj@gmail.com</div>
       </div>
-      <div class="footer-badge">CRA Risk Assessment Drafting Tool</div>
+      <div class="footer-badge">CRA Risk Assessment Drafting Tool <span id="version-label"></span></div>
     </div>
   </main>
 </div>
 
 <script>
+const VERSION = 'v1.0';
 let cur = 0;
 const TOTAL = 11;
 const TITLES = ['Product Identity','Intended Use','Foreseeable Misuse','Operational Environment','Attack Surface','Data & Assets','Authentication','Availability','Security Logging','Updates & Patches','Review & Generate'];
@@ -1388,7 +1389,10 @@ function checkMS(id, values) {
 }
 
 // Run prefill on page load
-window.addEventListener('DOMContentLoaded', prefillDemo);
+window.addEventListener('DOMContentLoaded', () => {
+  prefillDemo();
+  document.getElementById('version-label').textContent = VERSION;
+});
 </script>
 </body>
 </html>
