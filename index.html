@@ -1,0 +1,1394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRA Risk Assessment Drafting Tool</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Fraunces:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sand:     #f7f4ef;
+    --sand2:    #ede9e1;
+    --sand3:    #ddd8cc;
+    --cream:    #fefcf8;
+    --text:     #2c2416;
+    --text2:    #6b5f4f;
+    --text3:    #a8997f;
+    --accent:   #2f6b4f;
+    --accent2:  #3d8a64;
+    --accent3:  #e8f5ee;
+    --danger:   #c0392b;
+    --radius:   10px;
+    --radius-lg:16px;
+    --shadow:   0 2px 12px rgba(44,36,22,0.08);
+    --shadow-lg:0 8px 32px rgba(44,36,22,0.12);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--sand);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* Layout */
+  .shell { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; }
+
+  /* Sidebar */
+  .sidebar {
+    background: var(--cream);
+    border-right: 1px solid var(--sand3);
+    padding: 2rem 1.5rem;
+    position: sticky; top: 0; height: 100vh;
+    overflow-y: auto;
+    display: flex; flex-direction: column;
+  }
+  .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 2.5rem; }
+  .brand-icon {
+    width: 40px; height: 40px; background: var(--accent);
+    border-radius: 10px; display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0; box-shadow: 0 2px 8px rgba(47,107,79,0.3);
+  }
+  .brand-text h1 { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 600; color: var(--text); line-height: 1.2; }
+  .brand-text p { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+  .nav-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; color: var(--text3); margin-bottom: 8px; padding-left: 4px; }
+  .nav-list { display: flex; flex-direction: column; gap: 2px; margin-bottom: 1.5rem; }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 12px; border-radius: var(--radius);
+    cursor: pointer; font-size: 13px; color: var(--text2);
+    transition: all .15s; border: 1.5px solid transparent;
+  }
+  .nav-item:hover { background: var(--sand); color: var(--text); }
+  .nav-item.active { background: var(--accent3); color: var(--accent); border-color: rgba(47,107,79,.2); font-weight: 500; }
+  .nav-item.done { color: var(--accent); }
+  .step-num {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--sand2); color: var(--text3);
+    font-size: 11px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: all .2s;
+  }
+  .nav-item.active .step-num { background: var(--accent); color: white; }
+  .nav-item.done .step-num { background: var(--accent); color: white; font-size: 0; }
+  .nav-item.done .step-num::after { content: '✓'; font-size: 12px; }
+
+  .sidebar-footer { margin-top: auto; padding-top: 1.5rem; border-top: 1px solid var(--sand2); }
+  .api-label { font-size: 12px; font-weight: 500; color: var(--text2); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+  .api-badge { font-size: 10px; background: var(--sand2); color: var(--text3); padding: 2px 6px; border-radius: 4px; }
+  .api-input {
+    width: 100%; background: var(--sand); border: 1.5px solid var(--sand3);
+    border-radius: var(--radius); padding: 9px 12px;
+    color: var(--text); font-size: 13px; font-family: 'Inter', sans-serif;
+    outline: none; transition: border-color .2s;
+  }
+  .api-input:focus { border-color: var(--accent2); }
+  .api-input::placeholder { color: var(--text3); }
+  .api-note { font-size: 11px; color: var(--text3); margin-top: 8px; line-height: 1.5; }
+
+  /* Main */
+  .main { padding: 3rem 3.5rem; max-width: 780px; }
+
+  /* Progress */
+  .progress-wrap { margin-bottom: 2.5rem; }
+  .progress-info { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+  .progress-title { font-family: 'Fraunces', serif; font-size: 22px; color: var(--text); font-weight: 600; }
+  .progress-step { font-size: 12px; color: var(--text3); font-weight: 500; }
+  .progress-bar { height: 4px; background: var(--sand2); border-radius: 4px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 4px; transition: width .4s ease; }
+
+  /* Notice */
+  .notice {
+    background: var(--accent3); border: 1.5px solid rgba(47,107,79,.15);
+    border-radius: var(--radius); padding: 12px 16px;
+    font-size: 13px; color: var(--accent); margin-bottom: 2rem;
+    display: flex; gap: 10px; align-items: flex-start; line-height: 1.5;
+  }
+
+  /* Sections */
+  .section { display: none; }
+  .section.active { display: block; }
+  .section-badge {
+    display: inline-block; font-size: 11px; font-weight: 600;
+    color: var(--accent); background: var(--accent3);
+    padding: 3px 10px; border-radius: 20px; margin-bottom: 10px; letter-spacing: .05em;
+  }
+  .section-title { font-family: 'Fraunces', serif; font-size: 24px; color: var(--text); font-weight: 600; margin-bottom: 6px; }
+  .section-desc { font-size: 14px; color: var(--text2); line-height: 1.6; margin-bottom: 1.75rem; }
+
+  /* Field card */
+  .field-card {
+    background: white; border: 1.5px solid var(--sand2);
+    border-radius: var(--radius-lg); padding: 1.5rem;
+    margin-bottom: 1rem; box-shadow: var(--shadow);
+  }
+  .field { margin-bottom: 1.25rem; }
+  .field:last-child { margin-bottom: 0; }
+  .field-label { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 8px; }
+  .req { color: var(--accent); }
+
+  /* Tooltip */
+  .tip { position: relative; display: inline-flex; }
+  .tip-icon {
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--sand2); border: 1px solid var(--sand3);
+    color: var(--text3); font-size: 11px; font-style: italic;
+    font-family: Georgia, serif; font-weight: bold;
+    display: inline-flex; align-items: center; justify-content: center;
+    cursor: help; transition: background .15s;
+  }
+  .tip-icon:hover { background: var(--sand3); }
+  .tip-box {
+    display: none; position: absolute; left: 24px; top: -6px;
+    background: var(--text); color: #f7f4ef;
+    border-radius: var(--radius); padding: 10px 14px;
+    font-size: 12px; font-style: normal; font-family: 'Inter', sans-serif;
+    font-weight: 400; z-index: 100; width: 260px; line-height: 1.5;
+    box-shadow: var(--shadow-lg);
+  }
+  .tip:hover .tip-box { display: block; }
+
+  /* Inputs */
+  input[type="text"], input[type="password"], textarea, select {
+    width: 100%; background: white; border: 1.5px solid var(--sand3);
+    border-radius: var(--radius); padding: 11px 14px;
+    color: var(--text); font-size: 14px; font-family: 'Inter', sans-serif;
+    outline: none; transition: border-color .2s, box-shadow .2s;
+    box-shadow: 0 1px 3px rgba(44,36,22,.04);
+  }
+  input:focus, textarea:focus, select:focus { border-color: var(--accent2); box-shadow: 0 0 0 3px rgba(47,107,79,.1); }
+  input::placeholder, textarea::placeholder { color: var(--text3); }
+  textarea { resize: vertical; min-height: 100px; }
+  select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23a8997f' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 14px center;
+    padding-right: 36px; cursor: pointer;
+  }
+
+  /* Multi-select */
+  .ms { background: white; border: 1.5px solid var(--sand3); border-radius: var(--radius); padding: 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 4px; box-shadow: 0 1px 3px rgba(44,36,22,.04); }
+  .ms.col1 { grid-template-columns: 1fr; }
+  .ms-opt { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 7px; cursor: pointer; transition: background .12s; font-size: 13.5px; color: var(--text2); user-select: none; }
+  .ms-opt:hover { background: var(--sand); }
+  .ms-opt input { display: none; }
+  .ms-box { width: 17px; height: 17px; border: 1.5px solid var(--sand3); border-radius: 5px; flex-shrink: 0; background: var(--sand); display: flex; align-items: center; justify-content: center; transition: all .15s; }
+  .ms-opt input:checked + .ms-box { background: var(--accent); border-color: var(--accent); }
+  .ms-opt input:checked + .ms-box::after { content: ''; width: 9px; height: 5px; border-left: 2px solid white; border-bottom: 2px solid white; transform: rotate(-45deg) translateY(-1px); display: block; }
+  .ms-opt input:checked ~ .ms-lbl { color: var(--text); font-weight: 500; }
+
+  /* Radio pills */
+  .pills { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill { display: flex; align-items: center; gap: 8px; padding: 9px 18px; background: white; border: 1.5px solid var(--sand3); border-radius: 25px; cursor: pointer; font-size: 14px; color: var(--text2); transition: all .15s; user-select: none; box-shadow: 0 1px 3px rgba(44,36,22,.04); }
+  .pill:hover { border-color: var(--accent2); color: var(--text); }
+  .pill input { display: none; }
+  .pill.on { border-color: var(--accent); background: var(--accent3); color: var(--accent); font-weight: 500; }
+
+  /* Conditional */
+  .cond { margin-top: 10px; display: none; animation: fadeIn .2s ease; }
+  .cond.show { display: block; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:translateY(0); } }
+
+  /* Nav buttons */
+  .form-nav { display: flex; align-items: center; justify-content: space-between; margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--sand2); }
+  .btn { padding: 11px 24px; border-radius: 25px; font-size: 14px; font-weight: 500; cursor: pointer; border: 1.5px solid transparent; font-family: 'Inter', sans-serif; transition: all .15s; outline: none; display: inline-flex; align-items: center; gap: 8px; }
+  .btn-ghost { background: transparent; border-color: var(--sand3); color: var(--text2); }
+  .btn-ghost:hover { background: var(--sand); color: var(--text); }
+  .btn-next { background: var(--accent); color: white; box-shadow: 0 2px 8px rgba(47,107,79,.25); border: none; }
+  .btn-next:hover { background: var(--accent2); box-shadow: 0 4px 12px rgba(47,107,79,.3); }
+  .btn-generate { background: var(--accent); color: white; font-size: 15px; padding: 13px 32px; border-radius: 25px; box-shadow: 0 4px 16px rgba(47,107,79,.3); border: none; }
+  .btn-generate:hover { background: var(--accent2); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(47,107,79,.35); }
+  .btn-generate:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+  /* Review */
+  .review-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 1.5rem; }
+  .review-card { background: white; border: 1.5px solid var(--sand2); border-radius: var(--radius); padding: 14px 16px; box-shadow: var(--shadow); }
+  .review-lbl { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--text3); margin-bottom: 5px; }
+  .review-val { font-size: 13.5px; color: var(--text); line-height: 1.5; }
+
+  /* Loading / error */
+  .loader { display: none; align-items: center; gap: 14px; padding: 16px 20px; background: var(--accent3); border: 1.5px solid rgba(47,107,79,.15); border-radius: var(--radius); margin-top: 1.5rem; font-size: 14px; color: var(--accent); }
+  .loader.show { display: flex; }
+  .spinner { width: 22px; height: 22px; border: 2.5px solid rgba(47,107,79,.2); border-top-color: var(--accent); border-radius: 50%; animation: spin .75s linear infinite; flex-shrink: 0; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .err-box { display: none; background: #fef2f2; border: 1.5px solid #fecaca; border-radius: var(--radius); padding: 12px 16px; color: var(--danger); font-size: 13px; margin-top: 1rem; }
+  .err-box.show { display: block; }
+
+  /* Output */
+  .output { display: none; }
+  .output.show { display: block; }
+  .output-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
+  .output-title { font-family: 'Fraunces', serif; font-size: 22px; color: var(--text); }
+  .btn-dl { padding: 9px 20px; border-radius: 25px; background: white; border: 1.5px solid var(--sand3); color: var(--text2); font-size: 13px; font-weight: 500; cursor: pointer; font-family: 'Inter', sans-serif; transition: all .15s; display: flex; align-items: center; gap: 6px; }
+  .btn-dl:hover { border-color: var(--accent); color: var(--accent); }
+  .report-card { background: white; border: 1.5px solid var(--sand2); border-radius: var(--radius-lg); padding: 2.5rem 3rem; box-shadow: var(--shadow-lg); line-height: 1.8; }
+  .report-card h1 { font-family: 'Fraunces', serif; font-size: 24px; color: var(--text); font-weight: 600; border-bottom: 2px solid var(--sand2); padding-bottom: 1rem; margin-bottom: 1.25rem; }
+  .report-card h2 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--accent); margin: 2rem 0 .75rem; }
+  .report-card h3 { font-size: 16px; font-weight: 600; color: var(--text); margin: 1.5rem 0 .5rem; }
+  .report-card p { margin-bottom: .75rem; color: var(--text2); }
+  .report-card ul { padding-left: 1.5rem; margin-bottom: .75rem; }
+  .report-card li { margin-bottom: .3rem; color: var(--text2); }
+  .report-card strong { color: var(--text); }
+  .report-card hr { border: none; border-top: 1px solid var(--sand2); margin: 1.75rem 0; }
+  .report-card table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 13px; }
+  .report-card th { background: var(--sand); padding: 9px 14px; text-align: left; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .07em; color: var(--text3); border-bottom: 1.5px solid var(--sand2); }
+  .report-card td { padding: 9px 14px; border-bottom: 1px solid var(--sand2); color: var(--text2); vertical-align: top; }
+  .report-card tr:last-child td { border-bottom: none; }
+  .rCRITICAL { color: #c0392b; font-weight: 700; }
+  .rHIGH { color: #e67e22; font-weight: 700; }
+  .rMEDIUM { color: #b8860b; font-weight: 600; }
+  .rLOW { color: var(--accent); font-weight: 600; }
+  .btn-new { margin-top: 1.5rem; padding: 10px 22px; border-radius: 25px; background: var(--sand); border: 1.5px solid var(--sand3); color: var(--text2); font-size: 13px; font-weight: 500; cursor: pointer; font-family: 'Inter', sans-serif; transition: all .15s; }
+  .btn-new:hover { background: var(--sand2); color: var(--text); }
+
+  /* Footer */
+  .site-footer {
+    margin-top: 3rem;
+    padding: 1.5rem 0;
+    border-top: 1px solid var(--sand2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .footer-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text2);
+  }
+  .footer-email {
+    font-size: 12px;
+    color: var(--text3);
+  }
+  .footer-badge {
+    font-size: 11px;
+    background: var(--accent3);
+    color: var(--accent);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-weight: 500;
+  }
+
+  /* Review banner */
+  .review-banner {
+    background: #fffbeb;
+    border: 1.5px solid #f59e0b;
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    margin-bottom: 1.5rem;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    font-size: 13px;
+    color: #92400e;
+    line-height: 1.6;
+  }
+  .review-banner strong { color: #78350f; }
+
+  /* Print styles */
+  @media print {
+    .shell { display: block; }
+    .sidebar { display: none; }
+    .main { padding: 1rem; max-width: 100%; }
+    .progress-wrap { display: none; }
+    .notice { display: none; }
+    .section { display: none !important; }
+    .output { display: block !important; }
+    .output-bar { display: none; }
+    .review-banner { border: 1.5px solid #f59e0b; background: #fffbeb; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .report-card { box-shadow: none; border: none; padding: 0; }
+    .btn-new { display: none; }
+    .btn-dl { display: none; }
+    .btn-print { display: none; }
+    .site-footer { display: none; }
+    body { font-size: 13px; }
+    .report-card h1 { font-size: 20px; }
+    .report-card h2 { font-size: 11px; }
+    .report-card h3 { font-size: 14px; }
+    .report-card table { font-size: 11px; }
+    .rCRITICAL { color: #c0392b !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .rHIGH { color: #e67e22 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .rMEDIUM { color: #b8860b !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .rLOW { color: #2f6b4f !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">🛡️</div>
+      <div class="brand-text">
+        <h1>CRA Drafting Tool</h1>
+        <p>Regulation (EU) 2024/2847 · Drafting Tool</p>
+      </div>
+    </div>
+    <div class="nav-label">Assessment Steps</div>
+    <div class="nav-list" id="navList">
+      <div class="nav-item active" data-s="0" onclick="go(0)"><div class="step-num">1</div>Product Identity</div>
+      <div class="nav-item" data-s="1" onclick="go(1)"><div class="step-num">2</div>Intended Use</div>
+      <div class="nav-item" data-s="2" onclick="go(2)"><div class="step-num">3</div>Foreseeable Misuse</div>
+      <div class="nav-item" data-s="3" onclick="go(3)"><div class="step-num">4</div>Operational Environment</div>
+      <div class="nav-item" data-s="4" onclick="go(4)"><div class="step-num">5</div>Attack Surface</div>
+      <div class="nav-item" data-s="5" onclick="go(5)"><div class="step-num">6</div>Data &amp; Assets</div>
+      <div class="nav-item" data-s="6" onclick="go(6)"><div class="step-num">7</div>Authentication</div>
+      <div class="nav-item" data-s="7" onclick="go(7)"><div class="step-num">8</div>Availability</div>
+      <div class="nav-item" data-s="8" onclick="go(8)"><div class="step-num">9</div>Security Logging</div>
+      <div class="nav-item" data-s="9" onclick="go(9)"><div class="step-num">10</div>Updates &amp; Patches</div>
+      <div class="nav-item" data-s="10" onclick="go(10)"><div class="step-num">11</div>Review &amp; Generate</div>
+    </div>
+    <div class="sidebar-footer">
+      <div class="api-note" style="font-size:12px;color:var(--text3);line-height:1.6;">
+        🔒 API calls are handled securely server-side. No key required.
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="progress-wrap">
+      <div class="progress-info">
+        <div class="progress-title" id="pTitle">Product Identity</div>
+        <div class="progress-step" id="pStep">Step 1 of 11</div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="pFill" style="width:9%"></div></div>
+    </div>
+
+    <div class="notice">
+      💡&nbsp; Answer as accurately as possible. <strong>Unknown / Not sure</strong> is always an option and will be flagged as an information gap in the draft. Fields marked <strong style="color:var(--accent)">*</strong> are required.
+    </div>
+
+    <!-- A: Product Identity -->
+    <div class="section active" id="s0">
+      <div class="section-badge">Section A</div>
+      <h2 class="section-title">Tell us about the product</h2>
+      <p class="section-desc">We'll start with the basics — what the product is and how it's classified under the CRA. This anchors the entire risk assessment.</p>
+      <div class="field-card">
+        <div class="field">
+          <div class="field-label">Product name <span class="req">*</span></div>
+          <input type="text" id="a1" placeholder="e.g. SmartGateway Pro 3000">
+        </div>
+        <div class="field">
+          <div class="field-label">Version(s) covered <div class="tip"><span class="tip-icon">i</span><div class="tip-box">Specify which firmware or software version(s) this assessment applies to. e.g. v1.0 or v1.0–v1.4</div></div></div>
+          <input type="text" id="a2" placeholder="e.g. v1.0">
+        </div>
+      </div>
+      <div class="field-card">
+        <div class="field">
+          <div class="field-label">CRA product category <span class="req">*</span></div>
+          <select id="a3">
+            <option value="">Select a category…</option>
+            <option>Default — self-assessment</option>
+            <option>Important Class I — harmonised standard required</option>
+            <option>Important Class II — notified body required</option>
+            <option>Critical — EU cybersecurity certification required</option>
+          </select>
+        </div>
+        <div class="field">
+          <div class="field-label">Product type <span class="req">*</span></div>
+          <select id="a4">
+            <option value="">Select a product type…</option>
+            <option>Consumer IoT device (smart home, wearable, etc.)</option>
+            <option>Industrial IoT device</option>
+            <option>Network equipment (router, switch, firewall, modem)</option>
+            <option>Software application (desktop/mobile)</option>
+            <option>Cloud-connected software / SaaS</option>
+            <option>Operating system</option>
+            <option>Embedded system / firmware</option>
+            <option>Medical device with digital elements</option>
+            <option>Automotive component with digital elements</option>
+            <option>Industrial control system (ICS/SCADA)</option>
+            <option>Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-nav"><div></div><button class="btn btn-next" onclick="next()">Continue →</button></div>
+    </div>
+
+    <!-- B: Intended Use -->
+    <div class="section" id="s1">
+      <div class="section-badge">Section B</div>
+      <h2 class="section-title">Intended use &amp; users</h2>
+      <p class="section-desc">Article 13(3) requires the risk assessment to be grounded in the product's intended purpose and who uses it. This shapes the entire threat model.</p>
+      <div class="field-card">
+        <div class="field">
+          <div class="field-label">What does the product do? <span class="req">*</span></div>
+          <textarea id="b1" placeholder="e.g. A smart door lock that allows keyless entry via a mobile app and stores access logs in the cloud. Supports PIN codes, RFID cards, and remote unlock via internet connection."></textarea>
+        </div>
+      </div>
+      <div class="field-card">
+        <div class="field">
+          <div class="field-label">Who are the intended users?</div>
+          <div class="ms" id="b2">
+            <label class="ms-opt"><input type="checkbox" value="General consumers (non-technical)"><div class="ms-box"></div><span class="ms-lbl">General consumers (non-technical)</span></label>
+            <label class="ms-opt"><input type="checkbox" value="Small/medium business users"><div class="ms-box"></div><span class="ms-lbl">Small/medium business users</span></label>
+            <label class="ms-opt"><input type="checkbox" value="Enterprise / IT professionals"><div class="ms-box"></div><span class="ms-lbl">Enterprise / IT professionals</span></label>
+            <label class="ms-opt"><input type="checkbox" value="Industrial operators"><div class="ms-box"></div><span class="ms-lbl">Industrial operators</span></label>
+            <label class="ms-opt"><input type="checkbox" value="Critical infrastructure operators"><div class="ms-box"></div><span class="ms-lbl">Critical infrastructure operators</span></label>
+            <label class="ms-opt"><input type="checkbox" value="Government / public sector"><div class="ms-box"></div><span class="ms-lbl">Government / public sector</span></label>
+            <label class="ms-opt"><input type="checkbox" value="Developers / integrators"><div class="ms-box"></div><span class="ms-lbl">Developers / integrators</span></label>
+            <label class="ms-opt"><input type="checkbox" value="Unknown"><div class="ms-box"></div><span class="ms-lbl">Unknown / Not sure</span></label>
+          </div>
+        </div>
+        <div class="field">
+          <div class="field-label">Where is the product typically deployed?</div>
+          <div class="ms" id="b3">
+            <label class="ms-opt"><input type="checkbox" value="Home / residential"><div class="ms-box"></div><span class="ms-lbl">Home / residential</span></label>
+            <label class="ms-opt"><input type="checkbox" value="Office environment"><div class="ms-box"></div><span class="ms-lbl">Office environment</span></label>
+            <label class="ms-opt"><input type="checkbox" value="Industrial / factory floor"><div class="ms-box"></div><span class="ms-lbl">Industrial / factory floor</span></label>
+            <label class="ms-opt"><input type="checkbox" value="Public space"><div class="ms-box"></div><span class="ms-lbl">Public space</span></label>
+            <label class="ms-opt"><input type="checkbox" value="Critical infrastructure facility"><div class="ms-box"></div><span class="ms-lbl">Critical infrastructure facility</span></label>
+            <label class="ms-opt"><input type="checkbox" value="Cloud / data centre"><div class="ms-box"></div><span class="ms-lbl">Cloud / data centre</span></label>
+            <label class="ms-opt"><input type="checkbox" value="Embedded in another product"><div class="ms-box"></div><span class="ms-lbl">Embedded in another product</span></label>
+            <label class="ms-opt"><input type="checkbox" value="Unknown"><div class="ms-box"></div><span class="ms-lbl">Unknown / Not sure</span></label>
+          </div>
+        </div>
+        <div class="field">
+          <div class="field-label">Expected product lifetime <span class="req">*</span></div>
+          <select id="b4">
+            <option value="">Select expected lifetime…</option>
+            <option>Less than 2 years</option>
+            <option>2–5 years</option>
+            <option>5–10 years</option>
+            <option>More than 10 years</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-nav"><button class="btn btn-ghost" onclick="prev()">← Back</button><button class="btn btn-next" onclick="next()">Continue →</button></div>
+    </div>
+
+    <!-- C: Foreseeable Misuse -->
+    <div class="section" id="s2">
+      <div class="section-badge">Section C</div>
+      <h2 class="section-title">Reasonably foreseeable misuse</h2>
+      <p class="section-desc">Article 13(3) explicitly requires the assessment to cover not just intended use, but how the product could be misused — even unintentionally.</p>
+      <div class="field-card">
+        <div class="field">
+          <div class="field-label">Could the product be used in a higher-risk environment than intended? <div class="tip"><span class="tip-icon">i</span><div class="tip-box">e.g. A consumer smart plug deployed in an industrial facility to control heavy machinery</div></div></div>
+          <div class="pills"><label class="pill" onclick="pick('c1','Yes');tog('c1x',true)"><input type="radio" name="c1" value="Yes">Yes</label><label class="pill" onclick="pick('c1','No');tog('c1x',false)"><input type="radio" name="c1" value="No">No</label><label class="pill" onclick="pick('c1','Unknown');tog('c1x',false)"><input type="radio" name="c1" value="Unknown">Unknown</label></div>
+          <div class="cond" id="c1x"><input type="text" id="c1d" placeholder="Briefly describe the higher-risk scenario"></div>
+        </div>
+        <div class="field">
+          <div class="field-label">Could an attacker use this product to access other systems on the same network?</div>
+          <div class="pills"><label class="pill" onclick="pick('c2','Yes')"><input type="radio" name="c2" value="Yes">Yes</label><label class="pill" onclick="pick('c2','No')"><input type="radio" name="c2" value="No">No</label><label class="pill" onclick="pick('c2','Unknown')"><input type="radio" name="c2" value="Unknown">Unknown</label></div>
+        </div>
+        <div class="field">
+          <div class="field-label">Are there functions that could cause harm if exploited? <div class="tip"><span class="tip-icon">i</span><div class="tip-box">e.g. A remote unlock function triggered by an attacker to enable unauthorised physical access to a building</div></div></div>
+          <div class="pills"><label class="pill" onclick="pick('c3','Yes');tog('c3x',true)"><input type="radio" name="c3" value="Yes">Yes</label><label class="pill" onclick="pick('c3','No');tog('c3x',false)"><input type="radio" name="c3" value="No">No</label><label class="pill" onclick="pick('c3','Unknown');tog('c3x',false)"><input type="radio" name="c3" value="Unknown">Unknown</label></div>
+          <div class="cond" id="c3x"><input type="text" id="c3d" placeholder="Describe the function and potential harm"></div>
+        </div>
+        <div class="field">
+          <div class="field-label">Could a non-technical user accidentally disable or bypass security features?</div>
+          <div class="pills"><label class="pill" onclick="pick('c4','Yes')"><input type="radio" name="c4" value="Yes">Yes</label><label class="pill" onclick="pick('c4','No')"><input type="radio" name="c4" value="No">No</label><label class="pill" onclick="pick('c4','Unknown')"><input type="radio" name="c4" value="Unknown">Unknown</label></div>
+        </div>
+      </div>
+      <div class="form-nav"><button class="btn btn-ghost" onclick="prev()">← Back</button><button class="btn btn-next" onclick="next()">Continue →</button></div>
+    </div>
+
+    <!-- D: Operational Environment -->
+    <div class="section" id="s3">
+      <div class="section-badge">Section D</div>
+      <h2 class="section-title">Operational environment</h2>
+      <p class="section-desc">Article 13(3) requires the risk assessment to reflect actual conditions of use — not a generic environment.</p>
+      <div class="field-card">
+        <div class="field">
+          <div class="field-label">How is the product connected to networks?</div>
+          <select id="d1"><option value="">Select connectivity…</option><option>Always connected</option><option>Intermittently connected</option><option>Offline only</option><option>Both online and offline modes</option><option>Unknown</option></select>
+        </div>
+        <div class="field">
+          <div class="field-label">Which network types does it connect to?</div>
+          <div class="ms" id="d2">
+            <label class="ms-opt"><input type="checkbox" value="Public internet"><div class="ms-box"></div><span class="ms-lbl">Public internet</span></label>
+            <label class="ms-opt"><input type="checkbox" value="Private LAN / corporate network"><div class="ms-box"></div><span class="ms-lbl">Private LAN / corporate network</span></label>
+            <label class="ms-opt"><input type="checkbox" value="Industrial network (OT/ICS)"><div class="ms-box"></div><span class="ms-lbl">Industrial network (OT/ICS)</span></label>
+            <label class="ms-opt"><input type="checkbox" value="Mobile network (4G/5G)"><div class="ms-box"></div><span class="ms-lbl">Mobile network (4G/5G)</span></label>
+            <label class="ms-opt"><input type="checkbox" value="Wi-Fi"><div class="ms-box"></div><span class="ms-lbl">Wi-Fi</span></label>
+            <label class="ms-opt"><input type="checkbox" value="Bluetooth"><div class="ms-box"></div><span class="ms-lbl">Bluetooth</span></label>
+            <label class="ms-opt"><input type="checkbox" value="Zigbee / Z-Wave / Thread"><div class="ms-box"></div><span class="ms-lbl">Zigbee / Z-Wave / Thread</span></label>
+            <label class="ms-opt"><input type="checkbox" value="Air-gapped (no network)"><div class="ms-box"></div><span class="ms-lbl">Air-gapped (no network)</span></label>
+            <label class="ms-opt"><input type="checkbox" value="Unknown"><div class="ms-box"></div><span class="ms-lbl">Unknown / Not sure</span></label>
+          </div>
+        </div>
+        <div class="field">
+          <div class="field-label">Does the product operate in a safety-critical environment? <div class="tip"><span class="tip-icon">i</span><div class="tip-box">e.g. Healthcare monitoring, industrial automation, vehicle control, water treatment</div></div></div>
+          <div class="pills"><label class="pill" onclick="pick('d3','Yes');tog('d3x',true)"><input type="radio" name="d3" value="Yes">Yes</label><label class="pill" onclick="pick('d3','No');tog('d3x',false)"><input type="radio" name="d3" value="No">No</label><label class="pill" onclick="pick('d3','Unknown');tog('d3x',false)"><input type="radio" name="d3" value="Unknown">Unknown</label></div>
+          <div class="cond" id="d3x"><input type="text" id="d3d" placeholder="Describe the safety-critical context"></div>
+        </div>
+        <div class="field">
+          <div class="field-label">Who can physically access the device?</div>
+          <select id="d4"><option value="">Select physical access level…</option><option>Device is physically accessible to the public</option><option>Device is accessible to authorised personnel only</option><option>Device is in a controlled / locked facility</option><option>Device is embedded and not physically accessible</option><option>Unknown</option></select>
+        </div>
+      </div>
+      <div class="form-nav"><button class="btn btn-ghost" onclick="prev()">← Back</button><button class="btn btn-next" onclick="next()">Continue →</button></div>
+    </div>
+
+    <!-- E: Attack Surface -->
+    <div class="section" id="s4">
+      <div class="section-badge">Section E</div>
+      <h2 class="section-title">Connectivity &amp; attack surface</h2>
+      <p class="section-desc">Annex I §3(h) requires products to limit attack surfaces including external interfaces. This section maps what an attacker could target.</p>
+      <div class="field-card">
+        <div class="field">
+          <div class="field-label">Which external interfaces does the product expose?</div>
+          <div class="ms" id="e1">
+            <label class="ms-opt"><input type="checkbox" value="Web interface (browser-based)"><div class="ms-box"></div><span class="ms-lbl">Web interface (browser-based)</span></label>
+            <label class="ms-opt"><input type="checkbox" value="REST / GraphQL API"><div class="ms-box"></div><span class="ms-lbl">REST / GraphQL API</span></label>
+            <label class="ms-opt"><input type="checkbox" value="Mobile app interface"><div class="ms-box"></div><span class="ms-lbl">Mobile app interface</span></label>
+            <label class="ms-opt"><input type="checkbox" value="USB / serial port"><div class="ms-box"></div><span class="ms-lbl">USB / serial port</span></label>
+            <label class="ms-opt"><input type="checkbox" value="JTAG / debug port"><div class="ms-box"></div><span class="ms-lbl">JTAG / debug port</span></label>
+            <label class="ms-opt"><input type="checkbox" value="Bluetooth"><div class="ms-box"></div><span class="ms-lbl">Bluetooth</span></label>
+            <label class="ms-opt"><input type="checkbox" value="Wi-Fi"><div class="ms-box"></div><span class="ms-lbl">Wi-Fi</span></label>
+            <label class="ms-opt"><input type="checkbox" value="Zigbee / Z-Wave / Thread"><div class="ms-box"></div><span class="ms-lbl">Zigbee / Z-Wave / Thread</span></label>
+            <label class="ms-opt"><input type="checkbox" value="Cellular (4G/5G)"><div class="ms-box"></div><span class="ms-lbl">Cellular (4G/5G)</span></label>
+            <label class="ms-opt"><input type="checkbox" value="NFC"><div class="ms-box"></div><span class="ms-lbl">NFC</span></label>
+            <label class="ms-opt"><input type="checkbox" value="Ethernet / LAN"><div class="ms-box"></div><span class="ms-lbl">Ethernet / LAN</span></label>
+            <label class="ms-opt"><input type="checkbox" value="None"><div class="ms-box"></div><span class="ms-lbl">None</span></label>
+            <label class="ms-opt"><input type="checkbox" value="Unknown"><div class="ms-box"></div><span class="ms-lbl">Unknown / Not sure</span></label>
+          </div>
+        </div>
+        <div class="field">
+          <div class="field-label">Is any interface exposed to the public internet?</div>
+          <div class="pills"><label class="pill" onclick="pick('e2','Yes')"><input type="radio" name="e2" value="Yes">Yes</label><label class="pill" onclick="pick('e2','No')"><input type="radio" name="e2" value="No">No</label><label class="pill" onclick="pick('e2','Unknown')"><input type="radio" name="e2" value="Unknown">Unknown</label></div>
+        </div>
+        <div class="field">
+          <div class="field-label">Does the product have a companion app?</div>
+          <select id="e3"><option value="">Select…</option><option>No companion app</option><option>Mobile app only</option><option>Web interface only</option><option>Both mobile and web</option><option>Unknown</option></select>
+        </div>
+        <div class="field">
+          <div class="field-label">Does the product expose a remote management interface? <div class="tip"><span class="tip-icon">i</span><div class="tip-box">e.g. SSH, Telnet, web admin panel, cloud management console, SNMP</div></div></div>
+          <div class="pills"><label class="pill" onclick="pick('e4','Yes');tog('e4x',true)"><input type="radio" name="e4" value="Yes">Yes</label><label class="pill" onclick="pick('e4','No');tog('e4x',false)"><input type="radio" name="e4" value="No">No</label><label class="pill" onclick="pick('e4','Unknown');tog('e4x',false)"><input type="radio" name="e4" value="Unknown">Unknown</label></div>
+          <div class="cond" id="e4x"><input type="text" id="e4d" placeholder="e.g. SSH on port 22, cloud admin console"></div>
+        </div>
+      </div>
+      <div class="form-nav"><button class="btn btn-ghost" onclick="prev()">← Back</button><button class="btn btn-next" onclick="next()">Continue →</button></div>
+    </div>
+
+    <!-- F: Data & Assets -->
+    <div class="section" id="s5">
+      <div class="section-badge">Section F</div>
+      <h2 class="section-title">Data &amp; assets</h2>
+      <p class="section-desc">Article 13(3) requires identification of assets to be protected. The type of data handled determines the severity of a breach and which Annex I controls apply.</p>
+      <div class="field-card">
+        <div class="field">
+          <div class="field-label">What data does the product process or store?</div>
+          <div class="ms" id="f1">
+            <label class="ms-opt"><input type="checkbox" value="Personal data (names, emails, addresses)"><div class="ms-box"></div><span class="ms-lbl">Personal data (names, emails, addresses)</span></label>
+            <label class="ms-opt"><input type="checkbox" value="Sensitive personal data (health, biometric, financial)"><div class="ms-box"></div><span class="ms-lbl">Sensitive personal data (health, biometric, financial)</span></label>
+            <label class="ms-opt"><input type="checkbox" value="Authentication credentials (passwords, tokens, keys)"><div class="ms-box"></div><span class="ms-lbl">Authentication credentials</span></label>
+            <label class="ms-opt"><input type="checkbox" value="Device telemetry / operational data"><div class="ms-box"></div><span class="ms-lbl">Device telemetry / operational data</span></label>
+            <label class="ms-opt"><input type="checkbox" value="Configuration data"><div class="ms-box"></div><span class="ms-lbl">Configuration data</span></label>
+            <label class="ms-opt"><input type="checkbox" value="Intellectual property / proprietary data"><div class="ms-box"></div><span class="ms-lbl">Intellectual property / proprietary data</span></label>
+            <label class="ms-opt"><input type="checkbox" value="No data stored or processed"><div class="ms-box"></div><span class="ms-lbl">No data stored or processed</span></label>
+            <label class="ms-opt"><input type="checkbox" value="Unknown"><div class="ms-box"></div><span class="ms-lbl">Unknown / Not sure</span></label>
+          </div>
+        </div>
+        <div class="field">
+          <div class="field-label">Where is data stored?</div>
+          <div class="ms col1" id="f2">
+            <label class="ms-opt"><input type="checkbox" value="Locally on the device"><div class="ms-box"></div><span class="ms-lbl">Locally on the device</span></label>
+            <label class="ms-opt"><input type="checkbox" value="On a cloud backend"><div class="ms-box"></div><span class="ms-lbl">On a cloud backend</span></label>
+            <label class="ms-opt"><input type="checkbox" value="On a companion mobile app"><div class="ms-box"></div><span class="ms-lbl">On a companion mobile app</span></label>
+            <label class="ms-opt"><input type="checkbox" value="On a remote server (non-cloud)"><div class="ms-box"></div><span class="ms-lbl">On a remote server (non-cloud)</span></label>
+            <label class="ms-opt"><input type="checkbox" value="Not stored — processed in transit only"><div class="ms-box"></div><span class="ms-lbl">Not stored — processed in transit only</span></label>
+            <label class="ms-opt"><input type="checkbox" value="Unknown"><div class="ms-box"></div><span class="ms-lbl">Unknown / Not sure</span></label>
+          </div>
+        </div>
+        <div class="field">
+          <div class="field-label">Is data transmitted to other systems? <div class="tip"><span class="tip-icon">i</span><div class="tip-box">e.g. Sensor readings sent to cloud every 60s over MQTT; access logs synced to mobile app over TLS</div></div></div>
+          <div class="pills"><label class="pill" onclick="pick('f3','Yes');tog('f3x',true)"><input type="radio" name="f3" value="Yes">Yes</label><label class="pill" onclick="pick('f3','No');tog('f3x',false)"><input type="radio" name="f3" value="No">No</label><label class="pill" onclick="pick('f3','Unknown');tog('f3x',false)"><input type="radio" name="f3" value="Unknown">Unknown</label></div>
+          <div class="cond" id="f3x"><input type="text" id="f3d" placeholder="What is transmitted and how?"></div>
+        </div>
+        <div class="field">
+          <div class="field-label">Are there high-value assets that would cause serious harm if compromised? <div class="tip"><span class="tip-icon">i</span><div class="tip-box">e.g. Master encryption keys, user location history, industrial control commands, medical records</div></div></div>
+          <div class="pills"><label class="pill" onclick="pick('f4','Yes');tog('f4x',true)"><input type="radio" name="f4" value="Yes">Yes</label><label class="pill" onclick="pick('f4','No');tog('f4x',false)"><input type="radio" name="f4" value="No">No</label><label class="pill" onclick="pick('f4','Unknown');tog('f4x',false)"><input type="radio" name="f4" value="Unknown">Unknown</label></div>
+          <div class="cond" id="f4x"><input type="text" id="f4d" placeholder="Describe the high-value assets"></div>
+        </div>
+      </div>
+      <div class="form-nav"><button class="btn btn-ghost" onclick="prev()">← Back</button><button class="btn btn-next" onclick="next()">Continue →</button></div>
+    </div>
+
+    <!-- G: Authentication -->
+    <div class="section" id="s6">
+      <div class="section-badge">Section G</div>
+      <h2 class="section-title">Authentication &amp; access control</h2>
+      <p class="section-desc">Annex I §3(a)(b) — products must be secure by default and protect against unauthorised access. One of the most frequently audited areas under CRA.</p>
+      <div class="field-card">
+        <div class="field">
+          <div class="field-label">How do users authenticate to use the product?</div>
+          <select id="g1"><option value="">Select authentication method…</option><option>No authentication required</option><option>Password only</option><option>Username + password</option><option>Multi-factor authentication (MFA)</option><option>Certificate-based authentication</option><option>Hardware token</option><option>Biometric</option><option>Unknown</option></select>
+        </div>
+        <div class="field">
+          <div class="field-label">How are default credentials handled?</div>
+          <select id="g2"><option value="">Select…</option><option>No credentials / not applicable</option><option>Unique credentials per device (generated at manufacture)</option><option>Same default credentials for all devices (e.g. admin/admin)</option><option>User is forced to change default credentials on first use</option><option>No default credentials — user sets them on first use</option><option>Unknown</option></select>
+        </div>
+        <div class="field">
+          <div class="field-label">Is access control enforced between different user roles? <div class="tip"><span class="tip-icon">i</span><div class="tip-box">e.g. Separate admin and end-user roles, operator vs. read-only access, privilege separation</div></div></div>
+          <div class="pills"><label class="pill" onclick="pick('g3','Yes')"><input type="radio" name="g3" value="Yes">Yes</label><label class="pill" onclick="pick('g3','No')"><input type="radio" name="g3" value="No">No</label><label class="pill" onclick="pick('g3','Not applicable')"><input type="radio" name="g3" value="Not applicable">Not applicable</label><label class="pill" onclick="pick('g3','Unknown')"><input type="radio" name="g3" value="Unknown">Unknown</label></div>
+        </div>
+        <div class="field">
+          <div class="field-label">Are there any unauthenticated functions or interfaces? <div class="tip"><span class="tip-icon">i</span><div class="tip-box">e.g. Open Telnet port, public status page, unauthenticated device discovery broadcast</div></div></div>
+          <div class="pills"><label class="pill" onclick="pick('g4','Yes');tog('g4x',true)"><input type="radio" name="g4" value="Yes">Yes</label><label class="pill" onclick="pick('g4','No');tog('g4x',false)"><input type="radio" name="g4" value="No">No</label><label class="pill" onclick="pick('g4','Unknown');tog('g4x',false)"><input type="radio" name="g4" value="Unknown">Unknown</label></div>
+          <div class="cond" id="g4x"><input type="text" id="g4d" placeholder="Describe the unauthenticated function or interface"></div>
+        </div>
+      </div>
+      <div class="form-nav"><button class="btn btn-ghost" onclick="prev()">← Back</button><button class="btn btn-next" onclick="next()">Continue →</button></div>
+    </div>
+
+    <!-- H: Availability -->
+    <div class="section" id="s7">
+      <div class="section-badge">Section H</div>
+      <h2 class="section-title">Availability &amp; resilience</h2>
+      <p class="section-desc">Annex I §3(f) — products must protect the availability of essential functions, including resilience against denial of service attacks.</p>
+      <div class="field-card">
+        <div class="field">
+          <div class="field-label">Are there functions that must remain available at all times? <div class="tip"><span class="tip-icon">i</span><div class="tip-box">e.g. Emergency stop, alarm trigger, medical monitoring, door lock release, safety shutoff</div></div></div>
+          <div class="pills"><label class="pill" onclick="pick('h1','Yes');tog('h1x',true)"><input type="radio" name="h1" value="Yes">Yes</label><label class="pill" onclick="pick('h1','No');tog('h1x',false)"><input type="radio" name="h1" value="No">No</label><label class="pill" onclick="pick('h1','Unknown');tog('h1x',false)"><input type="radio" name="h1" value="Unknown">Unknown</label></div>
+          <div class="cond" id="h1x"><input type="text" id="h1d" placeholder="Describe the always-available function(s)"></div>
+        </div>
+        <div class="field">
+          <div class="field-label">What is the impact if the product becomes unavailable?</div>
+          <select id="h2"><option value="">Select impact level…</option><option>No significant impact</option><option>Minor inconvenience to users</option><option>Loss of business functionality</option><option>Safety risk to users or third parties</option><option>Risk to critical infrastructure</option><option>Unknown</option></select>
+        </div>
+        <div class="field">
+          <div class="field-label">Is the product protected against denial of service attacks?</div>
+          <select id="h3"><option value="">Select…</option><option>Yes — rate limiting and DoS protections are implemented</option><option>Partially — some protections exist</option><option>No — no specific DoS protections</option><option>Unknown</option></select>
+        </div>
+        <div class="field">
+          <div class="field-label">Does the product have a fail-safe mode if connectivity is lost? <div class="tip"><span class="tip-icon">i</span><div class="tip-box">e.g. Defaults to locked state if cloud connection drops; local override available; cached last-known-good config</div></div></div>
+          <div class="pills"><label class="pill" onclick="pick('h4','Yes');tog('h4x',true)"><input type="radio" name="h4" value="Yes">Yes</label><label class="pill" onclick="pick('h4','No');tog('h4x',false)"><input type="radio" name="h4" value="No">No</label><label class="pill" onclick="pick('h4','Unknown');tog('h4x',false)"><input type="radio" name="h4" value="Unknown">Unknown</label></div>
+          <div class="cond" id="h4x"><input type="text" id="h4d" placeholder="Describe the fail-safe behaviour"></div>
+        </div>
+      </div>
+      <div class="form-nav"><button class="btn btn-ghost" onclick="prev()">← Back</button><button class="btn btn-next" onclick="next()">Continue →</button></div>
+    </div>
+
+    <!-- I: Logging -->
+    <div class="section" id="s8">
+      <div class="section-badge">Section I</div>
+      <h2 class="section-title">Security logging &amp; monitoring</h2>
+      <p class="section-desc">Annex I §3(j) — products must record relevant internal activity, including access to or modification of data, services or functions.</p>
+      <div class="field-card">
+        <div class="field">
+          <div class="field-label">Does the product log security-relevant events?</div>
+          <select id="i1"><option value="">Select…</option><option>Yes — comprehensive logging implemented</option><option>Yes — partial logging only</option><option>No — no logging implemented</option><option>Unknown</option></select>
+        </div>
+        <div class="field">
+          <div class="field-label">Which events are logged?</div>
+          <div class="ms" id="i2">
+            <label class="ms-opt"><input type="checkbox" value="User login attempts (success and failure)"><div class="ms-box"></div><span class="ms-lbl">Login attempts (success &amp; failure)</span></label>
+            <label class="ms-opt"><input type="checkbox" value="Configuration changes"><div class="ms-box"></div><span class="ms-lbl">Configuration changes</span></label>
+            <label class="ms-opt"><input type="checkbox" value="Firmware / software updates"><div class="ms-box"></div><span class="ms-lbl">Firmware / software updates</span></label>
+            <label class="ms-opt"><input type="checkbox" value="Data access or export events"><div class="ms-box"></div><span class="ms-lbl">Data access or export events</span></label>
+            <label class="ms-opt"><input type="checkbox" value="Network connection events"><div class="ms-box"></div><span class="ms-lbl">Network connection events</span></label>
+            <label class="ms-opt"><input type="checkbox" value="Error and crash events"><div class="ms-box"></div><span class="ms-lbl">Error and crash events</span></label>
+            <label class="ms-opt"><input type="checkbox" value="None"><div class="ms-box"></div><span class="ms-lbl">None</span></label>
+            <label class="ms-opt"><input type="checkbox" value="Unknown"><div class="ms-box"></div><span class="ms-lbl">Unknown / Not sure</span></label>
+          </div>
+        </div>
+        <div class="field">
+          <div class="field-label">Are logs protected against tampering or deletion? <div class="tip"><span class="tip-icon">i</span><div class="tip-box">e.g. Logs stored on remote server, cryptographically signed, write-once storage media</div></div></div>
+          <div class="pills"><label class="pill" onclick="pick('i3','Yes')"><input type="radio" name="i3" value="Yes">Yes</label><label class="pill" onclick="pick('i3','No')"><input type="radio" name="i3" value="No">No</label><label class="pill" onclick="pick('i3','Unknown')"><input type="radio" name="i3" value="Unknown">Unknown</label></div>
+        </div>
+        <div class="field">
+          <div class="field-label">Are logs accessible for security monitoring?</div>
+          <select id="i4"><option value="">Select…</option><option>Yes — logs sent to manufacturer/cloud for monitoring</option><option>Yes — logs accessible locally to operator only</option><option>No — logs not accessible after generation</option><option>Unknown</option></select>
+        </div>
+      </div>
+      <div class="form-nav"><button class="btn btn-ghost" onclick="prev()">← Back</button><button class="btn btn-next" onclick="next()">Continue →</button></div>
+    </div>
+
+    <!-- J: Updates -->
+    <div class="section" id="s9">
+      <div class="section-badge">Section J</div>
+      <h2 class="section-title">Updates &amp; patch management</h2>
+      <p class="section-desc">Annex I §3(k) and Part II §2,7 — products must support security updates, and manufacturers must have a timely, defined patch process.</p>
+      <div class="field-card">
+        <div class="field">
+          <div class="field-label">How does the product receive software or firmware updates?</div>
+          <select id="j1"><option value="">Select update mechanism…</option><option>Yes — over-the-air (OTA) automatic updates</option><option>Yes — OTA updates but manual trigger required</option><option>Yes — updates via physical connection only (USB, serial)</option><option>No — product cannot be updated</option><option>Unknown</option></select>
+        </div>
+        <div class="field">
+          <div class="field-label">Are security updates delivered separately from feature updates? <div class="tip"><span class="tip-icon">i</span><div class="tip-box">The CRA recommends separating security patches from feature releases where feasible, to allow faster deployment of critical fixes</div></div></div>
+          <div class="pills"><label class="pill" onclick="pick('j2','Yes')"><input type="radio" name="j2" value="Yes">Yes</label><label class="pill" onclick="pick('j2','No')"><input type="radio" name="j2" value="No">No</label><label class="pill" onclick="pick('j2','Unknown')"><input type="radio" name="j2" value="Unknown">Unknown</label></div>
+        </div>
+        <div class="field">
+          <div class="field-label">Are updates cryptographically signed and verified before installation? <div class="tip"><span class="tip-icon">i</span><div class="tip-box">e.g. RSA or ECDSA signature verified by the device before applying the firmware update</div></div></div>
+          <div class="pills"><label class="pill" onclick="pick('j3','Yes')"><input type="radio" name="j3" value="Yes">Yes</label><label class="pill" onclick="pick('j3','No')"><input type="radio" name="j3" value="No">No</label><label class="pill" onclick="pick('j3','Unknown')"><input type="radio" name="j3" value="Unknown">Unknown</label></div>
+        </div>
+        <div class="field">
+          <div class="field-label">Is there a defined process for releasing security patches? <div class="tip"><span class="tip-icon">i</span><div class="tip-box">e.g. Internal triage within 24h, patch released within 30 days, critical patches within 72h</div></div></div>
+          <div class="pills"><label class="pill" onclick="pick('j4','Yes');tog('j4x',true)"><input type="radio" name="j4" value="Yes">Yes</label><label class="pill" onclick="pick('j4','No');tog('j4x',false)"><input type="radio" name="j4" value="No">No</label><label class="pill" onclick="pick('j4','Unknown');tog('j4x',false)"><input type="radio" name="j4" value="Unknown">Unknown</label></div>
+          <div class="cond" id="j4x"><input type="text" id="j4d" placeholder="Briefly describe the patch process and timelines"></div>
+        </div>
+      </div>
+      <div class="form-nav"><button class="btn btn-ghost" onclick="prev()">← Back</button><button class="btn btn-next" onclick="next()">Continue →</button></div>
+    </div>
+
+    <!-- Review & Generate -->
+    <div class="section" id="s10">
+      <div class="section-badge">Final Step</div>
+      <h2 class="section-title">Review &amp; generate</h2>
+      <p class="section-desc">Check your answers below, then click Generate. Claude will produce a full CRA-aligned risk assessment using the ISO 27005 methodology — this takes about 20–40 seconds.</p>
+      <div class="review-grid" id="reviewGrid"></div>
+      <div class="err-box" id="errBox"></div>
+      <div class="loader" id="loader"><div class="spinner"></div>Generating your CRA risk assessment — hang tight…</div>
+      <div class="form-nav">
+        <button class="btn btn-ghost" onclick="prev()">← Back</button>
+        <button class="btn btn-generate" id="genBtn" onclick="generate()">⚡ Generate Draft Assessment</button>
+      </div>
+    </div>
+
+    <!-- Output -->
+    <div class="output" id="outputWrap">
+      <div class="output-bar">
+        <h2 class="output-title">Draft Risk Assessment Report</h2>
+        <div style="display:flex;gap:8px;">
+          <button class="btn-dl" onclick="window.print()">🖨 Save as PDF</button>
+          <button class="btn-dl" onclick="download()">↓ Download (.md)</button>
+        </div>
+      </div>
+
+      <div class="review-banner">
+        ⚠️&nbsp; <span><strong>Professional review required.</strong> This is a first-draft working document generated by AI based on the information provided. It must be reviewed and validated by a qualified cybersecurity professional before use in regulatory submissions, technical documentation, or client delivery. The consultant remains responsible for the accuracy and completeness of the final document.</span>
+      </div>
+      <div class="report-card" id="reportCard"></div>
+      <button class="btn-new" onclick="restart()">← Start a new assessment</button>
+    </div>
+
+
+    <!-- Footer -->
+    <div class="site-footer">
+      <div>
+        <div class="footer-name">Jyohan Joglekar</div>
+        <div class="footer-email">Safety Consultant · jyohannj@gmail.com</div>
+      </div>
+      <div class="footer-badge">CRA Risk Assessment Drafting Tool</div>
+    </div>
+  </main>
+</div>
+
+<script>
+let cur = 0;
+const TOTAL = 11;
+const TITLES = ['Product Identity','Intended Use','Foreseeable Misuse','Operational Environment','Attack Surface','Data & Assets','Authentication','Availability','Security Logging','Updates & Patches','Review & Generate'];
+
+function go(n) {
+  document.getElementById('s'+cur).classList.remove('active');
+  document.querySelector('[data-s="'+cur+'"]').classList.remove('active');
+  cur = n;
+  document.getElementById('s'+cur).classList.add('active');
+  document.querySelector('[data-s="'+cur+'"]').classList.add('active');
+  document.getElementById('pTitle').textContent = TITLES[cur];
+  document.getElementById('pStep').textContent = 'Step '+(cur+1)+' of '+TOTAL;
+  document.getElementById('pFill').style.width = Math.round((cur+1)/TOTAL*100)+'%';
+  if (n===10) buildReview();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function next() { if (!validate()) return; markDone(cur); go(Math.min(cur+1,TOTAL-1)); }
+function prev() { go(Math.max(cur-1,0)); }
+
+function markDone(n) { document.querySelector('[data-s="'+n+'"]').classList.add('done'); }
+
+function validate() {
+  const rules = { 0:[['a1','Product Name'],['a3','Product Category'],['a4','Product Type']], 1:[['b1','Product Description'],['b4','Expected Lifetime']] };
+  for (const [id,lbl] of (rules[cur]||[])) {
+    const el = document.getElementById(id);
+    if (!el||!el.value.trim()) { showErr('Please complete the required field: '+lbl); el&&el.focus(); return false; }
+  }
+  clearErr(); return true;
+}
+
+function showErr(msg) { const b=document.getElementById('errBox'); b.textContent=msg; b.classList.add('show'); }
+function clearErr() { document.getElementById('errBox').classList.remove('show'); }
+
+function pick(name, val) {
+  document.querySelectorAll('input[name="'+name+'"]').forEach(el => {
+    el.checked = el.value===val;
+    el.closest('.pill').classList.toggle('on', el.value===val);
+  });
+}
+function radio(name) { const el=document.querySelector('input[name="'+name+'"]:checked'); return el?el.value:''; }
+function tog(id, show) { document.getElementById(id).classList.toggle('show',show); }
+function getMS(id) { return Array.from(document.querySelectorAll('#'+id+' input:checked')).map(e=>e.value); }
+function g(id) { const el=document.getElementById(id); return el?el.value.trim():''; }
+
+function collect() {
+  return {
+    a1:g('a1'),a2:g('a2'),a3:g('a3'),a4:g('a4'),
+    b1:g('b1'),b2:getMS('b2'),b3:getMS('b3'),b4:g('b4'),
+    c1:radio('c1'),c1d:g('c1d'),c2:radio('c2'),c3:radio('c3'),c3d:g('c3d'),c4:radio('c4'),
+    d1:g('d1'),d2:getMS('d2'),d3:radio('d3'),d3d:g('d3d'),d4:g('d4'),
+    e1:getMS('e1'),e2:radio('e2'),e3:g('e3'),e4:radio('e4'),e4d:g('e4d'),
+    f1:getMS('f1'),f2:getMS('f2'),f3:radio('f3'),f3d:g('f3d'),f4:radio('f4'),f4d:g('f4d'),
+    g1:g('g1'),g2:g('g2'),g3:radio('g3'),g4:radio('g4'),g4d:g('g4d'),
+    h1:radio('h1'),h1d:g('h1d'),h2:g('h2'),h3:g('h3'),h4:radio('h4'),h4d:g('h4d'),
+    i1:g('i1'),i2:getMS('i2'),i3:radio('i3'),i4:g('i4'),
+    j1:g('j1'),j2:radio('j2'),j3:radio('j3'),j4:radio('j4'),j4d:g('j4d')
+  };
+}
+
+function buildReview() {
+  const a = collect();
+  const ms = arr => arr.length ? arr.join(', ') : '—';
+  const items = [
+    ['Product', (a.a1||'—')+(a.a2?' ('+a.a2+')':'')],
+    ['Category', a.a3||'—'], ['Type', a.a4||'—'],
+    ['Description', a.b1?(a.b1.length>90?a.b1.slice(0,90)+'…':a.b1):'—'],
+    ['Intended Users', ms(a.b2)], ['Deployment', ms(a.b3)],
+    ['Lifetime', a.b4||'—'], ['Networks', ms(a.d2)],
+    ['Interfaces', ms(a.e1)], ['Data Types', ms(a.f1)],
+    ['Authentication', a.g1||'—'], ['Updates', a.j1||'—'],
+  ];
+  document.getElementById('reviewGrid').innerHTML = items.map(([l,v]) =>
+    '<div class="review-card"><div class="review-lbl">'+l+'</div><div class="review-val">'+v+'</div></div>'
+  ).join('');
+}
+
+function sysPrompt() {
+  const today = new Date().toLocaleDateString('en-GB', {day:'2-digit', month:'long', year:'numeric'});
+  return `You are a senior cybersecurity consultant specialising in EU Cyber Resilience Act (CRA) compliance. You are producing a professional risk assessment working document for a manufacturer, based on information provided via a structured questionnaire.
+
+Your output must serve TWO distinct readers:
+- PART 1 is for MANAGEMENT — plain English, no jargon, maximum 2 pages, answers three questions: Are we at risk? What is broken? What do we do?
+- PART 2 is for the CONSULTANT and EXPERT REVIEWER — structured, justified, technically rigorous
+
+CRITICAL LANGUAGE RULES FOR PART 1:
+- Zero technical jargon. No "OTA", "RBAC", "credential stuffing", "attack surface", "threat vector"
+- Every sentence must be understandable by someone with no cybersecurity background
+- Describe threats in terms of consequences: "an attacker could unlock your doors remotely" not "spoofing via compromised authentication"
+- Use plain words: "security update" not "firmware patch", "password" not "credential", "hacker" not "threat actor"
+
+RISK SCORING — ISO/IEC 27005:
+- Likelihood: 1 (Very Unlikely) to 5 (Almost Certain)
+- Impact: 1 (Negligible) to 5 (Catastrophic)
+- Risk Score = Likelihood × Impact
+- 1–4 = LOW | 5–9 = MEDIUM | 10–16 = HIGH | 17–25 = CRITICAL
+- Always score for the WORST CREDIBLE CASE — never the best case
+- Every score must have a one sentence justification
+- If information is Unknown, score for worst case AND flag in information gaps
+
+ASSET PRIORITISATION:
+Select the top 3 assets for deep assessment based on:
+1. Highest combined CIA severity
+2. Highest damage severity if compromised
+3. Most directly linked to confirmed misuse scenarios
+For all other assets: list with CIA and one sentence explaining why not assessed in depth.
+
+CIA CLASSIFICATION (High / Medium / Low):
+- Confidentiality: harm from unauthorised disclosure
+- Integrity: harm from unauthorised modification
+- Availability: harm from loss of access or function
+
+DAMAGE SEVERITY:
+- Severe: safety risk, critical infrastructure impact, or irreversible harm
+- Major: significant financial, operational or privacy harm
+- Moderate: contained harm with recovery possible
+- Negligible: minimal real-world impact
+
+STRIDE METHODOLOGY:
+Every threat scenario must be tagged with its primary STRIDE category:
+- Spoofing: Impersonating a legitimate user, device or service
+- Tampering: Unauthorised modification of data, firmware or configuration
+- Repudiation: Inability to trace actions back to an actor
+- Information Disclosure: Exposure of sensitive data
+- Denial of Service: Making the product or its functions unavailable
+- Elevation of Privilege: Gaining higher access than authorised
+One threat may have a secondary STRIDE category — include both if relevant.
+
+ATTACK PATH FORMAT (plain structured steps — no framework labels):
+Step 1: How attacker gains initial access
+Step 2: What attacker does once inside
+Step 3: How attacker reaches the target asset
+Step 4: What harm is caused
+
+RESIDUAL RISK — express in plain English:
+"Even with [existing controls] in place, an attacker could still [specific harm] because [specific weakness]."
+Never express residual risk as a second number — always a plain English sentence.
+
+TREATMENT DECISION — be specific:
+Not "Mitigate" — but "Fix within 90 days: implement [specific action]"
+Not "Accept" — but "Accept: risk is low and cost of mitigation exceeds benefit"
+Not "Transfer" — but "Transfer: obtain cyber insurance to cover this risk"
+
+INFORMATION GAPS:
+Every Unknown answer MUST appear in the Information Gaps section.
+Scoring assumption for each Unknown must also be stated in the relevant asset assessment.
+
+TODAY'S DATE: ${today}
+
+OUTPUT — use this exact structure:
+
+---
+
+# CRA Risk Assessment — Working Document
+## [Product Name] — [Version]
+
+**Prepared by:** Jyohan Joglekar, Safety Consultant
+**Contact:** jyohannj@gmail.com
+**Date:** ${today}
+**Legal basis:** Regulation (EU) 2024/2847, Article 13(3), Annex VII
+**Methodology:** ISO/IEC 27005 (5×5 risk matrix)
+
+---
+
+# PART 1 — MANAGEMENT SUMMARY
+
+## Overall Risk Level: [ONE WORD in capitals — CRITICAL / HIGH / MEDIUM / LOW]
+
+[One plain English sentence explaining what this means for this specific product and its deployment context. No jargon.]
+
+## Risk Dashboard
+
+| | Count |
+|---|---|
+| 🔴 Critical risks | [n] |
+| 🟠 High risks | [n] |
+| 🟡 Medium risks | [n] |
+| 🟢 Low risks | [n] |
+| ⚠️ Information gaps | [n] |
+| 🎯 STRIDE threats assessed | [n] |
+
+## The [n] Most Urgent Problems
+
+[Numbered list. Plain English. Each item: what is the problem, what could an attacker do because of it, what is the real-world consequence. Maximum 3 sentences per item. Zero jargon.]
+
+1. **[Problem title in plain English]**
+[What is wrong. What an attacker could do. What happens to the business or people if they do.]
+
+[Repeat for each critical or high risk]
+
+## What Happens If These Are Not Fixed
+
+[2–3 sentences. Plain English. Describe the worst realistic outcome if the priority problems are not addressed. Be specific to this product and its deployment context.]
+
+## The [n] Most Urgent Actions
+
+[Numbered list. Each action: specific, concrete, with a timeframe. Written as instructions to the manufacturer.]
+
+1. [Specific action — timeframe]
+2. [Specific action — timeframe]
+3. [Specific action — timeframe]
+
+---
+
+# PART 2 — TECHNICAL ASSESSMENT
+
+## Section 1 — Asset Register
+
+[List ALL assets identified from the questionnaire answers.]
+
+| Asset | Confidentiality | Integrity | Availability | Damage Severity | Deep Assessment |
+|---|---|---|---|---|---|
+| [asset] | High/Med/Low | High/Med/Low | High/Med/Low | Severe/Major/Moderate/Negligible | Yes — Priority 1 / No — [one sentence rationale] |
+
+**Priority asset selection rationale:**
+[2–3 sentences explaining why the top 3 assets were selected for deep assessment and what criteria were used.]
+
+---
+
+## Section 2 — Priority Asset Risk Assessment
+
+[For each of the 3 priority assets, use this exact structure:]
+
+### Asset [n]: [Asset Name]
+
+**CIA Classification:** C: [High/Med/Low] | I: [High/Med/Low] | A: [High/Med/Low]
+**Damage Severity:** [Severe/Major/Moderate/Negligible]
+
+**Damage Scenario**
+[What is the worst realistic thing that could happen to this asset if compromised? One paragraph. Link explicitly to any relevant misuse scenario: "(see Misuse Scenario [n])"]
+
+**STRIDE Category:** [Primary STRIDE category] [Secondary if applicable]
+
+**Threat Scenario**
+[How could an attacker cause the damage scenario? One paragraph. Plain structured description.]
+
+**Attack Path**
+Step 1: [Initial access — how attacker gets in]
+Step 2: [Progression — what attacker does next]
+Step 3: [Target — how attacker reaches this asset]
+Step 4: [Impact — what harm is caused]
+
+**Risk Scoring**
+| Factor | Score | Justification |
+|---|---|---|
+| Likelihood | [1–5] | [One sentence — why this score] |
+| Impact | [1–5] | [One sentence — why this score] |
+| **Risk Score** | **[L×I]** | |
+| **Risk Level** | **[LOW/MEDIUM/HIGH/CRITICAL]** | |
+
+**Current Controls**
+[List what currently protects this asset, based on questionnaire answers. If none: "None identified."]
+
+**Residual Risk**
+[Plain English sentence: "Even with [controls] in place, an attacker could still [harm] because [weakness]."]
+
+**Treatment Decision**
+[Specific action with timeframe — not just Accept/Mitigate/Transfer/Avoid]
+
+---
+
+[Repeat Section 2 structure for each of the 3 priority assets]
+
+### STRIDE Coverage Summary
+
+[After completing all priority asset assessments, produce this summary table covering ALL identified threats across all assessed assets. Include non-priority assets where a STRIDE threat was identified but not assessed in depth — note these as "Not assessed in depth — [one sentence rationale]".]
+
+| STRIDE Category | Threat | Asset | Likelihood | Impact | Score | Level |
+|---|---|---|---|---|---|---|
+| Spoofing | [threat description] | [asset] | [1–5] | [1–5] | [score] | [LOW/MEDIUM/HIGH/CRITICAL] |
+| Tampering | [threat description] | [asset] | [1–5] | [1–5] | [score] | [LOW/MEDIUM/HIGH/CRITICAL] |
+| Repudiation | [threat description] | [asset] | [1–5] | [1–5] | [score] | [LOW/MEDIUM/HIGH/CRITICAL] |
+| Information Disclosure | [threat description] | [asset] | [1–5] | [1–5] | [score] | [LOW/MEDIUM/HIGH/CRITICAL] |
+| Denial of Service | [threat description] | [asset] | [1–5] | [1–5] | [score] | [LOW/MEDIUM/HIGH/CRITICAL] |
+| Elevation of Privilege | [threat description] | [asset] | [1–5] | [1–5] | [score] | [LOW/MEDIUM/HIGH/CRITICAL] |
+
+[If a STRIDE category is not applicable to this product, state: "[Category] — Not applicable: [one sentence reason]"]
+
+---
+
+## Section 3 — Information Gaps
+
+[Every Unknown answer must appear here.]
+
+| # | What is Unknown | Why it Matters | Impact on Risk Score | Priority | Who Must Provide This | Deadline |
+|---|---|---|---|---|---|---|
+| 1 | [what] | [why] | [scored worst case — if resolved as best case, risk level may decrease to X] | Critical/High/Medium | [manufacturer/consultant/third party] | [before submission/30 days/next review] |
+
+---
+
+## Section 4 — Assessment Limitations
+
+This assessment does not constitute a complete CRA technical documentation file. The following are explicitly out of scope:
+
+- Penetration testing or hands-on security testing of the product
+- Assessment of the manufacturer's internal security processes or organisational controls
+- Supply chain security assessment or SBOM review
+- Assessment of cloud backend or third-party component security
+- Verification of any information provided via the questionnaire
+- Legal or regulatory advice
+
+Risk scores are based solely on information provided via questionnaire. Where information was unavailable, worst-case assumptions were applied and flagged as information gaps.
+
+---
+
+# PART 3 — STANDARD CLOSING
+
+## Supply Chain Note
+Under Article 13(5) of Regulation (EU) 2024/2847, the manufacturer must exercise due diligence when integrating third-party components, including open-source software. A Software Bill of Materials (SBOM) must be maintained per Annex I Part II §1. Third-party components should be monitored for newly discovered vulnerabilities on an ongoing basis.
+
+## Support Period Note
+Under Article 13(8), the manufacturer must handle vulnerabilities throughout the declared support period (minimum 5 years unless expected product lifetime is shorter). Security updates must remain available for at least 10 years after release per Article 13(9).
+
+## Disclaimer
+This document is a first-draft working document prepared by Jyohan Joglekar, Safety Consultant (jyohannj@gmail.com), using AI assistance (Claude, Anthropic) based on information provided via a structured questionnaire. It must be reviewed and validated by a qualified cybersecurity professional before use in regulatory submissions, technical documentation, or client delivery. Risk scores and findings are based solely on questionnaire responses and have not been verified through technical testing. The manufacturer remains responsible for compliance with Regulation (EU) 2024/2847. This document does not constitute legal advice.
+
+---
+
+CRITICAL RULES:
+1. PART 1 must be readable by a non-technical manufacturer. Test every sentence — if it contains a technical term, rewrite it. Forbidden words in Part 1: OTA, RBAC, firmware, credential, cryptographic, TLS, API, threat vector, attack surface, exploit, vulnerability, authentication. Replace with plain words.
+2. Score for worst credible case always. Never optimistic scoring.
+3. Every Unknown answer appears in Section 3 — Information Gaps. No exceptions.
+4. Residual risk is always a plain English sentence — never a second score.
+5. Treatment decisions are always specific actions with timeframes — never just a category label. Use plain English in treatment decisions too — no jargon.
+6. Asset selection rationale must explain why the other assets were NOT assessed in depth.
+7. Be specific to this product throughout — name it, reference its actual interfaces, deployment context and data types.
+8. Part 1 maximum 2 pages when printed. Be ruthless about length.
+9. Today's date is ${today} — use this exact date in the document header.
+10. Generate the Risk Dashboard counts AFTER completing all asset assessments — count the actual risk levels assigned, do not guess upfront.
+11. The Urgent Actions in Part 1 must use plain English only. No technical terms. Write as if explaining to a business owner with no IT background.
+12. STRIDE is mandatory. Every priority asset threat scenario must have a STRIDE tag. The STRIDE Coverage Summary table must always appear at the end of Section 2 and must cover all 6 STRIDE categories — either with a threat or a "Not applicable" note. Never omit STRIDE.`;
+}
+
+function userPrompt(a) {
+  const ms = arr => arr.length ? arr.join(', ') : 'Not specified';
+  const det = (v,d) => v+(d?' — '+d:'');
+  return `Generate a CRA cybersecurity risk assessment for this product:
+
+SECTION A — PRODUCT IDENTITY
+- Product Name: ${a.a1||'Not provided'}
+- Version(s): ${a.a2||'Not specified'}
+- CRA Category: ${a.a3||'Not specified'}
+- Product Type: ${a.a4||'Not specified'}
+
+SECTION B — INTENDED USE & USERS
+- Description: ${a.b1||'Not provided'}
+- Intended Users: ${ms(a.b2)}
+- Deployment: ${ms(a.b3)}
+- Expected Lifetime: ${a.b4||'Not specified'}
+
+SECTION C — FORESEEABLE MISUSE
+- Higher-risk environment: ${det(a.c1||'Not answered',a.c1d)}
+- Stepping stone attack: ${a.c2||'Not answered'}
+- Harmful functions if exploited: ${det(a.c3||'Not answered',a.c3d)}
+- Non-technical bypass risk: ${a.c4||'Not answered'}
+
+SECTION D — OPERATIONAL ENVIRONMENT
+- Connectivity: ${a.d1||'Not specified'}
+- Network types: ${ms(a.d2)}
+- Safety-critical: ${det(a.d3||'Not answered',a.d3d)}
+- Physical access: ${a.d4||'Not specified'}
+
+SECTION E — ATTACK SURFACE
+- External interfaces: ${ms(a.e1)}
+- Internet-exposed interface: ${a.e2||'Not answered'}
+- Companion app: ${a.e3||'Not specified'}
+- Remote management: ${det(a.e4||'Not answered',a.e4d)}
+
+SECTION F — DATA & ASSETS
+- Data categories: ${ms(a.f1)}
+- Storage locations: ${ms(a.f2)}
+- Data transmitted: ${det(a.f3||'Not answered',a.f3d)}
+- High-value assets: ${det(a.f4||'Not answered',a.f4d)}
+
+SECTION G — AUTHENTICATION
+- Auth mechanism: ${a.g1||'Not specified'}
+- Default credentials: ${a.g2||'Not specified'}
+- Role-based access control: ${a.g3||'Not answered'}
+- Unauthenticated functions: ${det(a.g4||'Not answered',a.g4d)}
+
+SECTION H — AVAILABILITY
+- Always-available functions: ${det(a.h1||'Not answered',a.h1d)}
+- Impact if unavailable: ${a.h2||'Not specified'}
+- DoS resilience: ${a.h3||'Not specified'}
+- Fail-safe mode: ${det(a.h4||'Not answered',a.h4d)}
+
+SECTION I — LOGGING
+- Security logging: ${a.i1||'Not specified'}
+- Events logged: ${ms(a.i2)}
+- Log tamper protection: ${a.i3||'Not answered'}
+- Log accessibility: ${a.i4||'Not specified'}
+
+SECTION J — UPDATES
+- Update mechanism: ${a.j1||'Not specified'}
+- Security updates separate: ${a.j2||'Not answered'}
+- Updates signed: ${a.j3||'Not answered'}
+- Patch process defined: ${det(a.j4||'Not answered',a.j4d)}
+
+Please generate the full risk assessment now.`;
+}
+
+async function generate() {
+  const a = collect();
+  if (!a.a1||!a.a3||!a.a4) { showErr('Missing required fields in Section A. Please go back and complete them.'); return; }
+  if (!a.b1||!a.b4) { showErr('Missing required fields in Section B. Please go back and complete them.'); return; }
+
+  document.getElementById('genBtn').disabled = true;
+  document.getElementById('loader').classList.add('show');
+  clearErr();
+  document.getElementById('outputWrap').classList.remove('show');
+
+  try {
+    const res = await fetch('/api/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 8000,
+        system: sysPrompt(),
+        messages: [{ role: 'user', content: userPrompt(a) }]
+      })
+    });
+    if (!res.ok) { const e=await res.json(); throw new Error(e.error?.message||'API error '+res.status); }
+    const data = await res.json();
+    const text = data.content[0].text;
+    document.getElementById('loader').classList.remove('show');
+    document.getElementById('reportCard').innerHTML = renderMd(text);
+    document.getElementById('outputWrap').classList.add('show');
+    document.getElementById('outputWrap').scrollIntoView({behavior:'smooth'});
+    window._report = text;
+    window._product = a.a1;
+  } catch(e) {
+    document.getElementById('loader').classList.remove('show');
+    showErr('Error: '+e.message);
+  }
+  document.getElementById('genBtn').disabled = false;
+}
+
+function renderMd(t) {
+  // Escape HTML in content first
+  const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+  // Process tables first — handle multi-line content in cells
+  // Split into table blocks and non-table blocks
+  let h = '';
+  const lines = t.split('\n');
+  let i = 0;
+
+  while (i < lines.length) {
+    const line = lines[i];
+
+    // Detect start of a table
+    if (line.trim().startsWith('|') && line.trim().endsWith('|')) {
+      // Collect all consecutive table lines
+      let tableLines = [];
+      while (i < lines.length && lines[i].trim().startsWith('|') && lines[i].trim().endsWith('|')) {
+        tableLines.push(lines[i]);
+        i++;
+      }
+
+      // Build table HTML
+      let tbl = '<table>';
+      let isHeader = true;
+      tableLines.forEach(row => {
+        // Skip separator rows like |---|---|
+        if (/^\|[\s\-:|]+\|$/.test(row.trim())) {
+          isHeader = false;
+          return;
+        }
+        // Split cells — handle escaped pipes
+        const cells = row.split('|').filter((c,j,a) => j > 0 && j < a.length - 1);
+        const tag = isHeader ? 'th' : 'td';
+        tbl += '<tr>' + cells.map(c => {
+          const text = c.trim();
+          // Risk level colour coding
+          let cls = '';
+          if (text === 'CRITICAL') cls = ' class="rCRITICAL"';
+          else if (text === 'HIGH') cls = ' class="rHIGH"';
+          else if (text === 'MEDIUM') cls = ' class="rMEDIUM"';
+          else if (text === 'LOW') cls = ' class="rLOW"';
+          // Apply inline markdown within cells
+          const inner = text
+            .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+            .replace(/\*(.+?)\*/g,'<em>$1</em>');
+          return `<${tag}${cls}>${inner}</${tag}>`;
+        }).join('') + '</tr>';
+        if (isHeader) isHeader = false;
+      });
+      tbl += '</table>';
+      h += tbl + '\n';
+
+    } else {
+      h += line + '\n';
+      i++;
+    }
+  }
+
+  // Now process non-table markdown
+  h = h
+    .replace(/^# (.+)$/gm,'<h1>$1</h1>')
+    .replace(/^## (.+)$/gm,'<h2>$1</h2>')
+    .replace(/^### (.+)$/gm,'<h3>$1</h3>')
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g,'<em>$1</em>')
+    .replace(/^---+$/gm,'<hr>')
+    .replace(/^- (.+)$/gm,'<li>$1</li>')
+    .replace(/(<li>.*<\/li>\n?)+/g,'<ul>$&</ul>');
+
+  // Wrap remaining plain text lines in <p> tags
+  h = h.replace(/^(?!<[htulr]).+$/gm, line => {
+    line = line.trim();
+    if (!line) return '';
+    return `<p>${line}</p>`;
+  });
+
+  return h;
+}
+
+
+function download() {
+  if (!window._report) return;
+  const blob = new Blob([window._report],{type:'text/markdown'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href=url; a.download='CRA-Risk-Assessment-'+(window._product||'Product').replace(/\s+/g,'-')+'-'+new Date().toISOString().split('T')[0]+'.md';
+  a.click(); URL.revokeObjectURL(url);
+}
+
+function restart() {
+  document.getElementById('outputWrap').classList.remove('show');
+  go(0);
+}
+
+// ── Prefill demo answers ──
+function prefillDemo() {
+  // Section A
+  set('a1', 'SecureLock One');
+  set('a2', 'v2.1');
+  set('a3', 'Default — self-assessment');
+  set('a4', 'Consumer IoT device (smart home, wearable, etc.)');
+
+  // Section B
+  set('b1', 'A smart door lock for residential and small business use. Allows keyless entry via PIN code, RFID card, fingerprint, or mobile app. Supports remote lock/unlock via cloud connection. Access logs are stored in the cloud and viewable in the companion app. Integrates with Amazon Alexa and Google Home.');
+  checkMS('b2', ['General consumers (non-technical)', 'Small/medium business users']);
+  checkMS('b3', ['Home / residential', 'Office environment']);
+  set('b4', '5–10 years');
+
+  // Section C
+  pick('c1', 'Yes'); tog('c1x', true); set('c1d', 'Deployed in a shared office building controlling access to server rooms');
+  pick('c2', 'Yes');
+  pick('c3', 'Yes'); tog('c3x', true); set('c3d', 'Remote unlock can be triggered via compromised cloud account enabling unauthorised physical entry');
+  pick('c4', 'Yes');
+
+  // Section D
+  set('d1', 'Always connected');
+  checkMS('d2', ['Public internet', 'Wi-Fi', 'Bluetooth', 'Mobile network (4G/5G)']);
+  pick('d3', 'No');
+  set('d4', 'Device is physically accessible to the public');
+
+  // Section E
+  checkMS('e1', ['Mobile app interface', 'Bluetooth', 'Wi-Fi', 'REST / GraphQL API']);
+  pick('e2', 'Yes');
+  set('e3', 'Both mobile and web');
+  pick('e4', 'Yes'); tog('e4x', true); set('e4d', 'Cloud admin console for remote lock/unlock and access log review');
+
+  // Section F
+  checkMS('f1', ['Personal data (names, emails, addresses)', 'Authentication credentials (passwords, tokens, keys)', 'Device telemetry / operational data']);
+  checkMS('f2', ['On a cloud backend', 'On a companion mobile app', 'Locally on the device']);
+  pick('f3', 'Yes'); tog('f3x', true); set('f3d', 'Access events, lock/unlock commands and credentials synced to cloud over TLS');
+  pick('f4', 'Yes'); tog('f4x', true); set('f4d', 'Cloud account credentials and access logs — compromise enables remote unlock and reveals building entry patterns');
+
+  // Section G
+  set('g1', 'Username + password');
+  set('g2', 'User is forced to change default credentials on first use');
+  pick('g3', 'Yes');
+  pick('g4', 'No');
+
+  // Section H
+  pick('h1', 'Yes'); tog('h1x', true); set('h1d', 'Physical key override always available as fallback');
+  set('h2', 'Minor inconvenience to users');
+  set('h3', 'Partially — some protections exist');
+  pick('h4', 'Yes'); tog('h4x', true); set('h4d', 'Defaults to last known state; physical key override always available');
+
+  // Section I
+  set('i1', 'Yes — partial logging only');
+  checkMS('i2', ['User login attempts (success and failure)', 'Network connection events']);
+  pick('i3', 'No');
+  set('i4', 'Yes — logs sent to manufacturer/cloud for monitoring');
+
+  // Section J
+  set('j1', 'Yes — over-the-air (OTA) automatic updates');
+  pick('j2', 'No');
+  pick('j3', 'Unknown');
+  pick('j4', 'No');
+
+  // Mark all sections as done in sidebar
+  for (let n = 0; n < 10; n++) {
+    document.querySelector(`[data-s="${n}"]`).classList.add('done');
+  }
+}
+
+function set(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.value = val;
+}
+
+function checkMS(id, values) {
+  document.querySelectorAll(`#${id} input[type="checkbox"]`).forEach(cb => {
+    cb.checked = values.includes(cb.value);
+  });
+}
+
+// Run prefill on page load
+window.addEventListener('DOMContentLoaded', prefillDemo);
+</script>
+</body>
+</html>
