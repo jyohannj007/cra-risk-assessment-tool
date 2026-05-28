@@ -606,6 +606,16 @@
           <div class="cond" id="f3x"><input type="text" id="f3d" placeholder="What is transmitted and how?"></div>
         </div>
         <div class="field">
+          <div class="field-label">Is data encrypted in transit and at rest? <div class="tip"><span class="tip-icon">i</span><div class="tip-box">Annex I §3(e) requires products to protect data through encryption. In transit = data moving over a network (e.g. TLS). At rest = data stored on the device or in the cloud.</div></div></div>
+          <div class="ms col1" id="f5">
+            <label class="ms-opt"><input type="checkbox" value="Data is encrypted in transit (e.g. TLS/HTTPS)"><div class="ms-box"></div><span class="ms-lbl">Encrypted in transit (e.g. TLS/HTTPS)</span></label>
+            <label class="ms-opt"><input type="checkbox" value="Data is encrypted at rest on the device"><div class="ms-box"></div><span class="ms-lbl">Encrypted at rest on the device</span></label>
+            <label class="ms-opt"><input type="checkbox" value="Data is encrypted at rest in the cloud"><div class="ms-box"></div><span class="ms-lbl">Encrypted at rest in the cloud</span></label>
+            <label class="ms-opt"><input type="checkbox" value="No encryption implemented"><div class="ms-box"></div><span class="ms-lbl">No encryption implemented</span></label>
+            <label class="ms-opt"><input type="checkbox" value="Unknown"><div class="ms-box"></div><span class="ms-lbl">Unknown / Not sure</span></label>
+          </div>
+        </div>
+        <div class="field">
           <div class="field-label">Are there high-value assets that would cause serious harm if compromised? <div class="tip"><span class="tip-icon">i</span><div class="tip-box">e.g. Master encryption keys, user location history, industrial control commands, medical records</div></div></div>
           <div class="pills"><label class="pill" onclick="pick('f4','Yes');tog('f4x',true)"><input type="radio" name="f4" value="Yes">Yes</label><label class="pill" onclick="pick('f4','No');tog('f4x',false)"><input type="radio" name="f4" value="No">No</label><label class="pill" onclick="pick('f4','Unknown');tog('f4x',false)"><input type="radio" name="f4" value="Unknown">Unknown</label></div>
           <div class="cond" id="f4x"><input type="text" id="f4d" placeholder="Describe the high-value assets"></div>
@@ -828,7 +838,7 @@ function collect() {
     c1:radio('c1'),c1d:g('c1d'),c2:radio('c2'),c3:radio('c3'),c3d:g('c3d'),c4:radio('c4'),
     d1:g('d1'),d2:getMS('d2'),d3:radio('d3'),d3d:g('d3d'),d4:g('d4'),
     e1:getMS('e1'),e2:radio('e2'),e3:g('e3'),e4:radio('e4'),e4d:g('e4d'),
-    f1:getMS('f1'),f2:getMS('f2'),f3:radio('f3'),f3d:g('f3d'),f4:radio('f4'),f4d:g('f4d'),
+    f1:getMS('f1'),f2:getMS('f2'),f3:radio('f3'),f3d:g('f3d'),f4:radio('f4'),f4d:g('f4d'),f5:getMS('f5'),
     g1:g('g1'),g2:g('g2'),g3:radio('g3'),g4:radio('g4'),g4d:g('g4d'),
     h1:radio('h1'),h1d:g('h1d'),h2:g('h2'),h3:g('h3'),h4:radio('h4'),h4d:g('h4d'),
     i1:g('i1'),i2:getMS('i2'),i3:radio('i3'),i4:g('i4'),
@@ -1148,6 +1158,7 @@ SECTION F — DATA & ASSETS
 - Data categories: ${ms(a.f1)}
 - Storage locations: ${ms(a.f2)}
 - Data transmitted: ${det(a.f3||'Not answered',a.f3d)}
+- Encryption (transit/at rest): ${ms(a.f5)}
 - High-value assets: ${det(a.f4||'Not answered',a.f4d)}
 
 SECTION G — AUTHENTICATION
@@ -1282,10 +1293,12 @@ function renderMd(t) {
     .replace(/\*(.+?)\*/g,'<em>$1</em>')
     .replace(/^---+$/gm,'<hr>')
     .replace(/^- (.+)$/gm,'<li>$1</li>')
-    .replace(/(<li>.*<\/li>\n?)+/g,'<ul>$&</ul>');
+    .replace(/(<li>.*<\/li>\n?)+/g,'<ul>$&</ul>')
+    .replace(/^\d+\. (.+)$/gm,'<oli>$1</oli>')
+    .replace(/(<oli>.*<\/oli>\n?)+/g, m => '<ol>' + m.replace(/<oli>/g,'<li>').replace(/<\/oli>/g,'</li>') + '</ol>');
 
   // Wrap remaining plain text lines in <p> tags
-  h = h.replace(/^(?!<[htulr]).+$/gm, line => {
+  h = h.replace(/^(?!<[htulro]).+$/gm, line => {
     line = line.trim();
     if (!line) return '';
     return `<p>${line}</p>`;
@@ -1345,6 +1358,7 @@ function prefillDemo() {
   checkMS('f1', ['Personal data (names, emails, addresses)', 'Authentication credentials (passwords, tokens, keys)', 'Device telemetry / operational data']);
   checkMS('f2', ['On a cloud backend', 'On a companion mobile app', 'Locally on the device']);
   pick('f3', 'Yes'); tog('f3x', true); set('f3d', 'Access events, lock/unlock commands and credentials synced to cloud over TLS');
+  checkMS('f5', ['Data is encrypted in transit (e.g. TLS/HTTPS)', 'Data is encrypted at rest in the cloud']);
   pick('f4', 'Yes'); tog('f4x', true); set('f4d', 'Cloud account credentials and access logs — compromise enables remote unlock and reveals building entry patterns');
 
   // Section G
