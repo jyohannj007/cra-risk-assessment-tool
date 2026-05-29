@@ -2093,6 +2093,10 @@ function prefillDemo() {
   for (let n = 0; n < 9; n++) {
     document.querySelector(`[data-s="${n}"]`).classList.add('done');
   }
+
+  // Persist to localStorage so collect() + generate() have all values, then jump to Review
+  saveProgress();
+  go(9);
 }
 
 function set(id, val) {
