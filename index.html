@@ -246,6 +246,15 @@
   .rMEDIUM { color: #b8860b; font-weight: 600; }
   .rLOW { color: var(--accent); font-weight: 600; }
 
+  /* Report footer (screen) */
+  .report-footer {
+    margin-top: 3rem; padding-top: 1rem;
+    border-top: 1px solid var(--sand2);
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 11px; color: var(--text3); gap: 1rem;
+  }
+  .report-footer-right { text-align: right; white-space: nowrap; }
+
   /* Report cover block */
   .report-cover { margin-bottom: 2rem; padding-bottom: 2rem; border-bottom: 2px solid var(--sand2); }
   .report-cover-tag { font-size: 10px; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: var(--accent); margin-bottom: .625rem; }
@@ -482,6 +491,7 @@
     .report-card h2 { page-break-after: avoid; background: var(--sand) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     .report-card h3 { page-break-after: avoid; }
     .report-cover { page-break-after: always; }
+    .report-footer { display: none; }
     .report-card h1 { font-size: 20px; }
     .report-card h2 { font-size: 11px; }
     .report-card h3 { font-size: 14px; }
@@ -1583,6 +1593,20 @@ function enhanceReport() {
     if (metaP && metaP.tagName === 'P') metaP.remove();
   }
 
+  // 0a. Inject report footer (screen) + @page footer (print/PDF)
+  const productName = card.querySelector('.report-cover-title')?.textContent?.trim() || (window._product || 'Product');
+  const reportDate = new Date().toLocaleDateString('en-GB', {day:'2-digit', month:'long', year:'numeric'});
+  const footer = document.createElement('div');
+  footer.className = 'report-footer';
+  footer.innerHTML = `<div class="report-footer-left">Jyohan Joglekar &middot; Safety Consultant &middot; jyohann@gmail.com</div><div class="report-footer-right">CRA Risk Assessment &middot; ${productName} &middot; ${reportDate}</div>`;
+  card.appendChild(footer);
+  // @page rules for PDF — inject as dynamic style so product name & date are baked in
+  document.getElementById('rpt-page-footer')?.remove();
+  const pgStyle = document.createElement('style');
+  pgStyle.id = 'rpt-page-footer';
+  pgStyle.textContent = `@page { margin-bottom: 22mm; @bottom-left { content: "Jyohan Joglekar · Safety Consultant · jyohann@gmail.com"; font-size: 9px; color: #a8997f; font-family: 'Inter', sans-serif; } @bottom-right { content: "CRA Risk Assessment · ${productName} · ${reportDate}"; font-size: 9px; color: #a8997f; font-family: 'Inter', sans-serif; } }`;
+  document.head.appendChild(pgStyle);
+
   // 0b. Inject 4-question orientation flow before first h2
   const firstH2 = card.querySelector('h2');
   if (firstH2) {
@@ -1908,7 +1932,7 @@ function download() {
 function downloadHTML() {
   const card = document.getElementById('reportCard');
   if (!card) return;
-  const styles = Array.from(document.querySelectorAll('style')).map(s => s.outerHTML).join('\n');
+  const styles = Array.from(document.querySelectorAll('style')).map(s => s.outerHTML).join('\n'); // includes injected @page footer style
   const links = Array.from(document.querySelectorAll('link[rel="stylesheet"]')).map(l => l.outerHTML).join('\n');
   const productName = (window._product || 'Product').replace(/\s+/g, '-');
   const date = new Date().toISOString().split('T')[0];
