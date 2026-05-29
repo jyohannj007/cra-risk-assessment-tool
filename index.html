@@ -1151,27 +1151,52 @@ The product's function, users, and deployment determine every threat that follow
 
 ## 2.3 Attack Surface
 
-The attack surface is every way an attacker could try to reach the product — the more connections, the more ways in.
+The attack surface is every entry point an attacker could use to reach the product.
 
-**Networks & Connectivity**
-| Network / Protocol | Exposure Level | Notes |
-|---|---|---|
-[One row per network type from questionnaire. Exposure: High / Medium / Low]
+[Summary statement: "[Product name] has [N] confirmed attack vectors across [N] exposure zones — [N] internet-facing, [N] requiring local access or proximity, and [N] requiring physical contact." If OTA channel status is unknown, append: " One additional vector (AV-[N]) is unconfirmed pending manufacturer clarification."]
 
-**External Interfaces**
-| Interface | Access Required | Reachability | Notes |
-|---|---|---|---|
-[One row per interface. Access: Physical / Local Network / Internet. Reachability: High / Medium / Low]
+**Key terms used in this section:**
 
-**Deployment Environment**
-| Factor | Detail | Risk Implication |
-|---|---|---|
-| Physical access | [who can reach the device] | [one sentence implication] |
-| Safety-critical context | [yes/no + detail] | [one sentence implication] |
-| Foreseeable misuse | [summary of C-section answers] | [one sentence implication] |
-| Stepping stone risk | [can device pivot to other systems] | [one sentence implication] |
+| Term | What it means |
+|---|---|
+| **Attack Vector** | A specific entry point an attacker can interact with — always an external interface such as a REST API or Bluetooth. Not the network medium that carries them there. |
+| **Network Type** | The medium that carries data — Wi-Fi, internet, Bluetooth, mobile network. It tells you *how* an attacker gets there, not *what* they interact with. |
+| **Attacker Position** | Where the attacker needs to be to reach a vector — anywhere online, local network, proximity, or physical contact. This captures the network type implicitly. |
+| **Exposure** | How reachable a vector is by nature, before any controls are considered. Derived entirely from attacker position. |
 
-[One bridge sentence — e.g. "With the attack surface mapped, the next question is: what would an attacker actually target once they reach the product?"]
+*Note: Sometimes the network type and the interface are the same thing — Bluetooth is both the medium and the entry point. When they differ — Wi-Fi is the medium, the REST API is the interface — the table row always uses the interface.*
+
+*Diagram: attack surface overview*
+
+*Each row below maps one entry point identified for this product.*
+
+**Exposure levels:**
+
+| Exposure | Meaning |
+|---|---|
+| High | Internet-facing — reachable by any attacker, anywhere in the world |
+| Medium | Local network or physical proximity required |
+| Low | Physical contact with the device required |
+
+**Attack Vectors:**
+
+| # | Attack Vector | Attacker Position | Exposure | Notes |
+|---|---|---|---|---|
+[One row per identified attack vector, numbered AV-1, AV-2 etc. Order: High first, then Medium, then Low.
+Derive vectors from:
+- External interfaces (e1): each interface becomes a row — internet-facing ones are High, Bluetooth/NFC are Medium
+- Internet-exposed interface (e2): confirms High exposure for relevant vectors
+- Remote management (e4): adds management interface row if present
+- Network types (d2): Wi-Fi → Medium; mobile network → note under relevant vector
+- Physical entry methods from product description (b1): PIN keypad, RFID card, fingerprint sensor → each is Low or Medium
+- Physical device body → always one Low row for hardware access
+- Stepping stone risk (c2): if Yes → add "Internal network (via device pivot)" as Medium
+- OTA/update mechanism: if present → add "OTA firmware update channel" as High-unconfirmed if separate channel unknown
+Notes column: "—" if nothing to add. Add notes for: physical accessibility (publicly accessible device), RFID targeting cardholder not lock, OTA unconfirmed with "see 2.7" cross-reference.]
+
+*Interfaces confirmed absent: [List specific interfaces considered but not identified for this product — e.g. NFC, USB, serial/debug ports, Zigbee. If NFC absent but RFID present, write: "NFC — distinct from RFID, which is present (AV-[n])."]*
+
+[One bridge sentence connecting to 2.4]
 
 ---
 
@@ -1319,7 +1344,8 @@ CRITICAL RULES — DO NOT DEVIATE:
 14. The 2.8 IS/IS NOT table MUST appear — two columns, 5 rows
 15. Be specific to this product — name it, reference its actual interfaces and deployment context
 16. Keep all text lean — this report is for non-experts. Short sentences. No jargon.
-17. Section 2.3 MUST use all three markdown tables exactly as structured above: (a) Networks & Connectivity, (b) External Interfaces, (c) Deployment Environment — NO bullet lists, NO prose substitutions, NO combined tables`;
+17. Section 2.3 MUST follow this exact structure: intro sentence → summary statement (counting vectors by zone) → key terms table (4 rows) → italic note on network/interface distinction → *Diagram: attack surface overview* (output this exact text as an italic line) → 'Each row below...' italic sentence → exposure levels table → Attack Vectors table (# | Attack Vector | Attacker Position | Exposure | Notes — vectors as AV-1 etc., ordered High→Medium→Low) → absent interfaces note → bridge sentence. NO old three-table format (Networks/External Interfaces/Deployment Environment).
+18. Section 2.3 Attack Vectors MUST include: all interfaces from e1 (internet-facing=High, local network=Medium, physical=Low); Wi-Fi as Medium; Bluetooth as Medium; physical entry methods from product description (PIN/RFID/fingerprint) as Low; physical device body as Low; OTA channel as High-unconfirmed if update mechanism exists and separate channel is unknown; Internal network pivot as Medium if stepping stone risk (c2) is Yes. Notes column: "—" if none; add accessibility notes for public-facing physical vectors; RFID note about targeting cardholder; OTA "see 2.7" cross-reference.`;
 }
 
 function userPrompt(a) {
@@ -1555,12 +1581,22 @@ function enhanceReport() {
     }
   }
 
-  // 6. Inject concept SVGs after section h2 intro paragraph (not between h2 and intro)
-  const svgMap = { '2.3': svgAttackSurface(), '2.4': svgAssetRegister(), '2.5': svgThreatAssessment(), '2.6': svgStride() };
+  // 6. Inject concept SVGs
+  // 2.3: replace *Diagram: attack surface overview* marker placed by AI at exact position
+  card.querySelectorAll('em').forEach(em => {
+    if (em.textContent.trim() === 'Diagram: attack surface overview') {
+      const p = em.closest('p') || em.parentElement;
+      const block = document.createElement('div');
+      block.className = 'concept-block';
+      block.innerHTML = svgAttackSurface();
+      p.parentNode.replaceChild(block, p);
+    }
+  });
+  // 2.4, 2.5, 2.6: inject after h2 + intro paragraph
+  const svgMap = { '2.4': svgAssetRegister(), '2.5': svgThreatAssessment(), '2.6': svgStride() };
   card.querySelectorAll('h2').forEach(h2 => {
     const key = Object.keys(svgMap).find(k => h2.textContent.trim().startsWith(k));
     if (!key) return;
-    // Find the first <p> after this h2 (intro sentence), insert SVG after it
     let insertAfter = h2;
     let el = h2.nextElementSibling;
     if (el && el.tagName === 'P') insertAfter = el;
@@ -1591,20 +1627,37 @@ function enhanceReport() {
 
 // ── Concept SVGs ──
 function svgAttackSurface() {
-  // Concentric zones — accurate, no misleading arrows
-  return `<svg viewBox="0 0 560 148" xmlns="http://www.w3.org/2000/svg" style="max-height:148px;display:block;width:100%">
-    <rect width="560" height="148" fill="#f7f4ef"/>
-    <rect x="8" y="8" width="544" height="132" rx="8" fill="#fef2f2" stroke="#c0392b" stroke-width="1.2" stroke-dasharray="5,3"/>
-    <text x="18" y="24" font-size="9" font-weight="600" fill="#c0392b" font-family="Inter,sans-serif">Internet / Cloud</text>
-    <rect x="50" y="30" width="460" height="90" rx="7" fill="#fff7ed" stroke="#e67e22" stroke-width="1.2" stroke-dasharray="4,3"/>
-    <text x="60" y="45" font-size="9" font-weight="600" fill="#e67e22" font-family="Inter,sans-serif">Local Network &amp; Wireless</text>
-    <rect x="110" y="52" width="340" height="58" rx="6" fill="#fffbeb" stroke="#b8860b" stroke-width="1.2" stroke-dasharray="4,3"/>
-    <text x="120" y="66" font-size="9" font-weight="600" fill="#b8860b" font-family="Inter,sans-serif">Physical Proximity</text>
-    <rect x="190" y="68" width="180" height="34" rx="5" fill="#e8f5ee" stroke="#2f6b4f" stroke-width="1.5"/>
-    <text x="280" y="82" text-anchor="middle" font-size="10" font-weight="700" fill="#2f6b4f" font-family="Inter,sans-serif">Product</text>
-    <text x="280" y="95" text-anchor="middle" font-size="8.5" fill="#2f6b4f" font-family="Inter,sans-serif">The asset being protected</text>
-    <text x="280" y="140" text-anchor="middle" font-size="9" fill="#a8997f" font-family="Inter,sans-serif">Each zone is a layer of exposure. The tables below list every specific entry point identified for this product.</text>
-  </svg>`;
+  // Option B: Attacker position → vector → product (left-to-right flow)
+  const rows = [
+    { label: 'INTERNET', sub: 'Anywhere online', vectors: 'Cloud API · Admin Console · Mobile App · OTA', color: '#c0392b', bg: '#fef2f2', border: '#fecaca', y: 18 },
+    { label: 'LOCAL NETWORK', sub: 'Same network', vectors: 'Wi-Fi · Internal Network', color: '#c2410c', bg: '#fff7ed', border: '#fed7aa', y: 55 },
+    { label: 'PROXIMITY', sub: 'Within ~10m', vectors: 'Bluetooth · RFID', color: '#92400e', bg: '#fffbeb', border: '#fde68a', y: 92 },
+    { label: 'PHYSICAL', sub: 'Physical contact', vectors: 'Lock Body · PIN · Fingerprint', color: '#2f6b4f', bg: '#f0fdf4', border: '#86efac', y: 129 }
+  ];
+  const rH = 32, lX = 5, lW = 120, pX = 415, pW = 118;
+  const aEnd = pX - 6;
+  const lbX = Math.round((lX + lW + 6 + aEnd) / 2);
+  const pCY = 89;
+  const svgRows = rows.map(r => {
+    const cy = r.y + rH / 2;
+    return `<rect x="${lX}" y="${r.y}" width="${lW}" height="${rH}" rx="4" fill="${r.bg}" stroke="${r.border}" stroke-width="1.5"/>
+    <text x="${lX + lW/2}" y="${r.y + 13}" font-size="8.5" font-weight="700" fill="${r.color}" text-anchor="middle" font-family="Inter,sans-serif">${r.label}</text>
+    <text x="${lX + lW/2}" y="${r.y + 25}" font-size="7.5" fill="${r.color}" text-anchor="middle" font-family="Inter,sans-serif">${r.sub}</text>
+    <line x1="${lX + lW}" y1="${cy}" x2="${aEnd - 6}" y2="${cy}" stroke="${r.color}" stroke-width="1.5" opacity=".5"/>
+    <polygon points="${aEnd - 6},${cy - 4} ${aEnd + 2},${cy} ${aEnd - 6},${cy + 4}" fill="${r.color}" opacity=".5"/>
+    <text x="${lbX}" y="${cy - 3}" font-size="7.5" fill="${r.color}" text-anchor="middle" font-family="Inter,sans-serif">${r.vectors}</text>`;
+  }).join('\n  ');
+  return `<svg viewBox="0 0 560 170" xmlns="http://www.w3.org/2000/svg" style="max-height:170px;display:block;width:100%">
+  <rect width="560" height="170" fill="#f7f4ef"/>
+  <text x="${lX + lW/2}" y="11" font-size="7" font-weight="700" fill="#6b5f4f" text-anchor="middle" letter-spacing=".08em" font-family="Inter,sans-serif">WHERE THE ATTACKER IS</text>
+  <text x="${lbX}" y="11" font-size="7" font-weight="700" fill="#6b5f4f" text-anchor="middle" letter-spacing=".08em" font-family="Inter,sans-serif">HOW THEY GET IN</text>
+  <text x="${pX + pW/2}" y="11" font-size="7" font-weight="700" fill="#6b5f4f" text-anchor="middle" letter-spacing=".08em" font-family="Inter,sans-serif">WHAT THEY REACH</text>
+  ${svgRows}
+  <rect x="${pX}" y="${pCY - 44}" width="${pW}" height="88" rx="6" fill="white" stroke="#3d2f1f" stroke-width="2"/>
+  <text x="${pX + pW/2}" y="${pCY - 4}" font-size="11" font-weight="700" fill="#3d2f1f" text-anchor="middle" font-family="Inter,sans-serif">PRODUCT</text>
+  <text x="${pX + pW/2}" y="${pCY + 11}" font-size="7.5" fill="#6b5f4f" text-anchor="middle" font-family="Inter,sans-serif">The entry point</text>
+  <text x="${pX + pW/2}" y="${pCY + 22}" font-size="7.5" fill="#6b5f4f" text-anchor="middle" font-family="Inter,sans-serif">being mapped</text>
+</svg>`;
 }
 
 function svgAssetRegister() {
