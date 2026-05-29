@@ -230,7 +230,7 @@
   .report-card h2 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--accent); margin: 2rem 0 .75rem; }
   .report-card h3 { font-size: 16px; font-weight: 600; color: var(--text); margin: 1.5rem 0 .5rem; }
   .report-card p { margin-bottom: .75rem; color: var(--text2); }
-  .report-card ul { padding-left: 1.5rem; margin-bottom: .75rem; }
+  .report-card ul, .report-card ol { padding-left: 1.5rem; margin-bottom: .75rem; }
   .report-card li { margin-bottom: .3rem; color: var(--text2); }
   .report-card strong { color: var(--text); }
   .report-card hr { border: none; border-top: 1px solid var(--sand2); margin: 1.75rem 0; }
@@ -1248,6 +1248,7 @@ async function generate() {
     const text = data.content[0].text;
     document.getElementById('loader').classList.remove('show');
     document.getElementById('reportCard').innerHTML = renderMd(text);
+    fixListNumbering();
     document.getElementById('outputWrap').classList.add('show');
     document.getElementById('outputWrap').scrollIntoView({behavior:'smooth'});
     window._report = text;
@@ -1257,6 +1258,24 @@ async function generate() {
     showErr('Error: '+e.message);
   }
   document.getElementById('genBtn').disabled = false;
+}
+
+function fixListNumbering() {
+  let counter = 0;
+  let inListContext = false;
+  Array.from(document.querySelectorAll('#reportCard > *')).forEach(el => {
+    if (el.tagName === 'OL') {
+      if (!inListContext) counter = 0;
+      el.setAttribute('start', counter + 1);
+      counter += el.querySelectorAll(':scope > li').length;
+      inListContext = true;
+    } else if (el.tagName === 'P' && inListContext) {
+      // continuation paragraph between numbered items — preserve context
+    } else {
+      inListContext = false;
+      counter = 0;
+    }
+  });
 }
 
 function renderMd(t) {
