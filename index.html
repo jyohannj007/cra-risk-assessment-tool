@@ -544,7 +544,7 @@
         🔒 API calls are handled securely server-side. No key required.
       </div>
       <button class="btn-new-assess" onclick="clearProgress()" style="margin-top:12px;width:100%;padding:8px;border-radius:var(--radius);background:transparent;border:1.5px solid var(--sand3);color:var(--text3);font-size:12px;font-family:'Inter',sans-serif;cursor:pointer;transition:all .15s;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--sand3)';this.style.color='var(--text3)'">↺ New Assessment</button>
-      <button onclick="localStorage.clear();location.reload();" style="margin-top:6px;width:100%;padding:8px;border-radius:var(--radius);background:transparent;border:1.5px solid var(--sand3);color:var(--text3);font-size:12px;font-family:'Inter',sans-serif;cursor:pointer;transition:all .15s;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--sand3)';this.style.color='var(--text3)'">⚡ Load Demo</button>
+      <button onclick="loadDemo()" style="margin-top:6px;width:100%;padding:8px;border-radius:var(--radius);background:transparent;border:1.5px solid var(--sand3);color:var(--text3);font-size:12px;font-family:'Inter',sans-serif;cursor:pointer;transition:all .15s;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--sand3)';this.style.color='var(--text3)'">⚡ Load Demo</button>
     </div>
   </aside>
 
@@ -2028,6 +2028,23 @@ function restart() {
   go(0);
 }
 
+// ── Load Demo (no reload) ──
+function loadDemo() {
+  // 1. Reset all inputs to blank
+  document.querySelectorAll('input[type="text"][id], textarea[id]').forEach(el => el.value = '');
+  document.querySelectorAll('select[id]').forEach(el => el.selectedIndex = 0);
+  document.querySelectorAll('input[type="radio"]').forEach(el => {
+    el.checked = false;
+    el.closest('.pill')?.classList.remove('on');
+  });
+  document.querySelectorAll('input[type="checkbox"]').forEach(el => el.checked = false);
+  document.querySelectorAll('.cond-extra').forEach(el => el.classList.remove('show'));
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('done'));
+
+  // 2. Prefill with demo data
+  prefillDemo();
+}
+
 // ── Prefill demo answers ──
 function prefillDemo() {
   // Section A
@@ -2110,10 +2127,8 @@ function checkMS(id, values) {
   });
 }
 
-// Run prefill on page load (skip if saved progress exists)
 window.addEventListener('DOMContentLoaded', () => {
-  const resumed = loadProgress();
-  if (!resumed) prefillDemo();
+  loadProgress();
   document.getElementById('version-label').textContent = VERSION;
 });
 </script>
