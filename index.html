@@ -1050,7 +1050,8 @@ function buildReview() {
   ).join('');
 }
 
-function sysPrompt() {
+function sysPrompt(a) {
+  a = a || {};
   const today = new Date().toLocaleDateString('en-GB', {day:'2-digit', month:'long', year:'numeric'});
   return `You are a senior cybersecurity consultant specialising in EU Cyber Resilience Act (CRA) compliance. You produce professional, structured risk assessment documents for manufacturers based on questionnaire input.
 
@@ -1088,7 +1089,7 @@ OUTPUT — FOLLOW THIS STRUCTURE EXACTLY
 
 # CRA Risk Assessment — [Product Name]
 
-**Version:** [version] · **Date:** ${today} · **Legal basis:** Regulation (EU) 2024/2847, Article 13(3), Annex VII · **Methodology:** ISO/IEC 27005 + STRIDE
+**Product version:** ${a.a2||'Not specified'} · **Date:** ${today} · **Legal basis:** Regulation (EU) 2024/2847, Article 13(3), Annex VII · **Methodology:** ISO/IEC 27005 + STRIDE
 
 ---
 
@@ -1317,7 +1318,8 @@ CRITICAL RULES — DO NOT DEVIATE:
 13. Risk Score MUST be inline: **Risk Score:** Likelihood [n] × Impact [n] = **[score] → [LEVEL]** — NO table
 14. The 2.8 IS/IS NOT table MUST appear — two columns, 5 rows
 15. Be specific to this product — name it, reference its actual interfaces and deployment context
-16. Keep all text lean — this report is for non-experts. Short sentences. No jargon.`;
+16. Keep all text lean — this report is for non-experts. Short sentences. No jargon.
+17. Section 2.3 MUST use all three markdown tables exactly as structured above: (a) Networks & Connectivity, (b) External Interfaces, (c) Deployment Environment — NO bullet lists, NO prose substitutions, NO combined tables`;
 }
 
 function userPrompt(a) {
@@ -1402,7 +1404,7 @@ async function generate() {
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
         max_tokens: 16000,
-        system: sysPrompt(),
+        system: sysPrompt(a),
         messages: [{ role: 'user', content: userPrompt(a) }]
       })
     });
@@ -1607,8 +1609,8 @@ function svgAttackSurface() {
 
 function svgAssetRegister() {
   // Horizontal priority bars — clear and accurate
-  return `<svg viewBox="0 0 560 138" xmlns="http://www.w3.org/2000/svg" style="max-height:138px;display:block;width:100%">
-    <rect width="560" height="138" fill="#f7f4ef"/>
+  return `<svg viewBox="0 0 560 145" xmlns="http://www.w3.org/2000/svg" style="max-height:145px;display:block;width:100%">
+    <rect width="560" height="145" fill="#f7f4ef"/>
     <text x="10" y="27" font-size="9.5" font-weight="600" fill="#6b5f4f" font-family="Inter,sans-serif">Priority 1</text>
     <rect x="78" y="13" width="350" height="20" rx="4" fill="#c0392b" opacity=".75"/>
     <text x="436" y="27" font-size="9" fill="#c0392b" font-family="Inter,sans-serif">Fully assessed</text>
