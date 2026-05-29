@@ -255,6 +255,17 @@
   }
   .report-footer-right { text-align: right; white-space: nowrap; }
 
+  /* Report Table of Contents — scoped to avoid conflict with sidebar nav */
+  .report-toc { margin: 2rem 0 0; padding-bottom: 2rem; border-bottom: 2px solid var(--sand2); page-break-after: always; }
+  .report-toc-heading { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 600; color: var(--text); margin-bottom: 1.5rem; }
+  .report-toc .rtoc-item { display: flex; align-items: baseline; gap: .75rem; padding: .625rem 0; border-bottom: 1px solid var(--sand2); text-decoration: none; }
+  .report-toc .rtoc-item:last-child { border-bottom: none; }
+  .report-toc .rtoc-num { font-size: 11px; font-weight: 700; color: var(--accent); min-width: 2.75rem; letter-spacing: .02em; flex-shrink: 0; }
+  .report-toc .rtoc-body { flex: 1; }
+  .report-toc .rtoc-title { display: block; font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.4; }
+  .report-toc .rtoc-item:hover .rtoc-title { color: var(--accent); }
+  .report-toc .rtoc-desc { display: block; font-size: 11.5px; color: var(--text3); margin-top: 2px; }
+
   /* Report cover block */
   .report-cover { margin-bottom: 2rem; padding-bottom: 2rem; border-bottom: 2px solid var(--sand2); }
   .report-cover-tag { font-size: 10px; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: var(--accent); margin-bottom: .625rem; }
@@ -1608,7 +1619,54 @@ function enhanceReport() {
   pgStyle.textContent = `@page { margin-bottom: 22mm; @bottom-left { content: "Jyohan Joglekar · Safety Consultant · jyohann@gmail.com"; font-size: 9px; color: #a8997f; font-family: 'Inter', sans-serif; } @bottom-right { content: "CRA Risk Assessment · ${productName} · ${reportDate}"; font-size: 9px; color: #a8997f; font-family: 'Inter', sans-serif; } }`;
   document.head.appendChild(pgStyle);
 
-  // 0b. Inject 4-question orientation flow before first h2
+  // 0b. Build Table of Contents — inserted after cover, before first h2
+  (function buildTOC() {
+    const h2s = Array.from(card.querySelectorAll('h2'));
+    if (h2s.length === 0) return;
+    const tocDescriptions = {
+      '2.1': 'What this assessment covers and what it does not',
+      '2.2': 'The product\'s function, connectivity, and deployment',
+      '2.3': 'Every entry point an attacker could use to reach the product',
+      '2.4': 'What we\'re protecting and how it was prioritised',
+      '2.5': 'Detailed threat analysis for each priority asset',
+      '2.6': 'Key findings and recommended actions at a glance',
+      '2.7': 'Information that could not be confirmed',
+      '2.8': 'What this document is and what it is not'
+    };
+    // Assign stable anchor IDs to each h2
+    h2s.forEach((h2, i) => {
+      const raw = h2.textContent.trim();
+      const m = raw.match(/^(\d+\.\d+)/);
+      h2.id = m ? 'sec-' + m[1].replace('.', '-') : 'sec-' + i;
+    });
+    // Build TOC rows
+    const rows = h2s.map(h2 => {
+      const raw = h2.textContent.trim();
+      const m = raw.match(/^(\d+\.\d+)\s+(.*)/);
+      const num   = m ? m[1] : '';
+      const title = m ? m[2] : raw;
+      const desc  = tocDescriptions[num] || '';
+      return `<a href="#${h2.id}" class="rtoc-item">` +
+               `<span class="rtoc-num">${num}</span>` +
+               `<span class="rtoc-body">` +
+                 `<span class="rtoc-title">${title}</span>` +
+                 (desc ? `<span class="rtoc-desc">${desc}</span>` : '') +
+               `</span>` +
+             `</a>`;
+    }).join('');
+    const toc = document.createElement('div');
+    toc.className = 'report-toc';
+    toc.innerHTML = '<div class="report-toc-heading">Contents</div>' + rows;
+    // Insert after cover block (cover is now the first child)
+    const coverEl = card.querySelector('.report-cover');
+    if (coverEl && coverEl.nextSibling) {
+      card.insertBefore(toc, coverEl.nextSibling);
+    } else {
+      card.appendChild(toc);
+    }
+  })();
+
+  // 0d. Inject 4-question orientation flow before first h2
   const firstH2 = card.querySelector('h2');
   if (firstH2) {
     const flow = document.createElement('div');
