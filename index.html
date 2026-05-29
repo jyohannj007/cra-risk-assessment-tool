@@ -2030,19 +2030,28 @@ function restart() {
 
 // ── Load Demo (no reload) ──
 function loadDemo() {
-  // 1. Reset all inputs to blank
-  document.querySelectorAll('input[type="text"][id], textarea[id]').forEach(el => el.value = '');
-  document.querySelectorAll('select[id]').forEach(el => el.selectedIndex = 0);
-  document.querySelectorAll('input[type="radio"]').forEach(el => {
-    el.checked = false;
-    el.closest('.pill')?.classList.remove('on');
-  });
-  document.querySelectorAll('input[type="checkbox"]').forEach(el => el.checked = false);
-  document.querySelectorAll('.cond-extra').forEach(el => el.classList.remove('show'));
-  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('done'));
+  try {
+    // 1. Reset all inputs
+    document.querySelectorAll('input[type="text"][id], textarea[id]').forEach(el => el.value = '');
+    document.querySelectorAll('select[id]').forEach(el => el.selectedIndex = 0);
+    document.querySelectorAll('input[type="radio"]').forEach(el => {
+      el.checked = false;
+      el.closest('.pill')?.classList.remove('on');
+    });
+    document.querySelectorAll('input[type="checkbox"]').forEach(el => el.checked = false);
+    document.querySelectorAll('.cond').forEach(el => el.classList.remove('show'));
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('done'));
 
-  // 2. Prefill with demo data
-  prefillDemo();
+    // 2. Fill demo data, save, navigate to Review
+    prefillDemo();
+
+    // 3. Flash the button text so the user knows it ran
+    const btn = document.querySelector('button[onclick="loadDemo()"]');
+    if (btn) { btn.textContent = '✓ Demo loaded'; setTimeout(() => btn.textContent = '⚡ Load Demo', 2000); }
+  } catch(e) {
+    console.error('loadDemo error:', e);
+    alert('Load Demo error — ' + e.message + '\nCheck the browser console for details.');
+  }
 }
 
 // ── Prefill demo answers ──
