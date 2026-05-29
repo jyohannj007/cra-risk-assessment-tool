@@ -1298,40 +1298,37 @@ For each priority asset, this section walks through who could attack it, how, an
 
 ---
 
-## 2.6 STRIDE Summary — Did We Cover Everything?
+## 2.6 Risk Summary — The Big Picture
 
-Section 2.5 assessed threats asset by asset. This section proves no *type* of attack was overlooked — regardless of which asset it targets. It is a completeness check, not a repeat of Section 2.5.
+This section summarises the findings from Section 2.5 — one row per priority asset, showing the attack type, risk score, and recommended action.
 
-| STRIDE | Threat Description | Asset | Likelihood | Impact | Score | Level |
-|---|---|---|---|---|---|---|
-| Spoofing (S) | [threat] | [AS-n] | [1–5] | [1–5] | [score] | [LEVEL] |
-| Tampering (T) | [threat] | [AS-n] | [1–5] | [1–5] | [score] | [LEVEL] |
-| Repudiation (R) | [threat] | [AS-n] | [1–5] | [1–5] | [score] | [LEVEL] |
-| Information Disclosure (I) | [threat] | [AS-n] | [1–5] | [1–5] | [score] | [LEVEL] |
-| Denial of Service (D) | [threat] | [AS-n] | [1–5] | [1–5] | [score] | [LEVEL] |
-| Elevation of Privilege (E) | [threat] | [AS-n] | [1–5] | [1–5] | [score] | [LEVEL] |
+[Summary statement: "[Product name] has [N] CRITICAL and [N] HIGH risk(s) identified across [N] priority assets."]
 
-[If a STRIDE category genuinely does not apply: "[Category] (X) — Not applicable: [one sentence reason]"]
+| Asset | STRIDE | Score | Level | Primary Threat | Action Required |
+|---|---|---|---|---|---|
+[One row per priority asset from 2.5. Asset = AS-n ID + name. STRIDE = primary category from the asset card. Score = Likelihood × Impact. Level = LOW/MEDIUM/HIGH/CRITICAL. Primary Threat = one short phrase. Action Required = recommended control + timeframe.]
 
-[One bridge sentence — e.g. "Before drawing conclusions, the following section documents what could not be confirmed — and what assumptions were made as a result."]
+*Scores reflect worst-case exposure before controls. Residual risk after recommended controls are applied is assessed in Section 2.5.*
+
+[One bridge sentence to 2.7]
 
 ---
 
-## 2.7 Information Gaps
+## 2.7 Information Gaps — What We Couldn't Confirm
 
 These are things the assessor needed to confirm but couldn't — worst-case assumptions apply until each gap is closed by the manufacturer.
 
-| # | Gap | Type | Why It Matters | Assumed Worst Case | Owner |
-|---|---|---|---|---|---|
-[Every Unknown answer from questionnaire. Type: Not Disclosed / Needs Testing / Future Scope. Owner: Manufacturer / Assessor / Third Party]
+[Summary statement: "[N] gaps identified — worst-case assumptions were applied to each and are reflected in the risk scores above." If no gaps: "No information gaps identified — all questionnaire fields were completed."]
 
-[If no gaps: "No information gaps identified — all questionnaire fields were completed."]
+| # | Gap | Type | Assumed Worst Case | Owner |
+|---|---|---|---|---|
+[One row per Unknown answer from questionnaire. Type: Not Disclosed / Needs Testing / Future Scope. Assumed Worst Case: one plain sentence on what was assumed. Owner: Manufacturer / Assessor / Third Party. Where relevant, cross-reference the affected attack vector (e.g. "see AV-n") or asset (e.g. "see AS-n").]
 
 [One bridge sentence — e.g. "The final section defines what this assessment covers and where its boundaries lie."]
 
 ---
 
-## 2.8 Assessment Limitations
+## 2.8 Assessment Limitations — What This Document Is and Isn't
 
 This section defines what this document is, what it covers, and what it does not — preventing misuse of the findings.
 
@@ -1360,14 +1357,15 @@ CRITICAL RULES — DO NOT DEVIATE:
 4. Every Unknown answer appears in 2.7 — no exceptions
 5. Residual Risk is always a plain English sentence — never a second score
 6. Recommended Control is a specific action + timeframe — no vague labels
-7. STRIDE 2.6 is a completeness check — all 6 categories must appear
+7. Section 2.6 MUST follow this exact structure: intro sentence → summary statement (X CRITICAL, X HIGH) → summary table (Asset | STRIDE | Score | Level | Primary Threat | Action Required — one row per priority asset from 2.5, using AS-n IDs) → pre/post control note → bridge sentence. NO STRIDE completeness table.
 8. Section 2.4 MUST follow this exact structure: intro sentence → summary statement → CIA key table (3 rows H/M/L × C/I/A) → italic priority rule sentence → asset table (ID | Asset | C | I | A | Priority | Notes — AS-1 etc., top 3 get Priority 1/2/3, rest get "—" in Priority with reason in Notes) → "Why this score" blocks for AS-1, AS-2, AS-3 → "Why these assets were selected" paragraph → bridge sentence. NO old three-criteria format (CIA Severity / Damage Severity / Attack Reachability)
 9. Section 2.5 MUST follow this exact structure: intro sentence → summary statement (listing AS-n IDs) → key terms table (6 rows) → *Diagram: threat assessment flow* (output this exact text as an italic line) → Risk Scoring Model table → asset cards → bridge sentence
 10. Asset cards MUST use: ### [AS-n]: [NAME] — [RISK LEVEL]
 11. Each asset card MUST start with: **What this means:** [one jargon-free sentence]
 12. "What Could Go Wrong" MUST be 3 bullets: 🎯 Who · ⚡ What they do · 💥 What happens — NO paragraphs
 13. Risk Score MUST be inline: **Risk Score:** Likelihood [n] × Impact [n] = **[score] → [LEVEL]** — NO table
-14. The 2.8 IS/IS NOT table MUST appear — two columns, 5 rows
+14. Section 2.7 table MUST use exactly 5 columns: # | Gap | Type | Assumed Worst Case | Owner — NO "Why It Matters" column. Cross-reference AV-n or AS-n where relevant.
+20. The 2.8 IS/IS NOT table MUST appear — two columns, 5 rows
 15. Be specific to this product — name it, reference its actual interfaces and deployment context
 16. Keep all text lean — this report is for non-experts. Short sentences. No jargon.
 17. Section 2.3 MUST follow this exact structure: intro sentence → summary statement (counting vectors by zone) → key terms table (4 rows) → italic note on network/interface distinction → *Diagram: attack surface overview* (output this exact text as an italic line) → 'Each row below...' italic sentence → exposure levels table → Attack Vectors table (# | Attack Vector | Attacker Position | Exposure | Notes — vectors as AV-1 etc., ordered High→Medium→Low) → absent interfaces note → bridge sentence. NO old three-table format (Networks/External Interfaces/Deployment Environment).
@@ -1622,19 +1620,6 @@ function enhanceReport() {
       block.innerHTML = svg;
       p.parentNode.replaceChild(block, p);
     }
-  });
-  // 2.6: inject after h2 + intro paragraph
-  const svgMap = { '2.6': svgStride() };
-  card.querySelectorAll('h2').forEach(h2 => {
-    const key = Object.keys(svgMap).find(k => h2.textContent.trim().startsWith(k));
-    if (!key) return;
-    let insertAfter = h2;
-    let el = h2.nextElementSibling;
-    if (el && el.tagName === 'P') insertAfter = el;
-    const block = document.createElement('div');
-    block.className = 'concept-block';
-    block.innerHTML = svgMap[key];
-    insertAfter.parentNode.insertBefore(block, insertAfter.nextSibling);
   });
 
   // 7. Style IS/IS NOT table in 2.8
