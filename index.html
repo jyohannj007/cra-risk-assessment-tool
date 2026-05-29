@@ -225,23 +225,34 @@
   .output-title { font-family: 'Fraunces', serif; font-size: 22px; color: var(--text); }
   .btn-dl { padding: 9px 20px; border-radius: 25px; background: white; border: 1.5px solid var(--sand3); color: var(--text2); font-size: 13px; font-weight: 500; cursor: pointer; font-family: 'Inter', sans-serif; transition: all .15s; display: flex; align-items: center; gap: 6px; }
   .btn-dl:hover { border-color: var(--accent); color: var(--accent); }
-  .report-card { background: white; border: 1.5px solid var(--sand2); border-radius: var(--radius-lg); padding: 2.5rem 3rem; box-shadow: var(--shadow-lg); line-height: 1.8; }
-  .report-card h1 { font-family: 'Fraunces', serif; font-size: 24px; color: var(--text); font-weight: 600; border-bottom: 2px solid var(--sand2); padding-bottom: 1rem; margin-bottom: 1.25rem; }
-  .report-card h2 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--accent); margin: 2rem 0 .75rem; }
-  .report-card h3 { font-size: 16px; font-weight: 600; color: var(--text); margin: 1.5rem 0 .5rem; }
+  .report-card { background: white; border: 1.5px solid var(--sand2); border-radius: var(--radius-lg); padding: 2.5rem 3rem; box-shadow: var(--shadow-lg); line-height: 1.75; }
+  .report-card h1 { font-family: 'Fraunces', serif; font-size: 22px; color: var(--text); font-weight: 600; margin-bottom: .75rem; }
+  .report-card h2 { font-size: 14px; font-weight: 700; color: var(--text); letter-spacing: 0; text-transform: none; margin: 2.5rem 0 1rem; padding: .625rem 1rem; background: var(--sand); border-left: 3px solid var(--accent); border-radius: 0 var(--radius) var(--radius) 0; }
+  .report-card h3 { font-size: 15px; font-weight: 600; color: var(--text); margin: 1.5rem 0 .5rem; }
   .report-card p { margin-bottom: .75rem; color: var(--text2); }
   .report-card ul, .report-card ol { padding-left: 1.5rem; margin-bottom: .75rem; }
   .report-card li { margin-bottom: .3rem; color: var(--text2); }
   .report-card strong { color: var(--text); }
-  .report-card hr { border: none; border-top: 1px solid var(--sand2); margin: 1.75rem 0; }
+  .report-card em { color: var(--text3); }
+  .report-card hr { border: none; border-top: 1px solid var(--sand2); margin: 2rem 0; }
   .report-card table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 13px; }
   .report-card th { background: var(--sand); padding: 9px 14px; text-align: left; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .07em; color: var(--text3); border-bottom: 1.5px solid var(--sand2); }
   .report-card td { padding: 9px 14px; border-bottom: 1px solid var(--sand2); color: var(--text2); vertical-align: top; }
   .report-card tr:last-child td { border-bottom: none; }
+  .report-card blockquote { background: var(--accent3); border-left: 3px solid var(--accent); border-radius: 0 var(--radius) var(--radius) 0; padding: .75rem 1.25rem; margin: .75rem 0 1.25rem; }
+  .report-card blockquote p { margin: 0; color: var(--text); font-size: 14px; }
   .rCRITICAL { color: #c0392b; font-weight: 700; }
   .rHIGH { color: #e67e22; font-weight: 700; }
   .rMEDIUM { color: #b8860b; font-weight: 600; }
   .rLOW { color: var(--accent); font-weight: 600; }
+
+  /* Report cover block */
+  .report-cover { margin-bottom: 2rem; padding-bottom: 2rem; border-bottom: 2px solid var(--sand2); }
+  .report-cover-tag { font-size: 10px; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: var(--accent); margin-bottom: .625rem; }
+  .report-cover-title { font-family: 'Fraunces', serif; font-size: 30px; font-weight: 600; color: var(--text); line-height: 1.25; margin-bottom: 1.25rem; }
+  .report-cover-meta { display: flex; flex-wrap: wrap; gap: .375rem 2rem; font-size: 12px; color: var(--text2); }
+  .report-cover-meta span { display: flex; align-items: center; gap: .375rem; }
+  .report-cover-meta strong { color: var(--text); font-weight: 600; }
   .btn-new { margin-top: 1.5rem; padding: 10px 22px; border-radius: 25px; background: var(--sand); border: 1.5px solid var(--sand3); color: var(--text2); font-size: 13px; font-weight: 500; cursor: pointer; font-family: 'Inter', sans-serif; transition: all .15s; }
   .btn-new:hover { background: var(--sand2); color: var(--text); }
 
@@ -294,6 +305,7 @@
   /* Asset cards (2.5) */
   .asset-card {
     border: 1.5px solid var(--sand3);
+    border-left: 4px solid var(--sand3);
     border-radius: var(--radius-lg);
     padding: 1.5rem 1.75rem;
     margin: 1.25rem 0 1.75rem;
@@ -301,6 +313,10 @@
     box-shadow: var(--shadow);
     position: relative;
   }
+  .asset-card.CRITICAL { border-left-color: #c0392b; }
+  .asset-card.HIGH     { border-left-color: #e67e22; }
+  .asset-card.MEDIUM   { border-left-color: #b8860b; }
+  .asset-card.LOW      { border-left-color: var(--accent); }
   .asset-card-header {
     display: flex; align-items: center; justify-content: space-between;
     margin-bottom: 1rem; padding-bottom: .75rem;
@@ -440,6 +456,7 @@
   .toc-item.toc-h1 { font-weight: 600; color: var(--text); font-size: 12.5px; }
 
   /* Print styles */
+  @page { size: A4; margin: 20mm 18mm; }
   @media print {
     .shell { display: block; }
     .sidebar { display: none; }
@@ -455,7 +472,16 @@
     .btn-dl { display: none; }
     .btn-print { display: none; }
     .site-footer { display: none; }
+    .review-banner { display: none; }
+    .output-bar { display: none; }
     body { font-size: 13px; }
+    .asset-card { page-break-inside: avoid; }
+    .scoring-box { page-break-inside: avoid; }
+    .concept-block { page-break-inside: avoid; }
+    table { page-break-inside: avoid; }
+    .report-card h2 { page-break-after: avoid; background: var(--sand) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .report-card h3 { page-break-after: avoid; }
+    .report-cover { page-break-after: always; }
     .report-card h1 { font-size: 20px; }
     .report-card h2 { font-size: 11px; }
     .report-card h3 { font-size: 14px; }
@@ -893,8 +919,9 @@
       <div class="output-bar">
         <h2 class="output-title">Draft Risk Assessment Report</h2>
         <div style="display:flex;gap:8px;">
-          <button class="btn-dl" onclick="window.print()">🖨 Save as PDF</button>
-          <button class="btn-dl" onclick="download()">↓ Download (.md)</button>
+          <button class="btn-dl" onclick="window.print()">↓ Export PDF</button>
+          <button class="btn-dl" onclick="downloadHTML()">↓ Export HTML</button>
+          <button class="btn-dl" onclick="download()">↓ Download .md</button>
         </div>
       </div>
 
@@ -1368,6 +1395,7 @@ CRITICAL RULES — DO NOT DEVIATE:
 20. The 2.8 IS/IS NOT table MUST appear — two columns, 5 rows
 15. Be specific to this product — name it, reference its actual interfaces and deployment context
 16. Keep all text lean — this report is for non-experts. Short sentences. No jargon.
+21. All summary statements MUST be output as markdown blockquotes using `> ` prefix — e.g. `> SecureLock One has 11 confirmed attack vectors...` This applies to every section that has a summary statement (2.3, 2.4, 2.5, 2.6, 2.7).
 17. Section 2.3 MUST follow this exact structure: intro sentence → summary statement (counting vectors by zone) → key terms table (4 rows) → italic note on network/interface distinction → *Diagram: attack surface overview* (output this exact text as an italic line) → 'Each row below...' italic sentence → exposure levels table → Attack Vectors table (# | Attack Vector | Attacker Position | Exposure | Notes — vectors as AV-1 etc., ordered High→Medium→Low) → absent interfaces note → bridge sentence. NO old three-table format (Networks/External Interfaces/Deployment Environment).
 18. Section 2.3 Attack Vectors MUST include: all interfaces from e1 (internet-facing=High, local network=Medium, physical=Low); Wi-Fi as Medium; Bluetooth as Medium; physical entry methods from product description (PIN/RFID/fingerprint) as Low; physical device body as Low; OTA channel as High-unconfirmed if update mechanism exists and separate channel is unknown; Internal network pivot as Medium if stepping stone risk (c2) is Yes. Notes column: "—" if none; add accessibility notes for public-facing physical vectors; RFID note about targeting cardholder; OTA "see 2.7" cross-reference.
 19. Section 2.4 asset IDs MUST be AS-1, AS-2 … AS-N. EXACTLY 3 assets get Priority 1, 2, 3 (highest combined CIA first). Every other asset MUST get "—" in Priority with a one-sentence reason in Notes. EXACTLY 3 "Why this score" blocks MUST appear below the table — one per priority asset — each with C/I/A rationale on a single line.`;
@@ -1538,10 +1566,43 @@ function resetReportNav() {
 function enhanceReport() {
   const card = document.getElementById('reportCard');
 
-  // 1. Wrap ASSET cards — find h3 matching "### ASSET n: Name — LEVEL"
+  // 0. Build professional cover block from h1 + meta paragraph
+  const reportH1 = card.querySelector('h1');
+  if (reportH1) {
+    const rawTitle = reportH1.textContent.trim();
+    const productTitle = rawTitle.replace(/^CRA Risk Assessment\s*[—–\-]+\s*/i, '').trim();
+    const metaP = reportH1.nextElementSibling;
+    const metaHTML = (metaP && metaP.tagName === 'P') ? metaP.innerHTML : '';
+    // Parse · separated meta items into spans
+    const metaSpans = metaHTML.split(/\s*·\s*/).map(s => `<span>${s.trim()}</span>`).join('');
+    const cover = document.createElement('div');
+    cover.className = 'report-cover';
+    cover.innerHTML = `<div class="report-cover-tag">CRA Risk Assessment</div><div class="report-cover-title">${productTitle}</div><div class="report-cover-meta">${metaSpans}</div>`;
+    reportH1.parentNode.insertBefore(cover, reportH1);
+    reportH1.remove();
+    if (metaP && metaP.tagName === 'P') metaP.remove();
+  }
+
+  // 0b. Inject 4-question orientation flow before first h2
+  const firstH2 = card.querySelector('h2');
+  if (firstH2) {
+    const flow = document.createElement('div');
+    flow.className = 'four-questions';
+    flow.innerHTML =
+      '<div class="fq-item"><span class="fq-num">01</span><span class="fq-text">What are we protecting?</span></div>' +
+      '<span class="fq-arrow">→</span>' +
+      '<div class="fq-item"><span class="fq-num">02</span><span class="fq-text">Where can it be attacked?</span></div>' +
+      '<span class="fq-arrow">→</span>' +
+      '<div class="fq-item"><span class="fq-num">03</span><span class="fq-text">What could go wrong?</span></div>' +
+      '<span class="fq-arrow">→</span>' +
+      '<div class="fq-item"><span class="fq-num">04</span><span class="fq-text">How bad would it be?</span></div>';
+    firstH2.parentNode.insertBefore(flow, firstH2);
+  }
+
+  // 1. Wrap ASSET cards — find h3 matching "### AS-n: Name — LEVEL"
   card.querySelectorAll('h3').forEach(h3 => {
     const txt = h3.textContent.trim();
-    const m = txt.match(/^ASSET\s+(\d+):\s+(.+?)\s*[—–\-]+\s*(CRITICAL|HIGH|MEDIUM|LOW)$/i);
+    const m = txt.match(/^AS-(\d+):\s+(.+?)\s*[—–\-]+\s*(CRITICAL|HIGH|MEDIUM|LOW)$/i);
     if (!m) return;
     const [, num, name, level] = m;
     const nodes = [];
@@ -1551,10 +1612,10 @@ function enhanceReport() {
       sib = sib.nextSibling;
     }
     const wrapper = document.createElement('div');
-    wrapper.className = 'asset-card';
+    wrapper.className = `asset-card ${level.toUpperCase()}`;
     const hdr = document.createElement('div');
     hdr.className = 'asset-card-header';
-    hdr.innerHTML = `<div class="asset-card-title">Asset ${num}: ${name}</div><span class="risk-badge ${level.toUpperCase()}">${level.toUpperCase()}</span>`;
+    hdr.innerHTML = `<div class="asset-card-title">AS-${num}: ${name}</div><span class="risk-badge ${level.toUpperCase()}">${level.toUpperCase()}</span>`;
     wrapper.appendChild(hdr);
     nodes.forEach(n => wrapper.appendChild(n.cloneNode(true)));
     h3.parentNode.insertBefore(wrapper, h3);
@@ -1562,9 +1623,9 @@ function enhanceReport() {
     h3.parentNode.removeChild(h3);
   });
 
-  // 2. Style "In plain English:" lines in asset cards
+  // 2. Style "What this means:" lines in asset cards
   card.querySelectorAll('.asset-card p').forEach(p => {
-    if (p.innerHTML.includes('In plain English:') || p.textContent.trim().startsWith('In plain English:')) {
+    if (p.textContent.trim().startsWith('What this means:')) {
       p.classList.add('plain-english-bar');
     }
   });
@@ -1587,24 +1648,14 @@ function enhanceReport() {
     }
   });
 
-  // 5. Replace Section 2 orientation paragraph with 4-question visual
-  const secH1 = Array.from(card.querySelectorAll('h1')).find(h => h.textContent.includes('SECTION 2'));
-  if (secH1) {
-    let next = secH1.nextElementSibling;
-    if (next && next.tagName === 'P') {
-      const flow = document.createElement('div');
-      flow.className = 'four-questions';
-      flow.innerHTML =
-        '<div class="fq-item"><span class="fq-num">01</span><span class="fq-text">What are we protecting?</span></div>' +
-        '<span class="fq-arrow">→</span>' +
-        '<div class="fq-item"><span class="fq-num">02</span><span class="fq-text">Where can it be attacked?</span></div>' +
-        '<span class="fq-arrow">→</span>' +
-        '<div class="fq-item"><span class="fq-num">03</span><span class="fq-text">What could go wrong?</span></div>' +
-        '<span class="fq-arrow">→</span>' +
-        '<div class="fq-item"><span class="fq-num">04</span><span class="fq-text">How bad would it be?</span></div>';
-      next.parentNode.replaceChild(flow, next);
-    }
-  }
+  // 5. Colorise CRITICAL/HIGH/MEDIUM/LOW in table cells
+  card.querySelectorAll('td').forEach(td => {
+    const t = td.textContent.trim();
+    if (t === 'CRITICAL') td.classList.add('rCRITICAL');
+    else if (t === 'HIGH') td.classList.add('rHIGH');
+    else if (t === 'MEDIUM') td.classList.add('rMEDIUM');
+    else if (t === 'LOW') td.classList.add('rLOW');
+  });
 
   // 6. Inject concept SVGs
   // 2.3 + 2.4: marker-based replacement at exact position placed by AI
@@ -1852,6 +1903,40 @@ function download() {
   const a = document.createElement('a');
   a.href=url; a.download='CRA-Risk-Assessment-'+(window._product||'Product').replace(/\s+/g,'-')+'-'+new Date().toISOString().split('T')[0]+'.md';
   a.click(); URL.revokeObjectURL(url);
+}
+
+function downloadHTML() {
+  const card = document.getElementById('reportCard');
+  if (!card) return;
+  const styles = Array.from(document.querySelectorAll('style')).map(s => s.outerHTML).join('\n');
+  const links = Array.from(document.querySelectorAll('link[rel="stylesheet"]')).map(l => l.outerHTML).join('\n');
+  const productName = (window._product || 'Product').replace(/\s+/g, '-');
+  const date = new Date().toISOString().split('T')[0];
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRA Risk Assessment — ${window._product || 'Product'}</title>
+${links}
+${styles}
+<style>
+  body { background: white !important; padding: 2.5rem 3.5rem; max-width: 900px; margin: 0 auto; font-family: 'Inter', sans-serif; font-size: 15px; line-height: 1.75; color: #2c2416; }
+  .report-card { box-shadow: none !important; border: none !important; padding: 0 !important; }
+  .concept-block { border: 1.5px solid #ddd8cc; }
+</style>
+</head>
+<body>
+<div class="report-card">${card.innerHTML}</div>
+</body>
+</html>`;
+  const blob = new Blob([html], {type: 'text/html'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `CRA-Risk-Assessment-${productName}-${date}.html`;
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 function restart() {
