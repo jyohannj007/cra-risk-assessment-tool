@@ -1149,7 +1149,7 @@ The product's function, users, and deployment determine every threat that follow
 
 ---
 
-## 2.3 Attack Surface
+## 2.3 Attack Surface — Where Can It Be Attacked?
 
 The attack surface is every entry point an attacker could use to reach the product.
 
@@ -1200,21 +1200,39 @@ Notes column: "—" if nothing to add. Add notes for: physical accessibility (pu
 
 ---
 
-## 2.4 Asset Register
+## 2.4 Asset Register — What We're Protecting
 
-Assets are anything of value that could be harmed if the product is attacked — data, credentials, functions, or the physical access it controls. Priority is determined by three criteria:
+Assets are anything connected to this product whose loss, corruption, or exposure would cause real-world harm.
 
-**Prioritisation Criteria**
-1. **CIA Severity** — combined harm from breaches of Confidentiality, Integrity, and Availability
-2. **Damage Severity** — real-world harm if the asset is compromised (Severe / Major / Moderate / Negligible)
-3. **Attack Reachability** — how directly the asset can be reached from the attack surface (High / Medium / Low)
+[Summary statement: "[Product name] has [N] identified assets — [N] receive full threat assessment in Section 2.5, [N] are listed but not assessed in depth."]
 
-| Asset | C | I | A | Damage Severity | Reachability | Priority |
+**CIA ratings used in this section:**
+
+| Rating | Confidentiality (C) | Integrity (I) | Availability (A) |
+|---|---|---|---|
+| **H** | Exposes sensitive data if breached | Corruption causes real harm | Loss disrupts a critical function |
+| **M** | Partial exposure, limited sensitivity | Partial corruption, recoverable | Degraded function, workaround available |
+| **L** | No sensitive data involved | No meaningful effect | No meaningful effect |
+
+*Assets are ranked by combined CIA impact. The three assets with the highest CIA scores receive full threat assessment in Section 2.5.*
+
+*Diagram: asset register priority*
+
+| ID | Asset | C | I | A | Priority | Notes |
 |---|---|---|---|---|---|---|
-[All assets from questionnaire. Priority: 1 / 2 / 3 / Not assessed — [one sentence reason]. C/I/A: High/Med/Low]
+[One row per identified asset, numbered AS-1, AS-2 etc. Top 3 by combined CIA score get Priority 1, 2, 3. All other assets get "—" in Priority with a brief reason in Notes (e.g. "Lower CIA — not assessed in depth"). C/I/A: H / M / L]
 
-**Why these assets were selected for deep assessment:**
-[2–3 sentences. Name the top 3. Explain why they scored highest across all three criteria. Explain why others were not assessed in depth.]
+**AS-1 — Why this score**
+C: [one sentence rationale] · I: [one sentence rationale] · A: [one sentence rationale]
+
+**AS-2 — Why this score**
+C: [one sentence rationale] · I: [one sentence rationale] · A: [one sentence rationale]
+
+**AS-3 — Why this score**
+C: [one sentence rationale] · I: [one sentence rationale] · A: [one sentence rationale]
+
+**Why these assets were selected:**
+[2–3 sentences naming AS-1, AS-2, AS-3 and explaining why they scored highest. Note if any lower-priority asset carries elevated CIA in one dimension and should be reassessed if scope expands.]
 
 [One bridge sentence — e.g. "The following section assesses the specific threats to each priority asset — what could go wrong, how likely, and how bad."]
 
@@ -1335,7 +1353,7 @@ CRITICAL RULES — DO NOT DEVIATE:
 5. Residual Risk is always a plain English sentence — never a second score
 6. Recommended Control is a specific action + timeframe — no vague labels
 7. STRIDE 2.6 is a completeness check — all 6 categories must appear
-8. The 2.4 asset table MUST include: Asset, C, I, A, Damage Severity, Reachability, Priority — with the 3 criteria above it
+8. Section 2.4 MUST follow this exact structure: intro sentence → summary statement → CIA key table (3 rows H/M/L × C/I/A) → italic priority rule sentence → *Diagram: asset register priority* (output this exact text as an italic line) → asset table (ID | Asset | C | I | A | Priority | Notes — AS-1 etc., top 3 get Priority 1/2/3, rest get "—" in Priority with reason in Notes) → "Why this score" blocks for AS-1, AS-2, AS-3 → "Why these assets were selected" paragraph → bridge sentence. NO old three-criteria format (CIA Severity / Damage Severity / Attack Reachability)
 9. The Risk Scoring Model table MUST appear at the start of 2.5 before the first asset card
 10. Asset cards MUST use: ### ASSET [n]: [NAME] — [RISK LEVEL]
 11. Each asset card MUST start with: **In plain English:** [one jargon-free sentence]
@@ -1345,7 +1363,8 @@ CRITICAL RULES — DO NOT DEVIATE:
 15. Be specific to this product — name it, reference its actual interfaces and deployment context
 16. Keep all text lean — this report is for non-experts. Short sentences. No jargon.
 17. Section 2.3 MUST follow this exact structure: intro sentence → summary statement (counting vectors by zone) → key terms table (4 rows) → italic note on network/interface distinction → *Diagram: attack surface overview* (output this exact text as an italic line) → 'Each row below...' italic sentence → exposure levels table → Attack Vectors table (# | Attack Vector | Attacker Position | Exposure | Notes — vectors as AV-1 etc., ordered High→Medium→Low) → absent interfaces note → bridge sentence. NO old three-table format (Networks/External Interfaces/Deployment Environment).
-18. Section 2.3 Attack Vectors MUST include: all interfaces from e1 (internet-facing=High, local network=Medium, physical=Low); Wi-Fi as Medium; Bluetooth as Medium; physical entry methods from product description (PIN/RFID/fingerprint) as Low; physical device body as Low; OTA channel as High-unconfirmed if update mechanism exists and separate channel is unknown; Internal network pivot as Medium if stepping stone risk (c2) is Yes. Notes column: "—" if none; add accessibility notes for public-facing physical vectors; RFID note about targeting cardholder; OTA "see 2.7" cross-reference.`;
+18. Section 2.3 Attack Vectors MUST include: all interfaces from e1 (internet-facing=High, local network=Medium, physical=Low); Wi-Fi as Medium; Bluetooth as Medium; physical entry methods from product description (PIN/RFID/fingerprint) as Low; physical device body as Low; OTA channel as High-unconfirmed if update mechanism exists and separate channel is unknown; Internal network pivot as Medium if stepping stone risk (c2) is Yes. Notes column: "—" if none; add accessibility notes for public-facing physical vectors; RFID note about targeting cardholder; OTA "see 2.7" cross-reference.
+19. Section 2.4 asset IDs MUST be AS-1, AS-2 … AS-N. EXACTLY 3 assets get Priority 1, 2, 3 (highest combined CIA first). Every other asset MUST get "—" in Priority with a one-sentence reason in Notes. EXACTLY 3 "Why this score" blocks MUST appear below the table — one per priority asset — each with C/I/A rationale on a single line.`;
 }
 
 function userPrompt(a) {
@@ -1582,18 +1601,22 @@ function enhanceReport() {
   }
 
   // 6. Inject concept SVGs
-  // 2.3: replace *Diagram: attack surface overview* marker placed by AI at exact position
+  // 2.3 + 2.4: marker-based replacement at exact position placed by AI
   card.querySelectorAll('em').forEach(em => {
-    if (em.textContent.trim() === 'Diagram: attack surface overview') {
+    const txt = em.textContent.trim();
+    let svg = null;
+    if (txt === 'Diagram: attack surface overview') svg = svgAttackSurface();
+    else if (txt === 'Diagram: asset register priority') svg = svgAssetRegister();
+    if (svg) {
       const p = em.closest('p') || em.parentElement;
       const block = document.createElement('div');
       block.className = 'concept-block';
-      block.innerHTML = svgAttackSurface();
+      block.innerHTML = svg;
       p.parentNode.replaceChild(block, p);
     }
   });
-  // 2.4, 2.5, 2.6: inject after h2 + intro paragraph
-  const svgMap = { '2.4': svgAssetRegister(), '2.5': svgThreatAssessment(), '2.6': svgStride() };
+  // 2.5, 2.6: inject after h2 + intro paragraph
+  const svgMap = { '2.5': svgThreatAssessment(), '2.6': svgStride() };
   card.querySelectorAll('h2').forEach(h2 => {
     const key = Object.keys(svgMap).find(k => h2.textContent.trim().startsWith(k));
     if (!key) return;
@@ -1675,7 +1698,7 @@ function svgAssetRegister() {
     <rect x="78" y="103" width="80" height="20" rx="4" fill="#a8997f" opacity=".35"/>
     <text x="166" y="117" font-size="9" fill="#a8997f" font-family="Inter,sans-serif">Listed, not assessed in depth</text>
     <line x1="8" y1="129" x2="552" y2="129" stroke="#ddd8cc" stroke-width="1"/>
-    <text x="280" y="137" text-anchor="middle" font-size="8.5" fill="#a8997f" font-family="Inter,sans-serif">Ranked by: CIA Severity · Damage Severity · Attack Reachability</text>
+    <text x="280" y="137" text-anchor="middle" font-size="8.5" fill="#a8997f" font-family="Inter,sans-serif">Ranked by combined CIA impact (Confidentiality · Integrity · Availability)</text>
   </svg>`;
 }
 
