@@ -1629,14 +1629,13 @@ function enhanceReport() {
 function svgAttackSurface() {
   // Option B: Attacker position → vector → product (left-to-right flow)
   const rows = [
-    { label: 'INTERNET', sub: 'Anywhere online', vectors: 'Cloud API · Admin Console · Mobile App · OTA', color: '#c0392b', bg: '#fef2f2', border: '#fecaca', y: 18 },
-    { label: 'LOCAL NETWORK', sub: 'Same network', vectors: 'Wi-Fi · Internal Network', color: '#c2410c', bg: '#fff7ed', border: '#fed7aa', y: 55 },
-    { label: 'PROXIMITY', sub: 'Within ~10m', vectors: 'Bluetooth · RFID', color: '#92400e', bg: '#fffbeb', border: '#fde68a', y: 92 },
-    { label: 'PHYSICAL', sub: 'Physical contact', vectors: 'Lock Body · PIN · Fingerprint', color: '#2f6b4f', bg: '#f0fdf4', border: '#86efac', y: 129 }
+    { label: 'INTERNET', sub: 'Anywhere online', color: '#c0392b', bg: '#fef2f2', border: '#fecaca', y: 18 },
+    { label: 'LOCAL NETWORK', sub: 'Same network', color: '#c2410c', bg: '#fff7ed', border: '#fed7aa', y: 55 },
+    { label: 'PROXIMITY', sub: 'Within ~10m', color: '#92400e', bg: '#fffbeb', border: '#fde68a', y: 92 },
+    { label: 'PHYSICAL', sub: 'Physical contact', color: '#2f6b4f', bg: '#f0fdf4', border: '#86efac', y: 129 }
   ];
   const rH = 32, lX = 5, lW = 120, pX = 415, pW = 118;
   const aEnd = pX - 6;
-  const lbX = Math.round((lX + lW + 6 + aEnd) / 2);
   const pCY = 89;
   const svgRows = rows.map(r => {
     const cy = r.y + rH / 2;
@@ -1644,13 +1643,12 @@ function svgAttackSurface() {
     <text x="${lX + lW/2}" y="${r.y + 13}" font-size="8.5" font-weight="700" fill="${r.color}" text-anchor="middle" font-family="Inter,sans-serif">${r.label}</text>
     <text x="${lX + lW/2}" y="${r.y + 25}" font-size="7.5" fill="${r.color}" text-anchor="middle" font-family="Inter,sans-serif">${r.sub}</text>
     <line x1="${lX + lW}" y1="${cy}" x2="${aEnd - 6}" y2="${cy}" stroke="${r.color}" stroke-width="1.5" opacity=".5"/>
-    <polygon points="${aEnd - 6},${cy - 4} ${aEnd + 2},${cy} ${aEnd - 6},${cy + 4}" fill="${r.color}" opacity=".5"/>
-    <text x="${lbX}" y="${cy - 3}" font-size="7.5" fill="${r.color}" text-anchor="middle" font-family="Inter,sans-serif">${r.vectors}</text>`;
+    <polygon points="${aEnd - 6},${cy - 4} ${aEnd + 2},${cy} ${aEnd - 6},${cy + 4}" fill="${r.color}" opacity=".5"/>`;
   }).join('\n  ');
   return `<svg viewBox="0 0 560 170" xmlns="http://www.w3.org/2000/svg" style="max-height:170px;display:block;width:100%">
   <rect width="560" height="170" fill="#f7f4ef"/>
   <text x="${lX + lW/2}" y="11" font-size="7" font-weight="700" fill="#6b5f4f" text-anchor="middle" letter-spacing=".08em" font-family="Inter,sans-serif">WHERE THE ATTACKER IS</text>
-  <text x="${lbX}" y="11" font-size="7" font-weight="700" fill="#6b5f4f" text-anchor="middle" letter-spacing=".08em" font-family="Inter,sans-serif">HOW THEY GET IN</text>
+  <text x="${Math.round((lX + lW + 6 + aEnd) / 2)}" y="11" font-size="7" font-weight="700" fill="#6b5f4f" text-anchor="middle" letter-spacing=".08em" font-family="Inter,sans-serif">HOW THEY GET IN</text>
   <text x="${pX + pW/2}" y="11" font-size="7" font-weight="700" fill="#6b5f4f" text-anchor="middle" letter-spacing=".08em" font-family="Inter,sans-serif">WHAT THEY REACH</text>
   ${svgRows}
   <rect x="${pX}" y="${pCY - 44}" width="${pW}" height="88" rx="6" fill="white" stroke="#3d2f1f" stroke-width="2"/>
