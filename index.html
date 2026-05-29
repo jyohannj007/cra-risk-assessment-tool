@@ -1216,8 +1216,6 @@ Assets are anything connected to this product whose loss, corruption, or exposur
 
 *Assets are ranked by combined CIA impact. The three assets with the highest CIA scores receive full threat assessment in Section 2.5.*
 
-*Diagram: asset register priority*
-
 | ID | Asset | C | I | A | Priority | Notes |
 |---|---|---|---|---|---|---|
 [One row per identified asset, numbered AS-1, AS-2 etc. Top 3 by combined CIA score get Priority 1, 2, 3. All other assets get "—" in Priority with a brief reason in Notes (e.g. "Lower CIA — not assessed in depth"). C/I/A: H / M / L]
@@ -1353,7 +1351,7 @@ CRITICAL RULES — DO NOT DEVIATE:
 5. Residual Risk is always a plain English sentence — never a second score
 6. Recommended Control is a specific action + timeframe — no vague labels
 7. STRIDE 2.6 is a completeness check — all 6 categories must appear
-8. Section 2.4 MUST follow this exact structure: intro sentence → summary statement → CIA key table (3 rows H/M/L × C/I/A) → italic priority rule sentence → *Diagram: asset register priority* (output this exact text as an italic line) → asset table (ID | Asset | C | I | A | Priority | Notes — AS-1 etc., top 3 get Priority 1/2/3, rest get "—" in Priority with reason in Notes) → "Why this score" blocks for AS-1, AS-2, AS-3 → "Why these assets were selected" paragraph → bridge sentence. NO old three-criteria format (CIA Severity / Damage Severity / Attack Reachability)
+8. Section 2.4 MUST follow this exact structure: intro sentence → summary statement → CIA key table (3 rows H/M/L × C/I/A) → italic priority rule sentence → asset table (ID | Asset | C | I | A | Priority | Notes — AS-1 etc., top 3 get Priority 1/2/3, rest get "—" in Priority with reason in Notes) → "Why this score" blocks for AS-1, AS-2, AS-3 → "Why these assets were selected" paragraph → bridge sentence. NO old three-criteria format (CIA Severity / Damage Severity / Attack Reachability)
 9. The Risk Scoring Model table MUST appear at the start of 2.5 before the first asset card
 10. Asset cards MUST use: ### ASSET [n]: [NAME] — [RISK LEVEL]
 11. Each asset card MUST start with: **In plain English:** [one jargon-free sentence]
@@ -1606,7 +1604,6 @@ function enhanceReport() {
     const txt = em.textContent.trim();
     let svg = null;
     if (txt === 'Diagram: attack surface overview') svg = svgAttackSurface();
-    else if (txt === 'Diagram: asset register priority') svg = svgAssetRegister();
     if (svg) {
       const p = em.closest('p') || em.parentElement;
       const block = document.createElement('div');
