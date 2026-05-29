@@ -245,6 +245,92 @@
   .btn-new { margin-top: 1.5rem; padding: 10px 22px; border-radius: 25px; background: var(--sand); border: 1.5px solid var(--sand3); color: var(--text2); font-size: 13px; font-weight: 500; cursor: pointer; font-family: 'Inter', sans-serif; transition: all .15s; }
   .btn-new:hover { background: var(--sand2); color: var(--text); }
 
+  /* ── Report: Section 2 new components ── */
+
+  /* Asset cards (2.5) */
+  .asset-card {
+    border: 1.5px solid var(--sand3);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem 1.75rem;
+    margin: 1.25rem 0 1.75rem;
+    background: var(--cream);
+    box-shadow: var(--shadow);
+    position: relative;
+  }
+  .asset-card-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 1rem; padding-bottom: .75rem;
+    border-bottom: 1.5px solid var(--sand2);
+    flex-wrap: wrap; gap: 8px;
+  }
+  .asset-card-title {
+    font-family: 'Fraunces', serif; font-size: 17px;
+    font-weight: 600; color: var(--text);
+  }
+  .risk-badge {
+    font-size: 11px; font-weight: 700; letter-spacing: .08em;
+    padding: 4px 12px; border-radius: 20px; text-transform: uppercase;
+  }
+  .risk-badge.CRITICAL { background: #fef2f2; color: #c0392b; border: 1.5px solid #fecaca; }
+  .risk-badge.HIGH     { background: #fff7ed; color: #c2410c; border: 1.5px solid #fed7aa; }
+  .risk-badge.MEDIUM   { background: #fffbeb; color: #92400e; border: 1.5px solid #fde68a; }
+  .risk-badge.LOW      { background: var(--accent3); color: var(--accent); border: 1.5px solid rgba(47,107,79,.2); }
+
+  /* Risk scoring model box (2.5 header) */
+  .scoring-box {
+    background: var(--sand);
+    border: 1.5px solid var(--sand3);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    margin: 1rem 0 1.75rem;
+    font-size: 13px;
+  }
+  .scoring-box table { margin: .5rem 0 0; font-size: 12px; }
+
+  /* Concept illustration placeholder (2.3, 2.4, 2.5, 2.6) */
+  .concept-block {
+    background: var(--sand);
+    border: 1.5px dashed var(--sand3);
+    border-radius: var(--radius-lg);
+    margin: 1rem 0 1.25rem;
+    overflow: hidden;
+    text-align: center;
+  }
+  .concept-block svg { display: block; width: 100%; }
+
+  /* IS / IS NOT table (2.8) */
+  .report-card table.is-isnot th:first-child { color: var(--accent); }
+  .report-card table.is-isnot th:last-child  { color: var(--danger); }
+  .report-card table.is-isnot td:first-child  { color: var(--text); }
+  .report-card table.is-isnot td:last-child   { color: var(--text2); }
+
+  /* Gap type badges (2.7) */
+  .gap-type {
+    display: inline-block; font-size: 10px; font-weight: 600;
+    letter-spacing: .06em; text-transform: uppercase;
+    padding: 2px 8px; border-radius: 4px;
+  }
+  .gap-type.not-disclosed { background: #fef2f2; color: #c0392b; }
+  .gap-type.needs-testing  { background: #fff7ed; color: #c2410c; }
+  .gap-type.future-scope   { background: var(--accent3); color: var(--accent); }
+
+  /* Section orientation intro (top of Section 2) */
+  .section-orientation {
+    background: var(--accent3);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: .875rem 1.25rem;
+    margin: .5rem 0 1.5rem;
+    font-size: 14px; color: var(--text2); line-height: 1.7;
+  }
+
+  /* Bridge sentences */
+  .bridge {
+    font-size: 13px; color: var(--text3); font-style: italic;
+    margin: 1rem 0 .5rem; padding-left: .75rem;
+    border-left: 2px solid var(--sand3);
+  }
+
   /* Footer */
   .site-footer {
     margin-top: 3rem;
@@ -289,6 +375,25 @@
     line-height: 1.6;
   }
   .review-banner strong { color: #78350f; }
+
+  /* ── Report navigator (sidebar TOC) ── */
+  .report-nav-label {
+    font-size: 10px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: .1em; color: var(--text3);
+    margin-bottom: 8px; padding-left: 4px;
+  }
+  .toc-list { display: flex; flex-direction: column; gap: 2px; }
+  .toc-item {
+    display: flex; align-items: flex-start; gap: 8px;
+    padding: 7px 10px; border-radius: var(--radius);
+    cursor: pointer; font-size: 12px; color: var(--text2);
+    transition: all .15s; line-height: 1.4; border: 1.5px solid transparent;
+  }
+  .toc-item:hover { background: var(--sand); color: var(--text); }
+  .toc-item.toc-active { background: var(--accent3); color: var(--accent); border-color: rgba(47,107,79,.2); font-weight: 500; }
+  .toc-num { font-size: 10px; font-weight: 600; color: var(--text3); flex-shrink: 0; margin-top: 1px; min-width: 18px; }
+  .toc-item.toc-active .toc-num { color: var(--accent); }
+  .toc-item.toc-h1 { font-weight: 600; color: var(--text); font-size: 12.5px; }
 
   /* Print styles */
   @media print {
@@ -903,258 +1008,272 @@ function buildReview() {
 
 function sysPrompt() {
   const today = new Date().toLocaleDateString('en-GB', {day:'2-digit', month:'long', year:'numeric'});
-  return `You are a senior cybersecurity consultant specialising in EU Cyber Resilience Act (CRA) compliance. You are producing a professional risk assessment working document for a manufacturer, based on information provided via a structured questionnaire.
-
-Your output must serve TWO distinct readers:
-- PART 1 is for MANAGEMENT — plain English, no jargon, maximum 2 pages, answers three questions: Are we at risk? What is broken? What do we do?
-- PART 2 is for the CONSULTANT and EXPERT REVIEWER — structured, justified, technically rigorous
-
-CRITICAL LANGUAGE RULES FOR PART 1:
-- Zero technical jargon. No "OTA", "RBAC", "credential stuffing", "attack surface", "threat vector"
-- Every sentence must be understandable by someone with no cybersecurity background
-- Describe threats in terms of consequences: "an attacker could unlock your doors remotely" not "spoofing via compromised authentication"
-- Use plain words: "security update" not "firmware patch", "password" not "credential", "hacker" not "threat actor"
-
-RISK SCORING — ISO/IEC 27005:
-- Likelihood: 1 (Very Unlikely) to 5 (Almost Certain)
-- Impact: 1 (Negligible) to 5 (Catastrophic)
-- Risk Score = Likelihood × Impact
-- 1–4 = LOW | 5–9 = MEDIUM | 10–16 = HIGH | 17–25 = CRITICAL
-- Always score for the WORST CREDIBLE CASE — never the best case
-- Every score must have a one sentence justification
-- If information is Unknown, score for worst case AND flag in information gaps
-
-ASSET PRIORITISATION:
-Select the top 3 assets for deep assessment based on:
-1. Highest combined CIA severity
-2. Highest damage severity if compromised
-3. Most directly linked to confirmed misuse scenarios
-For all other assets: list with CIA and one sentence explaining why not assessed in depth.
-
-CIA CLASSIFICATION (High / Medium / Low):
-- Confidentiality: harm from unauthorised disclosure
-- Integrity: harm from unauthorised modification
-- Availability: harm from loss of access or function
-
-DAMAGE SEVERITY:
-- Severe: safety risk, critical infrastructure impact, or irreversible harm
-- Major: significant financial, operational or privacy harm
-- Moderate: contained harm with recovery possible
-- Negligible: minimal real-world impact
-
-STRIDE METHODOLOGY:
-Every threat scenario must be tagged with its primary STRIDE category:
-- Spoofing: Impersonating a legitimate user, device or service
-- Tampering: Unauthorised modification of data, firmware or configuration
-- Repudiation: Inability to trace actions back to an actor
-- Information Disclosure: Exposure of sensitive data
-- Denial of Service: Making the product or its functions unavailable
-- Elevation of Privilege: Gaining higher access than authorised
-One threat may have a secondary STRIDE category — include both if relevant.
-
-ATTACK PATH FORMAT (plain structured steps — no framework labels):
-Step 1: How attacker gains initial access
-Step 2: What attacker does once inside
-Step 3: How attacker reaches the target asset
-Step 4: What harm is caused
-
-RESIDUAL RISK — express in plain English:
-"Even with [existing controls] in place, an attacker could still [specific harm] because [specific weakness]."
-Never express residual risk as a second number — always a plain English sentence.
-
-TREATMENT DECISION — be specific:
-Not "Mitigate" — but "Fix within 90 days: implement [specific action]"
-Not "Accept" — but "Accept: risk is low and cost of mitigation exceeds benefit"
-Not "Transfer" — but "Transfer: obtain cyber insurance to cover this risk"
-
-INFORMATION GAPS:
-Every Unknown answer MUST appear in the Information Gaps section.
-Scoring assumption for each Unknown must also be stated in the relevant asset assessment.
+  return `You are a senior cybersecurity consultant specialising in EU Cyber Resilience Act (CRA) compliance. You produce professional, structured risk assessment documents for manufacturers based on questionnaire input.
 
 TODAY'S DATE: ${today}
 
-OUTPUT — use this exact structure:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RISK SCORING — ISO/IEC 27005 (5×5 matrix)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Likelihood: 1 Very Unlikely · 2 Unlikely · 3 Possible · 4 Likely · 5 Almost Certain
+Impact:     1 Negligible    · 2 Minor    · 3 Moderate · 4 Major  · 5 Catastrophic
+Risk Score = Likelihood × Impact
+Bands: 1–4 LOW · 5–9 MEDIUM · 10–16 HIGH · 17–25 CRITICAL
+Always score WORST CREDIBLE CASE. Never optimistic. Unknown = worst case + flag as gap.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ASSET PRIORITISATION — 3 CRITERIA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. CIA Severity — combined C+I+A harm if the asset is compromised
+2. Damage Severity — real-world harm: Severe / Major / Moderate / Negligible
+3. Attack Reachability — how directly reachable from the attack surface: High / Medium / Low
+Select top 3 assets. All others: list only, with one-sentence exclusion rationale.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+STRIDE — MANDATORY FOR EVERY ASSET CARD
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+S Spoofing · T Tampering · R Repudiation · I Information Disclosure · D Denial of Service · E Elevation of Privilege
+Tag each threat with primary STRIDE. Add secondary if relevant.
+Section 2.6 MUST cover all 6 categories — "Not applicable" acceptable with one-sentence reason.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+OUTPUT — FOLLOW THIS STRUCTURE EXACTLY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ---
 
-# CRA Risk Assessment — Working Document
-## [Product Name] — [Version]
+# CRA Risk Assessment — [Product Name]
 
-**Prepared by:** Jyohan Joglekar, Safety Consultant
-**Contact:** jyohannj@gmail.com
-**Date:** ${today}
-**Legal basis:** Regulation (EU) 2024/2847, Article 13(3), Annex VII
-**Methodology:** ISO/IEC 27005 (5×5 risk matrix)
+**Version:** [version] · **Date:** ${today} · **Legal basis:** Regulation (EU) 2024/2847, Article 13(3), Annex VII · **Methodology:** ISO/IEC 27005 + STRIDE
 
 ---
 
-# PART 1 — MANAGEMENT SUMMARY
+# SECTION 2 — TECHNICAL RISK ASSESSMENT
 
-## Overall Risk Level: [ONE WORD in capitals — CRITICAL / HIGH / MEDIUM / LOW]
+A cybersecurity risk assessment answers four questions: What are we protecting? Where can it be attacked? What could go wrong? How bad would it be? This section walks through each question in order, building from product context through to specific threat findings and recommended controls.
 
-[One plain English sentence explaining what this means for this specific product and its deployment context. No jargon.]
+---
 
-## Risk Dashboard
+## 2.1 Scope & Context
 
-| | Count |
+This section defines exactly what is — and is not — being assessed. A clear scope prevents misinterpretation and ensures the findings are not applied beyond their valid boundary.
+
+| Item | Detail |
 |---|---|
-| 🔴 Critical risks | [n] |
-| 🟠 High risks | [n] |
-| 🟡 Medium risks | [n] |
-| 🟢 Low risks | [n] |
-| ⚠️ Information gaps | [n] |
-| 🎯 STRIDE threats assessed | [n] |
+| Product | [product name and version] |
+| Assessment date | ${today} |
+| CRA classification | [from questionnaire] |
+| Product type | [from questionnaire] |
+| Expected lifetime | [from questionnaire] |
+| Deployment environment | [deployment locations] |
+| Physical access | [physical access level] |
+| Legal basis | Regulation (EU) 2024/2847, Article 13(3) |
+| Methodology | ISO/IEC 27005 (5×5 risk matrix) + STRIDE threat categorisation |
 
-## The [n] Most Urgent Problems
+**Out of scope for this assessment:**
+- Penetration testing or hands-on security testing of the product
+- Assessment of the manufacturer's internal organisational controls
+- Supply chain security or Software Bill of Materials (SBOM) review
+- Assessment of third-party cloud component internals
+- Verification of any information provided via questionnaire
+- Legal or regulatory advice
 
-[Numbered list. Plain English. Each item: what is the problem, what could an attacker do because of it, what is the real-world consequence. Maximum 3 sentences per item. Zero jargon.]
-
-1. **[Problem title in plain English]**
-[What is wrong. What an attacker could do. What happens to the business or people if they do.]
-
-[Repeat for each critical or high risk]
-
-## What Happens If These Are Not Fixed
-
-[2–3 sentences. Plain English. Describe the worst realistic outcome if the priority problems are not addressed. Be specific to this product and its deployment context.]
-
-## The [n] Most Urgent Actions
-
-[Numbered list. Each action: specific, concrete, with a timeframe. Written as instructions to the manufacturer.]
-
-1. [Specific action — timeframe]
-2. [Specific action — timeframe]
-3. [Specific action — timeframe]
+[One bridge sentence connecting to 2.2 — e.g. "With scope established, the next section describes the product in detail — this shapes every threat and asset analysis that follows."]
 
 ---
 
-# PART 2 — TECHNICAL ASSESSMENT
+## 2.2 Product Description
 
-## Section 1 — Asset Register
+Understanding what the product does, who uses it, and where it operates is the foundation of the threat model. An attacker's opportunities depend entirely on how and where the product is deployed.
 
-[List ALL assets identified from the questionnaire answers.]
+| Field | Detail |
+|---|---|
+| Product function | [what the product does — from questionnaire] |
+| Intended users | [user types] |
+| Deployment context | [where deployed] |
+| Network connectivity | [network types] |
+| External interfaces | [interfaces exposed] |
+| Data handled | [data categories] |
+| Data storage | [storage locations] |
+| Encryption | [in-transit and at-rest status] |
+| Internet-exposed interface | [yes/no/unknown] |
+| Remote management | [detail if present] |
+| Support obligation | Minimum 5 years per CRA Article 13(8) |
 
-| Asset | Confidentiality | Integrity | Availability | Damage Severity | Deep Assessment |
-|---|---|---|---|---|---|
-| [asset] | High/Med/Low | High/Med/Low | High/Med/Low | Severe/Major/Moderate/Negligible | Yes — Priority 1 / No — [one sentence rationale] |
-
-**Priority asset selection rationale:**
-[2–3 sentences explaining why the top 3 assets were selected for deep assessment and what criteria were used.]
+[One bridge sentence — e.g. "Now that we know what the product is and how it connects, the next step is to map every point where an attacker could reach it."]
 
 ---
 
-## Section 2 — Priority Asset Risk Assessment
+## 2.3 Attack Surface
 
-[For each of the 3 priority assets, use this exact structure:]
+The attack surface is every point where an attacker could try to interact with the product — networks it connects to, interfaces it exposes, and the environment it operates in. A larger attack surface means more opportunity for attack.
 
-### Asset [n]: [Asset Name]
+**Networks & Connectivity**
+| Network / Protocol | Exposure Level | Notes |
+|---|---|---|
+[One row per network type from questionnaire. Exposure: High / Medium / Low]
 
-**CIA Classification:** C: [High/Med/Low] | I: [High/Med/Low] | A: [High/Med/Low]
-**Damage Severity:** [Severe/Major/Moderate/Negligible]
+**External Interfaces**
+| Interface | Access Required | Reachability | Notes |
+|---|---|---|---|
+[One row per interface. Access: Physical / Local Network / Internet. Reachability: High / Medium / Low]
 
-**Damage Scenario**
-[What is the worst realistic thing that could happen to this asset if compromised? One paragraph. Link explicitly to any relevant misuse scenario: "(see Misuse Scenario [n])"]
+**Deployment Environment**
+| Factor | Detail | Risk Implication |
+|---|---|---|
+| Physical access | [who can reach the device] | [one sentence implication] |
+| Safety-critical context | [yes/no + detail] | [one sentence implication] |
+| Foreseeable misuse | [summary of C-section answers] | [one sentence implication] |
+| Stepping stone risk | [can device pivot to other systems] | [one sentence implication] |
 
-**STRIDE Category:** [Primary STRIDE category] [Secondary if applicable]
+[One bridge sentence — e.g. "With the attack surface mapped, the next question is: what would an attacker actually target once they reach the product?"]
 
-**Threat Scenario**
-[How could an attacker cause the damage scenario? One paragraph. Plain structured description.]
+---
+
+## 2.4 Asset Register
+
+Assets are anything of value that could be harmed — data, credentials, functions, and the physical access the product controls. Not all assets carry equal risk. Priority for deep assessment is determined by three criteria:
+
+**Prioritisation Criteria**
+1. **CIA Severity** — combined harm from breaches of Confidentiality, Integrity, and Availability
+2. **Damage Severity** — real-world harm if the asset is compromised (Severe / Major / Moderate / Negligible)
+3. **Attack Reachability** — how directly the asset can be reached from the attack surface (High / Medium / Low)
+
+| Asset | C | I | A | Damage Severity | Reachability | Priority |
+|---|---|---|---|---|---|---|
+[All assets from questionnaire. Priority: 1 / 2 / 3 / Not assessed — [one sentence reason]. C/I/A: High/Med/Low]
+
+**Why these assets were selected for deep assessment:**
+[2–3 sentences. Name the top 3. Explain why they scored highest across all three criteria. Explain why others were not assessed in depth.]
+
+[One bridge sentence — e.g. "The following section assesses the specific threats to each priority asset — what could go wrong, how likely, and how bad."]
+
+---
+
+## 2.5 Threat Assessment
+
+A threat is something that could go wrong with an asset. For each priority asset, this section describes a realistic attack scenario, scores the risk, identifies what protection already exists, and recommends the specific action needed.
+
+**Risk Scoring Model**
+| Score | Likelihood meaning | Impact meaning |
+|---|---|---|
+| 1 | Very Unlikely — requires sophisticated, rarely-attempted attack | Negligible — no meaningful real-world harm |
+| 2 | Unlikely — requires skill and specific opportunity | Minor — limited harm, quickly recoverable |
+| 3 | Possible — known technique, occasional attempts observed | Moderate — contained harm, recovery possible |
+| 4 | Likely — easy to exploit, commonly attempted | Major — significant harm, difficult to recover |
+| 5 | Almost Certain — trivial to exploit, actively exploited in the wild | Catastrophic — severe, irreversible harm |
+Risk Score = Likelihood × Impact · LOW 1–4 · MEDIUM 5–9 · HIGH 10–16 · CRITICAL 17–25
+
+[For EACH of the 3 priority assets, produce EXACTLY this block:]
+
+### ASSET [n]: [ASSET NAME] — [RISK LEVEL]
+
+**CIA:** C: [H/M/L] | I: [H/M/L] | A: [H/M/L] · **Damage Severity:** [Severe/Major/Moderate/Negligible]
+
+**What Could Go Wrong**
+[Plain English. One paragraph. Worst realistic scenario for this asset. What does an attacker gain or cause? Reference any relevant misuse scenario from Section C of the questionnaire.]
+
+**STRIDE:** [Primary category — one word] · [Secondary category if applicable — one word + one sentence why]
 
 **Attack Path**
-Step 1: [Initial access — how attacker gets in]
-Step 2: [Progression — what attacker does next]
-Step 3: [Target — how attacker reaches this asset]
-Step 4: [Impact — what harm is caused]
+- Step 1 — **Initial access:** [How attacker enters the product or system]
+- Step 2 — **Progression:** [What attacker does once in]
+- Step 3 — **Target:** [How attacker reaches this specific asset]
+- Step 4 — **Impact:** [What harm is caused to users, business, or the product]
 
-**Risk Scoring**
+**Risk Score**
 | Factor | Score | Justification |
 |---|---|---|
-| Likelihood | [1–5] | [One sentence — why this score] |
-| Impact | [1–5] | [One sentence — why this score] |
+| Likelihood | [1–5] | [One sentence] |
+| Impact | [1–5] | [One sentence] |
 | **Risk Score** | **[L×I]** | |
 | **Risk Level** | **[LOW/MEDIUM/HIGH/CRITICAL]** | |
 
 **Current Controls**
-[List what currently protects this asset, based on questionnaire answers. If none: "None identified."]
+[What currently protects this asset, from questionnaire answers. If none: "None identified."]
 
 **Residual Risk**
-[Plain English sentence: "Even with [controls] in place, an attacker could still [harm] because [weakness]."]
+Even with [current controls] in place, an attacker could still [specific harm] because [specific weakness].
 
-**Treatment Decision**
-[Specific action with timeframe — not just Accept/Mitigate/Transfer/Avoid]
+**Recommended Control**
+[Specific, concrete action. Timeframe: Before launch / Within 30 days / Within 90 days / Ongoing. Plain English. No jargon.]
 
 ---
 
-[Repeat Section 2 structure for each of the 3 priority assets]
+[Repeat the ASSET block for each of the 3 priority assets]
 
-### STRIDE Coverage Summary
+[One bridge sentence — e.g. "The following section proves that the assessments above cover every major category of attack — not just the ones most obviously relevant to this product."]
 
-[After completing all priority asset assessments, produce this summary table covering ALL identified threats across all assessed assets. Include non-priority assets where a STRIDE threat was identified but not assessed in depth — note these as "Not assessed in depth — [one sentence rationale]".]
+---
 
-| STRIDE Category | Threat | Asset | Likelihood | Impact | Score | Level |
+## 2.6 STRIDE Summary
+
+Section 2.5 assessed threats asset by asset. This section proves no *type* of attack was overlooked — regardless of which asset it targets. It is a completeness check, not a repeat of Section 2.5.
+
+| STRIDE | Threat Description | Asset | Likelihood | Impact | Score | Level |
 |---|---|---|---|---|---|---|
-| Spoofing | [threat description] | [asset] | [1–5] | [1–5] | [score] | [LOW/MEDIUM/HIGH/CRITICAL] |
-| Tampering | [threat description] | [asset] | [1–5] | [1–5] | [score] | [LOW/MEDIUM/HIGH/CRITICAL] |
-| Repudiation | [threat description] | [asset] | [1–5] | [1–5] | [score] | [LOW/MEDIUM/HIGH/CRITICAL] |
-| Information Disclosure | [threat description] | [asset] | [1–5] | [1–5] | [score] | [LOW/MEDIUM/HIGH/CRITICAL] |
-| Denial of Service | [threat description] | [asset] | [1–5] | [1–5] | [score] | [LOW/MEDIUM/HIGH/CRITICAL] |
-| Elevation of Privilege | [threat description] | [asset] | [1–5] | [1–5] | [score] | [LOW/MEDIUM/HIGH/CRITICAL] |
+| Spoofing (S) | [threat] | [asset] | [1–5] | [1–5] | [score] | [LEVEL] |
+| Tampering (T) | [threat] | [asset] | [1–5] | [1–5] | [score] | [LEVEL] |
+| Repudiation (R) | [threat] | [asset] | [1–5] | [1–5] | [score] | [LEVEL] |
+| Information Disclosure (I) | [threat] | [asset] | [1–5] | [1–5] | [score] | [LEVEL] |
+| Denial of Service (D) | [threat] | [asset] | [1–5] | [1–5] | [score] | [LEVEL] |
+| Elevation of Privilege (E) | [threat] | [asset] | [1–5] | [1–5] | [score] | [LEVEL] |
 
-[If a STRIDE category is not applicable to this product, state: "[Category] — Not applicable: [one sentence reason]"]
+[If a STRIDE category genuinely does not apply: "[Category] (X) — Not applicable: [one sentence reason]"]
 
----
-
-## Section 3 — Information Gaps
-
-[Every Unknown answer must appear here.]
-
-| # | What is Unknown | Why it Matters | Impact on Risk Score | Priority | Who Must Provide This | Deadline |
-|---|---|---|---|---|---|---|
-| 1 | [what] | [why] | [scored worst case — if resolved as best case, risk level may decrease to X] | Critical/High/Medium | [manufacturer/consultant/third party] | [before submission/30 days/next review] |
+[One bridge sentence — e.g. "Before drawing conclusions, the following section documents what could not be confirmed — and what assumptions were made as a result."]
 
 ---
 
-## Section 4 — Assessment Limitations
+## 2.7 Information Gaps
 
-This assessment does not constitute a complete CRA technical documentation file. The following are explicitly out of scope:
+A risk assessment can only be as thorough as the information available. The gaps below identify areas where additional data is needed to confirm or revise the findings. Until resolved, the worst-case assumptions applied in Section 2.5 remain in force.
 
-- Penetration testing or hands-on security testing of the product
-- Assessment of the manufacturer's internal security processes or organisational controls
-- Supply chain security assessment or SBOM review
-- Assessment of cloud backend or third-party component security
-- Verification of any information provided via the questionnaire
-- Legal or regulatory advice
+| # | Gap | Type | Why It Matters | Assumed Worst Case | Owner |
+|---|---|---|---|---|---|
+[Every Unknown answer from questionnaire. Type: Not Disclosed / Needs Testing / Future Scope. Owner: Manufacturer / Assessor / Third Party]
 
-Risk scores are based solely on information provided via questionnaire. Where information was unavailable, worst-case assumptions were applied and flagged as information gaps.
+[If no gaps: "No information gaps identified — all questionnaire fields were completed."]
 
----
-
-# PART 3 — STANDARD CLOSING
-
-## Supply Chain Note
-Under Article 13(5) of Regulation (EU) 2024/2847, the manufacturer must exercise due diligence when integrating third-party components, including open-source software. A Software Bill of Materials (SBOM) must be maintained per Annex I Part II §1. Third-party components should be monitored for newly discovered vulnerabilities on an ongoing basis.
-
-## Support Period Note
-Under Article 13(8), the manufacturer must handle vulnerabilities throughout the declared support period (minimum 5 years unless expected product lifetime is shorter). Security updates must remain available for at least 10 years after release per Article 13(9).
-
-## Disclaimer
-This document is a first-draft working document prepared by Jyohan Joglekar, Safety Consultant (jyohannj@gmail.com), using AI assistance (Claude, Anthropic) based on information provided via a structured questionnaire. It must be reviewed and validated by a qualified cybersecurity professional before use in regulatory submissions, technical documentation, or client delivery. Risk scores and findings are based solely on questionnaire responses and have not been verified through technical testing. The manufacturer remains responsible for compliance with Regulation (EU) 2024/2847. This document does not constitute legal advice.
+[One bridge sentence — e.g. "The final section defines what this assessment covers and where its boundaries lie."]
 
 ---
 
-CRITICAL RULES:
-1. PART 1 must be readable by a non-technical manufacturer. Test every sentence — if it contains a technical term, rewrite it. Forbidden words in Part 1: OTA, RBAC, firmware, credential, cryptographic, TLS, API, threat vector, attack surface, exploit, vulnerability, authentication. Replace with plain words.
-2. Score for worst credible case always. Never optimistic scoring.
-3. Every Unknown answer appears in Section 3 — Information Gaps. No exceptions.
-4. Residual risk is always a plain English sentence — never a second score.
-5. Treatment decisions are always specific actions with timeframes — never just a category label. Use plain English in treatment decisions too — no jargon.
-6. Asset selection rationale must explain why the other assets were NOT assessed in depth.
-7. Be specific to this product throughout — name it, reference its actual interfaces, deployment context and data types.
-8. Part 1 maximum 2 pages when printed. Be ruthless about length.
-9. Today's date is ${today} — use this exact date in the document header.
-10. Generate the Risk Dashboard counts AFTER completing all asset assessments — count the actual risk levels assigned, do not guess upfront.
-11. The Urgent Actions in Part 1 must use plain English only. No technical terms. Write as if explaining to a business owner with no IT background.
-12. STRIDE is mandatory. Every priority asset threat scenario must have a STRIDE tag. The STRIDE Coverage Summary table must always appear at the end of Section 2 and must cover all 6 STRIDE categories — either with a threat or a "Not applicable" note. Never omit STRIDE.`;
+## 2.8 Assessment Limitations
+
+This assessment is a structured risk analysis, not a penetration test or security certification. The findings reflect information available at the time of assessment and the methodology described below.
+
+| This assessment IS | This assessment is NOT |
+|---|---|
+| A structured threat and risk analysis | A penetration test or red team exercise |
+| Based on ISO/IEC 27005 + STRIDE | A security certification or compliance stamp |
+| CRA Annex VII compliant documentation | A guarantee of security |
+| Valid for the assessed product version | A substitute for ongoing monitoring |
+| Actionable — includes specific recommended controls | A complete CRA technical file |
+
+**Methodology:** ISO/IEC 27005 risk scoring (5×5 likelihood × impact matrix), STRIDE threat categorisation across all 6 categories.
+
+**Scope boundary:** Software, firmware and connectivity attack surface as documented. Hardware physical security, supply chain, and third-party cloud component internals not assessed.
+
+**Validity:** This assessment reflects [product name] [version] as of ${today}. Material changes to firmware, connectivity, intended use, or deployment environment trigger reassessment under CRA Article 13(3).
+
+*This report was prepared in accordance with Regulation (EU) 2024/2847 (Cyber Resilience Act), Article 13(3) and Annex VII.*
+
+---
+
+CRITICAL RULES — DO NOT DEVIATE:
+1. Follow section numbers and headers EXACTLY as written above (2.1 through 2.8)
+2. Every section must have: (a) an intro paragraph explaining what the section is and why it matters, and (b) a bridge sentence leading to the next section
+3. Score WORST CREDIBLE CASE always — never optimistic
+4. Every Unknown answer appears in 2.7 — no exceptions
+5. Residual Risk is always a plain English sentence — never a second score
+6. Recommended Control is a specific action + timeframe — no vague labels like "Mitigate" or "Fix"
+7. STRIDE 2.6 is a completeness check — frame it that way explicitly in the intro. All 6 categories must appear.
+8. The 2.4 asset table MUST include columns: Asset, C, I, A, Damage Severity, Reachability, Priority — and the three prioritisation criteria must appear above it
+9. The Risk Scoring Model table MUST appear at the start of 2.5 before the first asset card
+10. Asset cards in 2.5 MUST use the header format: ### ASSET [n]: [NAME] — [RISK LEVEL]
+11. The 2.8 IS/IS NOT table MUST appear exactly as specified — two columns, 5 rows
+12. Be specific to this product throughout — name it, reference its actual interfaces and deployment context`;
 }
 
 function userPrompt(a) {
@@ -1238,7 +1357,7 @@ async function generate() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
-        max_tokens: 8000,
+        max_tokens: 16000,
         system: sysPrompt(),
         messages: [{ role: 'user', content: userPrompt(a) }]
       })
@@ -1249,6 +1368,8 @@ async function generate() {
     document.getElementById('loader').classList.remove('show');
     document.getElementById('reportCard').innerHTML = renderMd(text);
     fixListNumbering();
+    enhanceReport();
+    buildReportNav();
     document.getElementById('outputWrap').classList.add('show');
     document.getElementById('outputWrap').scrollIntoView({behavior:'smooth'});
     window._report = text;
@@ -1258,6 +1379,242 @@ async function generate() {
     showErr('Error: '+e.message);
   }
   document.getElementById('genBtn').disabled = false;
+}
+
+// ── Report navigator TOC ──
+function buildReportNav() {
+  const card = document.getElementById('reportCard');
+  const sidebar = document.querySelector('.sidebar');
+
+  // Collect headings from report
+  const headings = Array.from(card.querySelectorAll('h1, h2, h3'));
+  if (!headings.length) return;
+
+  // Hide questionnaire nav elements
+  sidebar.querySelector('.nav-label').style.display = 'none';
+  sidebar.querySelector('#navList').style.display = 'none';
+
+  // Build TOC
+  const label = document.createElement('div');
+  label.className = 'report-nav-label';
+  label.textContent = 'Report Contents';
+  const list = document.createElement('div');
+  list.className = 'toc-list';
+  list.id = 'tocList';
+
+  let secCount = 0;
+  headings.forEach((h, idx) => {
+    const txt = h.textContent.trim();
+    if (!txt || txt.length > 80) return;
+    const item = document.createElement('div');
+    item.className = 'toc-item' + (h.tagName === 'H1' ? ' toc-h1' : '') + (h.tagName === 'H3' ? ' toc-h3' : '');
+    const num = document.createElement('span');
+    num.className = 'toc-num';
+    num.textContent = h.tagName === 'H2' ? txt.split(' ')[0] : (h.tagName === 'H1' ? '§' : '·');
+    const lbl = document.createElement('span');
+    // Shorten long headings
+    lbl.textContent = txt.length > 42 ? txt.slice(0, 40) + '…' : txt;
+    item.appendChild(num); item.appendChild(lbl);
+    // Give heading an anchor id
+    if (!h.id) h.id = 'toc-' + idx;
+    item.addEventListener('click', () => {
+      h.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      document.querySelectorAll('.toc-item').forEach(i => i.classList.remove('toc-active'));
+      item.classList.add('toc-active');
+    });
+    list.appendChild(item);
+  });
+
+  // Insert into sidebar (before sidebar footer)
+  const footer = sidebar.querySelector('.sidebar-footer');
+  sidebar.insertBefore(label, footer);
+  sidebar.insertBefore(list, footer);
+
+  // Scroll-spy
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        document.querySelectorAll('.toc-item').forEach(item => {
+          const h = document.getElementById(id);
+          item.classList.toggle('toc-active', h && item.textContent.includes(h.textContent.slice(0, 20)));
+        });
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '-10% 0px -80% 0px' });
+  headings.forEach(h => { if (h.id) observer.observe(h); });
+}
+
+function resetReportNav() {
+  // Restore questionnaire nav on new assessment
+  const sidebar = document.querySelector('.sidebar');
+  sidebar.querySelector('.nav-label').style.display = '';
+  sidebar.querySelector('#navList').style.display = '';
+  const lbl = sidebar.querySelector('.report-nav-label');
+  const toc = sidebar.querySelector('#tocList');
+  if (lbl) lbl.remove();
+  if (toc) toc.remove();
+}
+
+// ── Post-render visual enhancements ──
+function enhanceReport() {
+  const card = document.getElementById('reportCard');
+
+  // 1. Wrap ASSET cards — find h3 matching "### ASSET n: Name — LEVEL"
+  card.querySelectorAll('h3').forEach(h3 => {
+    const txt = h3.textContent.trim();
+    const m = txt.match(/^ASSET\s+(\d+):\s+(.+?)\s+[—–-]+\s+(CRITICAL|HIGH|MEDIUM|LOW)$/i);
+    if (!m) return;
+    const [, num, name, level] = m;
+    // Collect all siblings until next h3 or hr
+    const nodes = [];
+    let sib = h3.nextSibling;
+    while (sib && sib.tagName !== 'H3' && sib.tagName !== 'HR') {
+      nodes.push(sib);
+      sib = sib.nextSibling;
+    }
+    // Build card
+    const wrapper = document.createElement('div');
+    wrapper.className = 'asset-card';
+    const hdr = document.createElement('div');
+    hdr.className = 'asset-card-header';
+    hdr.innerHTML = `<div class="asset-card-title">Asset ${num}: ${name}</div><span class="risk-badge ${level.toUpperCase()}">${level.toUpperCase()}</span>`;
+    wrapper.appendChild(hdr);
+    nodes.forEach(n => wrapper.appendChild(n.cloneNode(true)));
+    h3.parentNode.insertBefore(wrapper, h3);
+    nodes.forEach(n => n.parentNode && n.parentNode.removeChild(n));
+    h3.parentNode.removeChild(h3);
+  });
+
+  // 2. Style section orientation paragraph (first <p> after #SECTION 2 h1)
+  const secH1 = Array.from(card.querySelectorAll('h1')).find(h => h.textContent.includes('SECTION 2'));
+  if (secH1) {
+    let next = secH1.nextElementSibling;
+    if (next && next.tagName === 'P') next.classList.add('section-orientation');
+  }
+
+  // 3. Inject concept SVGs after section headers
+  const svgs = {
+    '2.3': svgAttackSurface(),
+    '2.4': svgAssetRegister(),
+    '2.5': svgThreatAssessment(),
+    '2.6': svgStride()
+  };
+  card.querySelectorAll('h2').forEach(h2 => {
+    const txt = h2.textContent.trim();
+    const key = Object.keys(svgs).find(k => txt.startsWith(k));
+    if (!key) return;
+    const block = document.createElement('div');
+    block.className = 'concept-block';
+    block.innerHTML = svgs[key];
+    h2.parentNode.insertBefore(block, h2.nextSibling);
+  });
+
+  // 4. Style IS/IS NOT table in 2.8
+  card.querySelectorAll('h2').forEach(h2 => {
+    if (!h2.textContent.includes('2.8')) return;
+    let el = h2.nextElementSibling;
+    while (el && el.tagName !== 'H2') {
+      if (el.tagName === 'TABLE') { el.classList.add('is-isnot'); break; }
+      el = el.nextElementSibling;
+    }
+  });
+
+  // 5. Style gap Type column cells
+  card.querySelectorAll('td').forEach(td => {
+    const t = td.textContent.trim();
+    if (t === 'Not Disclosed') { td.innerHTML = '<span class="gap-type not-disclosed">Not Disclosed</span>'; }
+    else if (t === 'Needs Testing') { td.innerHTML = '<span class="gap-type needs-testing">Needs Testing</span>'; }
+    else if (t === 'Future Scope') { td.innerHTML = '<span class="gap-type future-scope">Future Scope</span>'; }
+  });
+}
+
+// ── Concept SVGs ──
+function svgAttackSurface() {
+  return `<svg viewBox="0 0 560 130" xmlns="http://www.w3.org/2000/svg" style="max-height:130px">
+    <rect width="560" height="130" fill="#f7f4ef"/>
+    <!-- Device -->
+    <rect x="230" y="35" width="100" height="60" rx="8" fill="#2f6b4f" opacity=".12" stroke="#2f6b4f" stroke-width="1.5"/>
+    <text x="280" y="62" text-anchor="middle" font-size="11" fill="#2f6b4f" font-family="Inter,sans-serif" font-weight="600">Product</text>
+    <text x="280" y="77" text-anchor="middle" font-size="9" fill="#2f6b4f" font-family="Inter,sans-serif">Device</text>
+    <!-- Arrows from attack vectors -->
+    <g stroke="#c0392b" stroke-width="1.5" fill="none" marker-end="url(#arrowR)">
+      <line x1="60" y1="65" x2="225" y2="65"/>
+      <line x1="130" y1="30" x2="232" y2="50"/>
+      <line x1="130" y1="100" x2="232" y2="80"/>
+      <line x1="430" y1="65" x2="335" y2="65"/>
+      <line x1="420" y1="35" x2="336" y2="52"/>
+    </g>
+    <defs><marker id="arrowR" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="#c0392b"/></marker></defs>
+    <!-- Labels -->
+    <text x="52" y="62" text-anchor="middle" font-size="9.5" fill="#6b5f4f" font-family="Inter,sans-serif">Internet</text>
+    <text x="52" y="74" text-anchor="middle" font-size="9.5" fill="#6b5f4f" font-family="Inter,sans-serif">/ Cloud</text>
+    <text x="110" y="28" text-anchor="middle" font-size="9.5" fill="#6b5f4f" font-family="Inter,sans-serif">BLE / Wi-Fi</text>
+    <text x="110" y="104" text-anchor="middle" font-size="9.5" fill="#6b5f4f" font-family="Inter,sans-serif">Physical</text>
+    <text x="450" y="62" text-anchor="middle" font-size="9.5" fill="#6b5f4f" font-family="Inter,sans-serif">Mobile</text>
+    <text x="450" y="74" text-anchor="middle" font-size="9.5" fill="#6b5f4f" font-family="Inter,sans-serif">App</text>
+    <text x="447" y="33" text-anchor="middle" font-size="9.5" fill="#6b5f4f" font-family="Inter,sans-serif">API</text>
+    <text x="280" y="118" text-anchor="middle" font-size="10" fill="#a8997f" font-family="Inter,sans-serif">Every arrow is an entry point for an attacker</text>
+  </svg>`;
+}
+
+function svgAssetRegister() {
+  return `<svg viewBox="0 0 560 130" xmlns="http://www.w3.org/2000/svg" style="max-height:130px">
+    <rect width="560" height="130" fill="#f7f4ef"/>
+    <!-- Pyramid tiers -->
+    <polygon points="280,12 180,48 380,48" fill="#c0392b" opacity=".8"/>
+    <polygon points="180,52 130,88 430,88" fill="#e67e22" opacity=".7"/>
+    <polygon points="130,92 80,120 480,120" fill="#2f6b4f" opacity=".5"/>
+    <!-- Labels -->
+    <text x="280" y="36" text-anchor="middle" font-size="10" fill="white" font-family="Inter,sans-serif" font-weight="700">Priority 1</text>
+    <text x="280" y="75" text-anchor="middle" font-size="10" fill="white" font-family="Inter,sans-serif" font-weight="600">Priority 2</text>
+    <text x="280" y="110" text-anchor="middle" font-size="10" fill="white" font-family="Inter,sans-serif" font-weight="500">Not assessed in depth</text>
+    <!-- Criteria labels right side -->
+    <text x="440" y="36" font-size="9" fill="#6b5f4f" font-family="Inter,sans-serif">CIA Severity</text>
+    <text x="440" y="75" font-size="9" fill="#6b5f4f" font-family="Inter,sans-serif">Damage Severity</text>
+    <text x="440" y="107" font-size="9" fill="#6b5f4f" font-family="Inter,sans-serif">Reachability</text>
+  </svg>`;
+}
+
+function svgThreatAssessment() {
+  return `<svg viewBox="0 0 560 90" xmlns="http://www.w3.org/2000/svg" style="max-height:90px">
+    <rect width="560" height="90" fill="#f7f4ef"/>
+    <g font-family="Inter,sans-serif" font-size="10">
+      <!-- Steps -->
+      <rect x="20" y="25" width="100" height="40" rx="6" fill="#e8f5ee" stroke="#2f6b4f" stroke-width="1.2"/>
+      <text x="70" y="43" text-anchor="middle" fill="#2f6b4f" font-weight="600">Step 1</text>
+      <text x="70" y="57" text-anchor="middle" fill="#2f6b4f">Initial Access</text>
+      <line x1="122" y1="45" x2="148" y2="45" stroke="#a8997f" stroke-width="1.5" marker-end="url(#arr)"/>
+      <rect x="150" y="25" width="100" height="40" rx="6" fill="#fff7ed" stroke="#e67e22" stroke-width="1.2"/>
+      <text x="200" y="43" text-anchor="middle" fill="#c2410c" font-weight="600">Step 2</text>
+      <text x="200" y="57" text-anchor="middle" fill="#c2410c">Progression</text>
+      <line x1="252" y1="45" x2="278" y2="45" stroke="#a8997f" stroke-width="1.5" marker-end="url(#arr)"/>
+      <rect x="280" y="25" width="100" height="40" rx="6" fill="#fff7ed" stroke="#e67e22" stroke-width="1.2"/>
+      <text x="330" y="43" text-anchor="middle" fill="#c2410c" font-weight="600">Step 3</text>
+      <text x="330" y="57" text-anchor="middle" fill="#c2410c">Reach Target</text>
+      <line x1="382" y1="45" x2="408" y2="45" stroke="#a8997f" stroke-width="1.5" marker-end="url(#arr)"/>
+      <rect x="410" y="25" width="120" height="40" rx="6" fill="#fef2f2" stroke="#c0392b" stroke-width="1.2"/>
+      <text x="470" y="43" text-anchor="middle" fill="#c0392b" font-weight="600">Step 4</text>
+      <text x="470" y="57" text-anchor="middle" fill="#c0392b">Impact</text>
+    </g>
+    <defs><marker id="arr" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto"><path d="M0,0 L0,5 L5,2.5 z" fill="#a8997f"/></marker></defs>
+    <text x="280" y="83" text-anchor="middle" font-size="9.5" fill="#a8997f" font-family="Inter,sans-serif">Each asset card follows this path from attacker entry to real-world harm</text>
+  </svg>`;
+}
+
+function svgStride() {
+  return `<svg viewBox="0 0 560 120" xmlns="http://www.w3.org/2000/svg" style="max-height:120px">
+    <rect width="560" height="120" fill="#f7f4ef"/>
+    <g font-family="Inter,sans-serif" font-size="10" text-anchor="middle">
+      <!-- Hexagons row -->
+      ${[['S','Spoofing',70],['T','Tampering',150],['R','Repudiation',230],['I','Information',310],['D','Denial of Svc',390],['E','Elevation',470]].map(([l,n,x]) =>
+        `<polygon points="${x},18 ${x+28},32 ${x+28},60 ${x},74 ${x-28},60 ${x-28},32" fill="#2f6b4f" opacity=".12" stroke="#2f6b4f" stroke-width="1.2"/>
+         <text x="${x}" y="50" fill="#2f6b4f" font-weight="700" font-size="14">${l}</text>
+         <text x="${x}" y="88" fill="#6b5f4f" font-size="8.5">${n}</text>`
+      ).join('')}
+    </g>
+    <text x="280" y="108" text-anchor="middle" font-size="9.5" fill="#a8997f" font-family="Inter,sans-serif">All 6 STRIDE categories checked — proves no attack type was missed</text>
+  </svg>`;
 }
 
 function fixListNumbering() {
@@ -1372,6 +1729,7 @@ function download() {
 
 function restart() {
   document.getElementById('outputWrap').classList.remove('show');
+  resetReportNav();
   go(0);
 }
 
