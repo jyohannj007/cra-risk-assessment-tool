@@ -1067,12 +1067,10 @@ Bands: 1–4 LOW · 5–9 MEDIUM · 10–16 HIGH · 17–25 CRITICAL
 Always score WORST CREDIBLE CASE. Never optimistic. Unknown = worst case + flag as gap.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-ASSET PRIORITISATION — 3 CRITERIA
+ASSET PRIORITISATION — CIA ONLY
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-1. CIA Severity — combined C+I+A harm if the asset is compromised
-2. Damage Severity — real-world harm: Severe / Major / Moderate / Negligible
-3. Attack Reachability — how directly reachable from the attack surface: High / Medium / Low
-Select top 3 assets. All others: list only, with one-sentence exclusion rationale.
+Rate each asset on Confidentiality, Integrity, Availability: H (High) / M (Medium) / L (Low).
+Select top 3 by combined CIA score. All others: list only, with one-sentence exclusion rationale.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 STRIDE — MANDATORY FOR EVERY ASSET CARD
@@ -1093,12 +1091,6 @@ OUTPUT — FOLLOW THIS STRUCTURE EXACTLY
 
 ---
 
-# SECTION 2 — TECHNICAL RISK ASSESSMENT
-
-A cybersecurity risk assessment answers four questions: What are we protecting? Where can it be attacked? What could go wrong? How bad would it be? This section walks through each question in order, building from product context through to specific threat findings and recommended controls.
-
----
-
 ## 2.1 Scope & Context
 
 This section defines exactly what is being assessed and what is not — preventing misinterpretation of findings.
@@ -1116,12 +1108,15 @@ This section defines exactly what is being assessed and what is not — preventi
 | Methodology | ISO/IEC 27005 (5×5 risk matrix) + STRIDE threat categorisation |
 
 **Out of scope for this assessment:**
-- Penetration testing or hands-on security testing of the product
-- Assessment of the manufacturer's internal organisational controls
-- Supply chain security or Software Bill of Materials (SBOM) review
-- Assessment of third-party cloud component internals
-- Verification of any information provided via questionnaire
-- Legal or regulatory advice
+
+| Not covered | Why |
+|---|---|
+| Penetration testing or hands-on security testing | This is a documentation-based assessment only |
+| Manufacturer's internal organisational controls | Outside the product boundary |
+| Supply chain security or SBOM review | Requires separate engagement |
+| Third-party cloud component internals | Not accessible without vendor cooperation |
+| Verification of questionnaire responses | Taken at face value; inaccuracies are the manufacturer's responsibility |
+| Legal or regulatory advice | Outside the scope of a technical assessment |
 
 [One bridge sentence connecting to 2.2 — e.g. "With scope established, the next section describes the product in detail — this shapes every threat and asset analysis that follows."]
 
@@ -1236,27 +1231,42 @@ C: [one sentence rationale] · I: [one sentence rationale] · A: [one sentence r
 
 ---
 
-## 2.5 Threat Assessment
+## 2.5 Threat Assessment — What Could Go Wrong?
 
-For each priority asset, this section describes exactly what could go wrong, how likely it is, how bad it would be, and what to do about it.
+For each priority asset, this section walks through who could attack it, how, and what the real-world consequence would be.
+
+[Summary statement: "[Product name] has [N] priority assets assessed below — [list AS-n IDs]."]
+
+**Key terms used in this section:**
+
+| Term | What it means |
+|---|---|
+| **Likelihood** | How probable this attack is — scored 1 (very unlikely) to 5 (almost certain) |
+| **Impact** | How bad the outcome if the attack succeeds — scored 1 (negligible) to 5 (catastrophic) |
+| **Risk Score** | Likelihood × Impact — a number from 1 to 25 |
+| **Risk Level** | LOW 1–4 · MEDIUM 5–9 · HIGH 10–16 · CRITICAL 17–25 |
+| **Residual Risk** | The risk that remains even after existing controls are applied |
+| **Recommended Control** | A specific action to reduce residual risk, with a deadline |
+
+*Diagram: threat assessment flow*
 
 **Risk Scoring Model**
-| Score | Likelihood meaning | Impact meaning |
+
+| Score | Likelihood | Impact |
 |---|---|---|
-| 1 | Very Unlikely — requires sophisticated, rarely-attempted attack | Negligible — no meaningful real-world harm |
+| 1 | Very Unlikely — sophisticated, rarely-attempted | Negligible — no meaningful harm |
 | 2 | Unlikely — requires skill and specific opportunity | Minor — limited harm, quickly recoverable |
-| 3 | Possible — known technique, occasional attempts observed | Moderate — contained harm, recovery possible |
+| 3 | Possible — known technique, occasional attempts | Moderate — contained harm, recovery possible |
 | 4 | Likely — easy to exploit, commonly attempted | Major — significant harm, difficult to recover |
-| 5 | Almost Certain — trivial to exploit, actively exploited in the wild | Catastrophic — severe, irreversible harm |
-Risk Score = Likelihood × Impact · LOW 1–4 · MEDIUM 5–9 · HIGH 10–16 · CRITICAL 17–25
+| 5 | Almost Certain — trivial to exploit, actively exploited | Catastrophic — severe, irreversible harm |
 
 [For EACH of the 3 priority assets, produce EXACTLY this block:]
 
-### ASSET [n]: [ASSET NAME] — [RISK LEVEL]
+### [AS-n]: [ASSET NAME] — [RISK LEVEL]
 
-**In plain English:** [One sentence. No jargon. What does this risk mean for someone with no security background? Example: "Anyone who steals a user's password can unlock the door from anywhere in the world."]
+**What this means:** [One sentence. No jargon. What does this risk mean for someone with no security background? Example: "Anyone who steals a user's password can unlock the door from anywhere in the world."]
 
-**CIA:** C: [H/M/L] | I: [H/M/L] | A: [H/M/L] · **Damage Severity:** [Severe/Major/Moderate/Negligible]
+**CIA:** C: [H/M/L] | I: [H/M/L] | A: [H/M/L]
 
 **What Could Go Wrong**
 - 🎯 **Who could do this:** [Attacker profile in plain English — e.g. "Any internet user who finds or buys stolen login credentials"]
@@ -1288,18 +1298,18 @@ Risk Score = Likelihood × Impact · LOW 1–4 · MEDIUM 5–9 · HIGH 10–16 �
 
 ---
 
-## 2.6 STRIDE Summary
+## 2.6 STRIDE Summary — Did We Cover Everything?
 
 Section 2.5 assessed threats asset by asset. This section proves no *type* of attack was overlooked — regardless of which asset it targets. It is a completeness check, not a repeat of Section 2.5.
 
 | STRIDE | Threat Description | Asset | Likelihood | Impact | Score | Level |
 |---|---|---|---|---|---|---|
-| Spoofing (S) | [threat] | [asset] | [1–5] | [1–5] | [score] | [LEVEL] |
-| Tampering (T) | [threat] | [asset] | [1–5] | [1–5] | [score] | [LEVEL] |
-| Repudiation (R) | [threat] | [asset] | [1–5] | [1–5] | [score] | [LEVEL] |
-| Information Disclosure (I) | [threat] | [asset] | [1–5] | [1–5] | [score] | [LEVEL] |
-| Denial of Service (D) | [threat] | [asset] | [1–5] | [1–5] | [score] | [LEVEL] |
-| Elevation of Privilege (E) | [threat] | [asset] | [1–5] | [1–5] | [score] | [LEVEL] |
+| Spoofing (S) | [threat] | [AS-n] | [1–5] | [1–5] | [score] | [LEVEL] |
+| Tampering (T) | [threat] | [AS-n] | [1–5] | [1–5] | [score] | [LEVEL] |
+| Repudiation (R) | [threat] | [AS-n] | [1–5] | [1–5] | [score] | [LEVEL] |
+| Information Disclosure (I) | [threat] | [AS-n] | [1–5] | [1–5] | [score] | [LEVEL] |
+| Denial of Service (D) | [threat] | [AS-n] | [1–5] | [1–5] | [score] | [LEVEL] |
+| Elevation of Privilege (E) | [threat] | [AS-n] | [1–5] | [1–5] | [score] | [LEVEL] |
 
 [If a STRIDE category genuinely does not apply: "[Category] (X) — Not applicable: [one sentence reason]"]
 
@@ -1352,9 +1362,9 @@ CRITICAL RULES — DO NOT DEVIATE:
 6. Recommended Control is a specific action + timeframe — no vague labels
 7. STRIDE 2.6 is a completeness check — all 6 categories must appear
 8. Section 2.4 MUST follow this exact structure: intro sentence → summary statement → CIA key table (3 rows H/M/L × C/I/A) → italic priority rule sentence → asset table (ID | Asset | C | I | A | Priority | Notes — AS-1 etc., top 3 get Priority 1/2/3, rest get "—" in Priority with reason in Notes) → "Why this score" blocks for AS-1, AS-2, AS-3 → "Why these assets were selected" paragraph → bridge sentence. NO old three-criteria format (CIA Severity / Damage Severity / Attack Reachability)
-9. The Risk Scoring Model table MUST appear at the start of 2.5 before the first asset card
-10. Asset cards MUST use: ### ASSET [n]: [NAME] — [RISK LEVEL]
-11. Each asset card MUST start with: **In plain English:** [one jargon-free sentence]
+9. Section 2.5 MUST follow this exact structure: intro sentence → summary statement (listing AS-n IDs) → key terms table (6 rows) → *Diagram: threat assessment flow* (output this exact text as an italic line) → Risk Scoring Model table → asset cards → bridge sentence
+10. Asset cards MUST use: ### [AS-n]: [NAME] — [RISK LEVEL]
+11. Each asset card MUST start with: **What this means:** [one jargon-free sentence]
 12. "What Could Go Wrong" MUST be 3 bullets: 🎯 Who · ⚡ What they do · 💥 What happens — NO paragraphs
 13. Risk Score MUST be inline: **Risk Score:** Likelihood [n] × Impact [n] = **[score] → [LEVEL]** — NO table
 14. The 2.8 IS/IS NOT table MUST appear — two columns, 5 rows
@@ -1604,6 +1614,7 @@ function enhanceReport() {
     const txt = em.textContent.trim();
     let svg = null;
     if (txt === 'Diagram: attack surface overview') svg = svgAttackSurface();
+    else if (txt === 'Diagram: threat assessment flow') svg = svgThreatAssessment();
     if (svg) {
       const p = em.closest('p') || em.parentElement;
       const block = document.createElement('div');
@@ -1612,8 +1623,8 @@ function enhanceReport() {
       p.parentNode.replaceChild(block, p);
     }
   });
-  // 2.5, 2.6: inject after h2 + intro paragraph
-  const svgMap = { '2.5': svgThreatAssessment(), '2.6': svgStride() };
+  // 2.6: inject after h2 + intro paragraph
+  const svgMap = { '2.6': svgStride() };
   card.querySelectorAll('h2').forEach(h2 => {
     const key = Object.keys(svgMap).find(k => h2.textContent.trim().startsWith(k));
     if (!key) return;
