@@ -247,6 +247,50 @@
 
   /* ── Report: Section 2 new components ── */
 
+  /* 4-question orientation flow */
+  .four-questions {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--sand); border-radius: var(--radius-lg);
+    padding: .875rem 1rem; margin: 1rem 0 1.5rem;
+    flex-wrap: wrap; justify-content: center;
+  }
+  .fq-item {
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    background: white; border: 1.5px solid var(--sand3);
+    border-radius: var(--radius); padding: .5rem .875rem;
+    text-align: center; min-width: 108px; flex: 1;
+  }
+  .fq-num { font-size: 9px; font-weight: 700; color: var(--accent); letter-spacing: .12em; text-transform: uppercase; }
+  .fq-text { font-size: 12px; color: var(--text); font-weight: 500; line-height: 1.4; }
+  .fq-arrow { font-size: 16px; color: var(--sand3); flex-shrink: 0; }
+
+  /* Plain-English headline on asset cards */
+  .plain-english-bar {
+    background: var(--accent3); border-left: 3px solid var(--accent);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: .625rem 1rem; margin: .5rem 0 1rem !important;
+    font-size: 14px !important; font-style: italic;
+    color: var(--text) !important; line-height: 1.6;
+  }
+  .plain-english-bar strong { color: var(--accent) !important; font-style: normal; }
+
+  /* What Could Go Wrong bullets */
+  .wcgw-list { list-style: none !important; padding-left: 0 !important; }
+  .wcgw-list li {
+    padding: .45rem .75rem; margin-bottom: 4px;
+    border-radius: var(--radius); font-size: 13.5px;
+    background: var(--sand); border: 1px solid var(--sand2);
+  }
+
+  /* Inline risk score */
+  .risk-score-line {
+    font-size: 14px !important; padding: .5rem .875rem;
+    background: var(--sand); border-radius: var(--radius);
+    margin: .5rem 0 .75rem !important;
+    border: 1px solid var(--sand2);
+  }
+  .risk-score-line strong { font-size: 15px; }
+
   /* Asset cards (2.5) */
   .asset-card {
     border: 1.5px solid var(--sand3);
@@ -1056,7 +1100,7 @@ A cybersecurity risk assessment answers four questions: What are we protecting? 
 
 ## 2.1 Scope & Context
 
-This section defines exactly what is — and is not — being assessed. A clear scope prevents misinterpretation and ensures the findings are not applied beyond their valid boundary.
+This section defines exactly what is being assessed and what is not — preventing misinterpretation of findings.
 
 | Item | Detail |
 |---|---|
@@ -1084,7 +1128,7 @@ This section defines exactly what is — and is not — being assessed. A clear 
 
 ## 2.2 Product Description
 
-Understanding what the product does, who uses it, and where it operates is the foundation of the threat model. An attacker's opportunities depend entirely on how and where the product is deployed.
+The product's function, users, and deployment determine every threat that follows — this section captures that context in one place.
 
 | Field | Detail |
 |---|---|
@@ -1106,7 +1150,7 @@ Understanding what the product does, who uses it, and where it operates is the f
 
 ## 2.3 Attack Surface
 
-The attack surface is every point where an attacker could try to interact with the product — networks it connects to, interfaces it exposes, and the environment it operates in. A larger attack surface means more opportunity for attack.
+The attack surface is every way an attacker could try to reach the product — the more connections, the more ways in.
 
 **Networks & Connectivity**
 | Network / Protocol | Exposure Level | Notes |
@@ -1132,7 +1176,7 @@ The attack surface is every point where an attacker could try to interact with t
 
 ## 2.4 Asset Register
 
-Assets are anything of value that could be harmed — data, credentials, functions, and the physical access the product controls. Not all assets carry equal risk. Priority for deep assessment is determined by three criteria:
+Assets are anything of value that could be harmed if the product is attacked — data, credentials, functions, or the physical access it controls. Priority is determined by three criteria:
 
 **Prioritisation Criteria**
 1. **CIA Severity** — combined harm from breaches of Confidentiality, Integrity, and Availability
@@ -1152,7 +1196,7 @@ Assets are anything of value that could be harmed — data, credentials, functio
 
 ## 2.5 Threat Assessment
 
-A threat is something that could go wrong with an asset. For each priority asset, this section describes a realistic attack scenario, scores the risk, identifies what protection already exists, and recommends the specific action needed.
+For each priority asset, this section describes exactly what could go wrong, how likely it is, how bad it would be, and what to do about it.
 
 **Risk Scoring Model**
 | Score | Likelihood meaning | Impact meaning |
@@ -1168,35 +1212,31 @@ Risk Score = Likelihood × Impact · LOW 1–4 · MEDIUM 5–9 · HIGH 10–16 �
 
 ### ASSET [n]: [ASSET NAME] — [RISK LEVEL]
 
+**In plain English:** [One sentence. No jargon. What does this risk mean for someone with no security background? Example: "Anyone who steals a user's password can unlock the door from anywhere in the world."]
+
 **CIA:** C: [H/M/L] | I: [H/M/L] | A: [H/M/L] · **Damage Severity:** [Severe/Major/Moderate/Negligible]
 
 **What Could Go Wrong**
-[Plain English. One paragraph. Worst realistic scenario for this asset. What does an attacker gain or cause? Reference any relevant misuse scenario from Section C of the questionnaire.]
+- 🎯 **Who could do this:** [Attacker profile in plain English — e.g. "Any internet user who finds or buys stolen login credentials"]
+- ⚡ **What they do:** [The attack in one plain sentence — no jargon]
+- 💥 **What happens:** [Real-world consequence in one plain sentence]
 
-**STRIDE:** [Primary category — one word] · [Secondary category if applicable — one word + one sentence why]
+**STRIDE:** [Primary category — one word] · [Secondary if applicable — one word + one sentence why]
 
-**Attack Path**
-- Step 1 — **Initial access:** [How attacker enters the product or system]
-- Step 2 — **Progression:** [What attacker does once in]
-- Step 3 — **Target:** [How attacker reaches this specific asset]
-- Step 4 — **Impact:** [What harm is caused to users, business, or the product]
+**How an attack unfolds**
+- Step 1 — **Enter:** [How attacker gets initial access]
+- Step 2 — **Move:** [What attacker does once in]
+- Step 3 — **Reach:** [How attacker gets to this asset]
+- Step 4 — **Harm:** [What damage is caused]
 
-**Risk Score**
-| Factor | Score | Justification |
-|---|---|---|
-| Likelihood | [1–5] | [One sentence] |
-| Impact | [1–5] | [One sentence] |
-| **Risk Score** | **[L×I]** | |
-| **Risk Level** | **[LOW/MEDIUM/HIGH/CRITICAL]** | |
+**Risk Score:** Likelihood [1–5] × Impact [1–5] = **[L×I] → [LEVEL]**
+*[One sentence on why this likelihood score. One sentence on why this impact score.]*
 
-**Current Controls**
-[What currently protects this asset, from questionnaire answers. If none: "None identified."]
+**Current Controls:** [Short bullet list of what protects this asset. If nothing: "None identified."]
 
-**Residual Risk**
-Even with [current controls] in place, an attacker could still [specific harm] because [specific weakness].
+**Residual Risk:** Even with [controls] in place, an attacker could still [specific harm] because [specific weakness].
 
-**Recommended Control**
-[Specific, concrete action. Timeframe: Before launch / Within 30 days / Within 90 days / Ongoing. Plain English. No jargon.]
+**Recommended Control:** [Specific action — Before launch / Within 30 days / Within 90 days / Ongoing]
 
 ---
 
@@ -1227,7 +1267,7 @@ Section 2.5 assessed threats asset by asset. This section proves no *type* of at
 
 ## 2.7 Information Gaps
 
-A risk assessment can only be as thorough as the information available. The gaps below identify areas where additional data is needed to confirm or revise the findings. Until resolved, the worst-case assumptions applied in Section 2.5 remain in force.
+These are things the assessor needed to confirm but couldn't — worst-case assumptions apply until each gap is closed by the manufacturer.
 
 | # | Gap | Type | Why It Matters | Assumed Worst Case | Owner |
 |---|---|---|---|---|---|
@@ -1241,7 +1281,7 @@ A risk assessment can only be as thorough as the information available. The gaps
 
 ## 2.8 Assessment Limitations
 
-This assessment is a structured risk analysis, not a penetration test or security certification. The findings reflect information available at the time of assessment and the methodology described below.
+This section defines what this document is, what it covers, and what it does not — preventing misuse of the findings.
 
 | This assessment IS | This assessment is NOT |
 |---|---|
@@ -1263,17 +1303,21 @@ This assessment is a structured risk analysis, not a penetration test or securit
 
 CRITICAL RULES — DO NOT DEVIATE:
 1. Follow section numbers and headers EXACTLY as written above (2.1 through 2.8)
-2. Every section must have: (a) an intro paragraph explaining what the section is and why it matters, and (b) a bridge sentence leading to the next section
+2. Every section must have: (a) one intro sentence only — not a paragraph, and (b) one bridge sentence to the next section
 3. Score WORST CREDIBLE CASE always — never optimistic
 4. Every Unknown answer appears in 2.7 — no exceptions
 5. Residual Risk is always a plain English sentence — never a second score
-6. Recommended Control is a specific action + timeframe — no vague labels like "Mitigate" or "Fix"
-7. STRIDE 2.6 is a completeness check — frame it that way explicitly in the intro. All 6 categories must appear.
-8. The 2.4 asset table MUST include columns: Asset, C, I, A, Damage Severity, Reachability, Priority — and the three prioritisation criteria must appear above it
+6. Recommended Control is a specific action + timeframe — no vague labels
+7. STRIDE 2.6 is a completeness check — all 6 categories must appear
+8. The 2.4 asset table MUST include: Asset, C, I, A, Damage Severity, Reachability, Priority — with the 3 criteria above it
 9. The Risk Scoring Model table MUST appear at the start of 2.5 before the first asset card
-10. Asset cards in 2.5 MUST use the header format: ### ASSET [n]: [NAME] — [RISK LEVEL]
-11. The 2.8 IS/IS NOT table MUST appear exactly as specified — two columns, 5 rows
-12. Be specific to this product throughout — name it, reference its actual interfaces and deployment context`;
+10. Asset cards MUST use: ### ASSET [n]: [NAME] — [RISK LEVEL]
+11. Each asset card MUST start with: **In plain English:** [one jargon-free sentence]
+12. "What Could Go Wrong" MUST be 3 bullets: 🎯 Who · ⚡ What they do · 💥 What happens — NO paragraphs
+13. Risk Score MUST be inline: **Risk Score:** Likelihood [n] × Impact [n] = **[score] → [LEVEL]** — NO table
+14. The 2.8 IS/IS NOT table MUST appear — two columns, 5 rows
+15. Be specific to this product — name it, reference its actual interfaces and deployment context
+16. Keep all text lean — this report is for non-experts. Short sentences. No jargon.`;
 }
 
 function userPrompt(a) {
@@ -1382,78 +1426,59 @@ async function generate() {
 }
 
 // ── Report navigator TOC ──
+let _origNavLabel = null;
+let _origNavHTML = null;
+
 function buildReportNav() {
   const card = document.getElementById('reportCard');
-  const sidebar = document.querySelector('.sidebar');
+  const navLabel = document.querySelector('.nav-label');
+  const navList = document.getElementById('navList');
 
-  // Collect headings from report
-  const headings = Array.from(card.querySelectorAll('h1, h2, h3'));
-  if (!headings.length) return;
+  // Only h2 headings — clean, not overwhelming
+  const h2s = Array.from(card.querySelectorAll('h2'));
+  if (!h2s.length) return;
 
-  // Hide questionnaire nav elements
-  sidebar.querySelector('.nav-label').style.display = 'none';
-  sidebar.querySelector('#navList').style.display = 'none';
+  // Store originals once
+  if (!_origNavHTML) _origNavHTML = navList.innerHTML;
+  if (!_origNavLabel) _origNavLabel = navLabel.textContent;
 
-  // Build TOC
-  const label = document.createElement('div');
-  label.className = 'report-nav-label';
-  label.textContent = 'Report Contents';
-  const list = document.createElement('div');
-  list.className = 'toc-list';
-  list.id = 'tocList';
+  navLabel.textContent = 'Report Sections';
+  navList.innerHTML = '';
 
-  let secCount = 0;
-  headings.forEach((h, idx) => {
-    const txt = h.textContent.trim();
-    if (!txt || txt.length > 80) return;
+  h2s.forEach((h2, idx) => {
+    const txt = h2.textContent.trim();
+    if (!h2.id) h2.id = 'nav-sec-' + idx;
+
+    // Extract section number and title
+    const parts = txt.match(/^(\d+\.\d+)\s+(.+)$/);
+    const num = parts ? parts[1] : '§';
+    const title = parts ? parts[2] : txt;
+
     const item = document.createElement('div');
-    item.className = 'toc-item' + (h.tagName === 'H1' ? ' toc-h1' : '') + (h.tagName === 'H3' ? ' toc-h3' : '');
-    const num = document.createElement('span');
-    num.className = 'toc-num';
-    num.textContent = h.tagName === 'H2' ? txt.split(' ')[0] : (h.tagName === 'H1' ? '§' : '·');
-    const lbl = document.createElement('span');
-    // Shorten long headings
-    lbl.textContent = txt.length > 42 ? txt.slice(0, 40) + '…' : txt;
-    item.appendChild(num); item.appendChild(lbl);
-    // Give heading an anchor id
-    if (!h.id) h.id = 'toc-' + idx;
-    item.addEventListener('click', () => {
-      h.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      document.querySelectorAll('.toc-item').forEach(i => i.classList.remove('toc-active'));
-      item.classList.add('toc-active');
-    });
-    list.appendChild(item);
+    item.className = 'nav-item';
+    item.setAttribute('data-s', 'toc');
+    item.innerHTML = `<div class="step-num" style="font-size:9px;min-width:28px;border-radius:4px">${num}</div>${title.length > 22 ? title.slice(0,21)+'…' : title}`;
+    item.onclick = () => {
+      navList.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+      item.classList.add('active');
+      h2.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+    navList.appendChild(item);
   });
-
-  // Insert into sidebar (before sidebar footer)
-  const footer = sidebar.querySelector('.sidebar-footer');
-  sidebar.insertBefore(label, footer);
-  sidebar.insertBefore(list, footer);
-
-  // Scroll-spy
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const id = entry.target.id;
-        document.querySelectorAll('.toc-item').forEach(item => {
-          const h = document.getElementById(id);
-          item.classList.toggle('toc-active', h && item.textContent.includes(h.textContent.slice(0, 20)));
-        });
-      }
-    });
-  }, { threshold: 0.1, rootMargin: '-10% 0px -80% 0px' });
-  headings.forEach(h => { if (h.id) observer.observe(h); });
 }
 
 function resetReportNav() {
-  // Restore questionnaire nav on new assessment
-  const sidebar = document.querySelector('.sidebar');
-  sidebar.querySelector('.nav-label').style.display = '';
-  sidebar.querySelector('#navList').style.display = '';
-  const lbl = sidebar.querySelector('.report-nav-label');
-  const toc = sidebar.querySelector('#tocList');
-  if (lbl) lbl.remove();
-  if (toc) toc.remove();
+  const navLabel = document.querySelector('.nav-label');
+  const navList = document.getElementById('navList');
+  if (_origNavLabel) navLabel.textContent = _origNavLabel;
+  if (_origNavHTML) navList.innerHTML = _origNavHTML;
+  // Re-wire onclick handlers (innerHTML wipes them)
+  navList.querySelectorAll('.nav-item').forEach(item => {
+    const s = parseInt(item.getAttribute('data-s'));
+    if (!isNaN(s)) item.onclick = () => go(s);
+  });
+  _origNavHTML = null;
+  _origNavLabel = null;
 }
 
 // ── Post-render visual enhancements ──
@@ -1463,17 +1488,15 @@ function enhanceReport() {
   // 1. Wrap ASSET cards — find h3 matching "### ASSET n: Name — LEVEL"
   card.querySelectorAll('h3').forEach(h3 => {
     const txt = h3.textContent.trim();
-    const m = txt.match(/^ASSET\s+(\d+):\s+(.+?)\s+[—–-]+\s+(CRITICAL|HIGH|MEDIUM|LOW)$/i);
+    const m = txt.match(/^ASSET\s+(\d+):\s+(.+?)\s*[—–\-]+\s*(CRITICAL|HIGH|MEDIUM|LOW)$/i);
     if (!m) return;
     const [, num, name, level] = m;
-    // Collect all siblings until next h3 or hr
     const nodes = [];
     let sib = h3.nextSibling;
-    while (sib && sib.tagName !== 'H3' && sib.tagName !== 'HR') {
+    while (sib && !(sib.tagName === 'H3' || sib.tagName === 'HR')) {
       nodes.push(sib);
       sib = sib.nextSibling;
     }
-    // Build card
     const wrapper = document.createElement('div');
     wrapper.className = 'asset-card';
     const hdr = document.createElement('div');
@@ -1482,35 +1505,70 @@ function enhanceReport() {
     wrapper.appendChild(hdr);
     nodes.forEach(n => wrapper.appendChild(n.cloneNode(true)));
     h3.parentNode.insertBefore(wrapper, h3);
-    nodes.forEach(n => n.parentNode && n.parentNode.removeChild(n));
+    nodes.forEach(n => { if (n.parentNode) n.parentNode.removeChild(n); });
     h3.parentNode.removeChild(h3);
   });
 
-  // 2. Style section orientation paragraph (first <p> after #SECTION 2 h1)
+  // 2. Style "In plain English:" lines in asset cards
+  card.querySelectorAll('.asset-card p').forEach(p => {
+    if (p.innerHTML.includes('In plain English:') || p.textContent.trim().startsWith('In plain English:')) {
+      p.classList.add('plain-english-bar');
+    }
+  });
+
+  // 3. Style "What Could Go Wrong" bullet lists
+  card.querySelectorAll('p, strong').forEach(el => {
+    if (el.textContent.trim() === 'What Could Go Wrong') {
+      const p = el.tagName === 'P' ? el : el.closest('p');
+      if (p) {
+        let next = p.nextElementSibling;
+        if (next && next.tagName === 'UL') next.classList.add('wcgw-list');
+      }
+    }
+  });
+
+  // 4. Style inline Risk Score lines
+  card.querySelectorAll('p').forEach(p => {
+    if (p.textContent.trim().startsWith('Risk Score:')) {
+      p.classList.add('risk-score-line');
+    }
+  });
+
+  // 5. Replace Section 2 orientation paragraph with 4-question visual
   const secH1 = Array.from(card.querySelectorAll('h1')).find(h => h.textContent.includes('SECTION 2'));
   if (secH1) {
     let next = secH1.nextElementSibling;
-    if (next && next.tagName === 'P') next.classList.add('section-orientation');
+    if (next && next.tagName === 'P') {
+      const flow = document.createElement('div');
+      flow.className = 'four-questions';
+      flow.innerHTML =
+        '<div class="fq-item"><span class="fq-num">01</span><span class="fq-text">What are we protecting?</span></div>' +
+        '<span class="fq-arrow">→</span>' +
+        '<div class="fq-item"><span class="fq-num">02</span><span class="fq-text">Where can it be attacked?</span></div>' +
+        '<span class="fq-arrow">→</span>' +
+        '<div class="fq-item"><span class="fq-num">03</span><span class="fq-text">What could go wrong?</span></div>' +
+        '<span class="fq-arrow">→</span>' +
+        '<div class="fq-item"><span class="fq-num">04</span><span class="fq-text">How bad would it be?</span></div>';
+      next.parentNode.replaceChild(flow, next);
+    }
   }
 
-  // 3. Inject concept SVGs after section headers
-  const svgs = {
-    '2.3': svgAttackSurface(),
-    '2.4': svgAssetRegister(),
-    '2.5': svgThreatAssessment(),
-    '2.6': svgStride()
-  };
+  // 6. Inject concept SVGs after section h2 intro paragraph (not between h2 and intro)
+  const svgMap = { '2.3': svgAttackSurface(), '2.4': svgAssetRegister(), '2.5': svgThreatAssessment(), '2.6': svgStride() };
   card.querySelectorAll('h2').forEach(h2 => {
-    const txt = h2.textContent.trim();
-    const key = Object.keys(svgs).find(k => txt.startsWith(k));
+    const key = Object.keys(svgMap).find(k => h2.textContent.trim().startsWith(k));
     if (!key) return;
+    // Find the first <p> after this h2 (intro sentence), insert SVG after it
+    let insertAfter = h2;
+    let el = h2.nextElementSibling;
+    if (el && el.tagName === 'P') insertAfter = el;
     const block = document.createElement('div');
     block.className = 'concept-block';
-    block.innerHTML = svgs[key];
-    h2.parentNode.insertBefore(block, h2.nextSibling);
+    block.innerHTML = svgMap[key];
+    insertAfter.parentNode.insertBefore(block, insertAfter.nextSibling);
   });
 
-  // 4. Style IS/IS NOT table in 2.8
+  // 7. Style IS/IS NOT table in 2.8
   card.querySelectorAll('h2').forEach(h2 => {
     if (!h2.textContent.includes('2.8')) return;
     let el = h2.nextElementSibling;
@@ -1520,100 +1578,100 @@ function enhanceReport() {
     }
   });
 
-  // 5. Style gap Type column cells
+  // 8. Style gap Type column cells
   card.querySelectorAll('td').forEach(td => {
     const t = td.textContent.trim();
-    if (t === 'Not Disclosed') { td.innerHTML = '<span class="gap-type not-disclosed">Not Disclosed</span>'; }
-    else if (t === 'Needs Testing') { td.innerHTML = '<span class="gap-type needs-testing">Needs Testing</span>'; }
-    else if (t === 'Future Scope') { td.innerHTML = '<span class="gap-type future-scope">Future Scope</span>'; }
+    if (t === 'Not Disclosed') td.innerHTML = '<span class="gap-type not-disclosed">Not Disclosed</span>';
+    else if (t === 'Needs Testing') td.innerHTML = '<span class="gap-type needs-testing">Needs Testing</span>';
+    else if (t === 'Future Scope') td.innerHTML = '<span class="gap-type future-scope">Future Scope</span>';
   });
 }
 
 // ── Concept SVGs ──
 function svgAttackSurface() {
-  return `<svg viewBox="0 0 560 130" xmlns="http://www.w3.org/2000/svg" style="max-height:130px">
-    <rect width="560" height="130" fill="#f7f4ef"/>
-    <!-- Device -->
-    <rect x="230" y="35" width="100" height="60" rx="8" fill="#2f6b4f" opacity=".12" stroke="#2f6b4f" stroke-width="1.5"/>
-    <text x="280" y="62" text-anchor="middle" font-size="11" fill="#2f6b4f" font-family="Inter,sans-serif" font-weight="600">Product</text>
-    <text x="280" y="77" text-anchor="middle" font-size="9" fill="#2f6b4f" font-family="Inter,sans-serif">Device</text>
-    <!-- Arrows from attack vectors -->
-    <g stroke="#c0392b" stroke-width="1.5" fill="none" marker-end="url(#arrowR)">
-      <line x1="60" y1="65" x2="225" y2="65"/>
-      <line x1="130" y1="30" x2="232" y2="50"/>
-      <line x1="130" y1="100" x2="232" y2="80"/>
-      <line x1="430" y1="65" x2="335" y2="65"/>
-      <line x1="420" y1="35" x2="336" y2="52"/>
-    </g>
-    <defs><marker id="arrowR" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="#c0392b"/></marker></defs>
-    <!-- Labels -->
-    <text x="52" y="62" text-anchor="middle" font-size="9.5" fill="#6b5f4f" font-family="Inter,sans-serif">Internet</text>
-    <text x="52" y="74" text-anchor="middle" font-size="9.5" fill="#6b5f4f" font-family="Inter,sans-serif">/ Cloud</text>
-    <text x="110" y="28" text-anchor="middle" font-size="9.5" fill="#6b5f4f" font-family="Inter,sans-serif">BLE / Wi-Fi</text>
-    <text x="110" y="104" text-anchor="middle" font-size="9.5" fill="#6b5f4f" font-family="Inter,sans-serif">Physical</text>
-    <text x="450" y="62" text-anchor="middle" font-size="9.5" fill="#6b5f4f" font-family="Inter,sans-serif">Mobile</text>
-    <text x="450" y="74" text-anchor="middle" font-size="9.5" fill="#6b5f4f" font-family="Inter,sans-serif">App</text>
-    <text x="447" y="33" text-anchor="middle" font-size="9.5" fill="#6b5f4f" font-family="Inter,sans-serif">API</text>
-    <text x="280" y="118" text-anchor="middle" font-size="10" fill="#a8997f" font-family="Inter,sans-serif">Every arrow is an entry point for an attacker</text>
+  // Concentric zones — accurate, no misleading arrows
+  return `<svg viewBox="0 0 560 148" xmlns="http://www.w3.org/2000/svg" style="max-height:148px;display:block;width:100%">
+    <rect width="560" height="148" fill="#f7f4ef"/>
+    <rect x="8" y="8" width="544" height="132" rx="8" fill="#fef2f2" stroke="#c0392b" stroke-width="1.2" stroke-dasharray="5,3"/>
+    <text x="18" y="24" font-size="9" font-weight="600" fill="#c0392b" font-family="Inter,sans-serif">Internet / Cloud</text>
+    <rect x="50" y="30" width="460" height="90" rx="7" fill="#fff7ed" stroke="#e67e22" stroke-width="1.2" stroke-dasharray="4,3"/>
+    <text x="60" y="45" font-size="9" font-weight="600" fill="#e67e22" font-family="Inter,sans-serif">Local Network &amp; Wireless</text>
+    <rect x="110" y="52" width="340" height="58" rx="6" fill="#fffbeb" stroke="#b8860b" stroke-width="1.2" stroke-dasharray="4,3"/>
+    <text x="120" y="66" font-size="9" font-weight="600" fill="#b8860b" font-family="Inter,sans-serif">Physical Proximity</text>
+    <rect x="190" y="68" width="180" height="34" rx="5" fill="#e8f5ee" stroke="#2f6b4f" stroke-width="1.5"/>
+    <text x="280" y="82" text-anchor="middle" font-size="10" font-weight="700" fill="#2f6b4f" font-family="Inter,sans-serif">Product</text>
+    <text x="280" y="95" text-anchor="middle" font-size="8.5" fill="#2f6b4f" font-family="Inter,sans-serif">The asset being protected</text>
+    <text x="280" y="140" text-anchor="middle" font-size="9" fill="#a8997f" font-family="Inter,sans-serif">Each zone is a layer of exposure. The tables below list every specific entry point identified for this product.</text>
   </svg>`;
 }
 
 function svgAssetRegister() {
-  return `<svg viewBox="0 0 560 130" xmlns="http://www.w3.org/2000/svg" style="max-height:130px">
-    <rect width="560" height="130" fill="#f7f4ef"/>
-    <!-- Pyramid tiers -->
-    <polygon points="280,12 180,48 380,48" fill="#c0392b" opacity=".8"/>
-    <polygon points="180,52 130,88 430,88" fill="#e67e22" opacity=".7"/>
-    <polygon points="130,92 80,120 480,120" fill="#2f6b4f" opacity=".5"/>
-    <!-- Labels -->
-    <text x="280" y="36" text-anchor="middle" font-size="10" fill="white" font-family="Inter,sans-serif" font-weight="700">Priority 1</text>
-    <text x="280" y="75" text-anchor="middle" font-size="10" fill="white" font-family="Inter,sans-serif" font-weight="600">Priority 2</text>
-    <text x="280" y="110" text-anchor="middle" font-size="10" fill="white" font-family="Inter,sans-serif" font-weight="500">Not assessed in depth</text>
-    <!-- Criteria labels right side -->
-    <text x="440" y="36" font-size="9" fill="#6b5f4f" font-family="Inter,sans-serif">CIA Severity</text>
-    <text x="440" y="75" font-size="9" fill="#6b5f4f" font-family="Inter,sans-serif">Damage Severity</text>
-    <text x="440" y="107" font-size="9" fill="#6b5f4f" font-family="Inter,sans-serif">Reachability</text>
+  // Horizontal priority bars — clear and accurate
+  return `<svg viewBox="0 0 560 138" xmlns="http://www.w3.org/2000/svg" style="max-height:138px;display:block;width:100%">
+    <rect width="560" height="138" fill="#f7f4ef"/>
+    <text x="10" y="27" font-size="9.5" font-weight="600" fill="#6b5f4f" font-family="Inter,sans-serif">Priority 1</text>
+    <rect x="78" y="13" width="350" height="20" rx="4" fill="#c0392b" opacity=".75"/>
+    <text x="436" y="27" font-size="9" fill="#c0392b" font-family="Inter,sans-serif">Fully assessed</text>
+    <text x="10" y="57" font-size="9.5" font-weight="600" fill="#6b5f4f" font-family="Inter,sans-serif">Priority 2</text>
+    <rect x="78" y="43" width="250" height="20" rx="4" fill="#e67e22" opacity=".65"/>
+    <text x="336" y="57" font-size="9" fill="#e67e22" font-family="Inter,sans-serif">Fully assessed</text>
+    <text x="10" y="87" font-size="9.5" font-weight="600" fill="#6b5f4f" font-family="Inter,sans-serif">Priority 3</text>
+    <rect x="78" y="73" width="170" height="20" rx="4" fill="#b8860b" opacity=".55"/>
+    <text x="256" y="87" font-size="9" fill="#b8860b" font-family="Inter,sans-serif">Fully assessed</text>
+    <text x="10" y="117" font-size="9.5" fill="#a8997f" font-family="Inter,sans-serif">Other assets</text>
+    <rect x="78" y="103" width="80" height="20" rx="4" fill="#a8997f" opacity=".35"/>
+    <text x="166" y="117" font-size="9" fill="#a8997f" font-family="Inter,sans-serif">Listed, not assessed in depth</text>
+    <line x1="8" y1="129" x2="552" y2="129" stroke="#ddd8cc" stroke-width="1"/>
+    <text x="280" y="137" text-anchor="middle" font-size="8.5" fill="#a8997f" font-family="Inter,sans-serif">Ranked by: CIA Severity · Damage Severity · Attack Reachability</text>
   </svg>`;
 }
 
 function svgThreatAssessment() {
-  return `<svg viewBox="0 0 560 90" xmlns="http://www.w3.org/2000/svg" style="max-height:90px">
-    <rect width="560" height="90" fill="#f7f4ef"/>
-    <g font-family="Inter,sans-serif" font-size="10">
-      <!-- Steps -->
-      <rect x="20" y="25" width="100" height="40" rx="6" fill="#e8f5ee" stroke="#2f6b4f" stroke-width="1.2"/>
-      <text x="70" y="43" text-anchor="middle" fill="#2f6b4f" font-weight="600">Step 1</text>
-      <text x="70" y="57" text-anchor="middle" fill="#2f6b4f">Initial Access</text>
-      <line x1="122" y1="45" x2="148" y2="45" stroke="#a8997f" stroke-width="1.5" marker-end="url(#arr)"/>
-      <rect x="150" y="25" width="100" height="40" rx="6" fill="#fff7ed" stroke="#e67e22" stroke-width="1.2"/>
-      <text x="200" y="43" text-anchor="middle" fill="#c2410c" font-weight="600">Step 2</text>
-      <text x="200" y="57" text-anchor="middle" fill="#c2410c">Progression</text>
-      <line x1="252" y1="45" x2="278" y2="45" stroke="#a8997f" stroke-width="1.5" marker-end="url(#arr)"/>
-      <rect x="280" y="25" width="100" height="40" rx="6" fill="#fff7ed" stroke="#e67e22" stroke-width="1.2"/>
-      <text x="330" y="43" text-anchor="middle" fill="#c2410c" font-weight="600">Step 3</text>
-      <text x="330" y="57" text-anchor="middle" fill="#c2410c">Reach Target</text>
-      <line x1="382" y1="45" x2="408" y2="45" stroke="#a8997f" stroke-width="1.5" marker-end="url(#arr)"/>
-      <rect x="410" y="25" width="120" height="40" rx="6" fill="#fef2f2" stroke="#c0392b" stroke-width="1.2"/>
-      <text x="470" y="43" text-anchor="middle" fill="#c0392b" font-weight="600">Step 4</text>
-      <text x="470" y="57" text-anchor="middle" fill="#c0392b">Impact</text>
-    </g>
-    <defs><marker id="arr" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto"><path d="M0,0 L0,5 L5,2.5 z" fill="#a8997f"/></marker></defs>
-    <text x="280" y="83" text-anchor="middle" font-size="9.5" fill="#a8997f" font-family="Inter,sans-serif">Each asset card follows this path from attacker entry to real-world harm</text>
+  // 4-step attack flow — clean boxes, proper markers
+  return `<svg viewBox="0 0 560 78" xmlns="http://www.w3.org/2000/svg" style="max-height:78px;display:block;width:100%">
+    <defs><marker id="arrowT" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="#a8997f"/></marker></defs>
+    <rect width="560" height="78" fill="#f7f4ef"/>
+    <rect x="12" y="14" width="112" height="38" rx="6" fill="#e8f5ee" stroke="#2f6b4f" stroke-width="1.5"/>
+    <text x="68" y="30" text-anchor="middle" font-size="9" font-weight="700" fill="#2f6b4f" font-family="Inter,sans-serif">1 · ENTER</text>
+    <text x="68" y="44" text-anchor="middle" font-size="8.5" fill="#2f6b4f" font-family="Inter,sans-serif">Initial access</text>
+    <line x1="125" y1="33" x2="146" y2="33" stroke="#a8997f" stroke-width="1.5" marker-end="url(#arrowT)"/>
+    <rect x="148" y="14" width="112" height="38" rx="6" fill="#fff7ed" stroke="#e67e22" stroke-width="1.5"/>
+    <text x="204" y="30" text-anchor="middle" font-size="9" font-weight="700" fill="#c2410c" font-family="Inter,sans-serif">2 · MOVE</text>
+    <text x="204" y="44" text-anchor="middle" font-size="8.5" fill="#c2410c" font-family="Inter,sans-serif">Progress deeper</text>
+    <line x1="261" y1="33" x2="282" y2="33" stroke="#a8997f" stroke-width="1.5" marker-end="url(#arrowT)"/>
+    <rect x="284" y="14" width="112" height="38" rx="6" fill="#fff7ed" stroke="#e67e22" stroke-width="1.5"/>
+    <text x="340" y="30" text-anchor="middle" font-size="9" font-weight="700" fill="#c2410c" font-family="Inter,sans-serif">3 · REACH</text>
+    <text x="340" y="44" text-anchor="middle" font-size="8.5" fill="#c2410c" font-family="Inter,sans-serif">Target the asset</text>
+    <line x1="397" y1="33" x2="418" y2="33" stroke="#a8997f" stroke-width="1.5" marker-end="url(#arrowT)"/>
+    <rect x="420" y="14" width="128" height="38" rx="6" fill="#fef2f2" stroke="#c0392b" stroke-width="1.5"/>
+    <text x="484" y="30" text-anchor="middle" font-size="9" font-weight="700" fill="#c0392b" font-family="Inter,sans-serif">4 · HARM</text>
+    <text x="484" y="44" text-anchor="middle" font-size="8.5" fill="#c0392b" font-family="Inter,sans-serif">Real-world impact</text>
+    <text x="280" y="70" text-anchor="middle" font-size="8.5" fill="#a8997f" font-family="Inter,sans-serif">Every asset card below maps a realistic attack through these 4 steps</text>
   </svg>`;
 }
 
 function svgStride() {
-  return `<svg viewBox="0 0 560 120" xmlns="http://www.w3.org/2000/svg" style="max-height:120px">
+  // 2×3 clean grid — simple, readable, accurate
+  const items = [
+    ['S','Spoofing','Pretending to be someone else'],
+    ['T','Tampering','Changing data without permission'],
+    ['R','Repudiation','Denying an action happened'],
+    ['I','Info Disclosure','Leaking private data'],
+    ['D','Denial of Service','Making the product unavailable'],
+    ['E','Priv Escalation','Gaining more access than allowed']
+  ];
+  const cells = items.map(([l,n,d], i) => {
+    const col = i % 3, row = Math.floor(i / 3);
+    const x = 10 + col * 182, y = 10 + row * 52;
+    return `<rect x="${x}" y="${y}" width="172" height="44" rx="5" fill="white" stroke="#ddd8cc" stroke-width="1.2"/>
+      <text x="${x+10}" y="${y+19}" font-size="14" font-weight="700" fill="#2f6b4f" font-family="Inter,sans-serif">${l}</text>
+      <text x="${x+30}" y="${y+18}" font-size="9.5" font-weight="600" fill="#2c2416" font-family="Inter,sans-serif">${n}</text>
+      <text x="${x+30}" y="${y+32}" font-size="8.5" fill="#6b5f4f" font-family="Inter,sans-serif">${d}</text>`;
+  }).join('');
+  return `<svg viewBox="0 0 560 120" xmlns="http://www.w3.org/2000/svg" style="max-height:120px;display:block;width:100%">
     <rect width="560" height="120" fill="#f7f4ef"/>
-    <g font-family="Inter,sans-serif" font-size="10" text-anchor="middle">
-      <!-- Hexagons row -->
-      ${[['S','Spoofing',70],['T','Tampering',150],['R','Repudiation',230],['I','Information',310],['D','Denial of Svc',390],['E','Elevation',470]].map(([l,n,x]) =>
-        `<polygon points="${x},18 ${x+28},32 ${x+28},60 ${x},74 ${x-28},60 ${x-28},32" fill="#2f6b4f" opacity=".12" stroke="#2f6b4f" stroke-width="1.2"/>
-         <text x="${x}" y="50" fill="#2f6b4f" font-weight="700" font-size="14">${l}</text>
-         <text x="${x}" y="88" fill="#6b5f4f" font-size="8.5">${n}</text>`
-      ).join('')}
-    </g>
-    <text x="280" y="108" text-anchor="middle" font-size="9.5" fill="#a8997f" font-family="Inter,sans-serif">All 6 STRIDE categories checked — proves no attack type was missed</text>
+    ${cells}
+    <text x="280" y="115" text-anchor="middle" font-size="8.5" fill="#a8997f" font-family="Inter,sans-serif">All 6 categories are checked below — confirms no attack type was overlooked</text>
   </svg>`;
 }
 
