@@ -278,23 +278,6 @@
 
   /* ── Report: Section 2 new components ── */
 
-  /* 4-question orientation flow */
-  .four-questions {
-    display: flex; align-items: center; gap: 6px;
-    background: var(--sand); border-radius: var(--radius-lg);
-    padding: .875rem 1rem; margin: 1rem 0 1.5rem;
-    flex-wrap: wrap; justify-content: center;
-  }
-  .fq-item {
-    display: flex; flex-direction: column; align-items: center; gap: 3px;
-    background: white; border: 1.5px solid var(--sand3);
-    border-radius: var(--radius); padding: .5rem .875rem;
-    text-align: center; min-width: 108px; flex: 1;
-  }
-  .fq-num { font-size: 9px; font-weight: 700; color: var(--accent); letter-spacing: .12em; text-transform: uppercase; }
-  .fq-text { font-size: 12px; color: var(--text); font-weight: 500; line-height: 1.4; }
-  .fq-arrow { font-size: 16px; color: var(--sand3); flex-shrink: 0; }
-
   /* Plain-English headline on asset cards */
   .plain-english-bar {
     background: var(--accent3); border-left: 3px solid var(--accent);
@@ -1649,22 +1632,6 @@ function enhanceReport() {
       card.appendChild(toc);
     }
   })();
-
-  // 0d. Inject 4-question orientation flow before first h2
-  const firstH2 = card.querySelector('h2');
-  if (firstH2) {
-    const flow = document.createElement('div');
-    flow.className = 'four-questions';
-    flow.innerHTML =
-      '<div class="fq-item"><span class="fq-num">01</span><span class="fq-text">What are we protecting?</span></div>' +
-      '<span class="fq-arrow">→</span>' +
-      '<div class="fq-item"><span class="fq-num">02</span><span class="fq-text">Where can it be attacked?</span></div>' +
-      '<span class="fq-arrow">→</span>' +
-      '<div class="fq-item"><span class="fq-num">03</span><span class="fq-text">What could go wrong?</span></div>' +
-      '<span class="fq-arrow">→</span>' +
-      '<div class="fq-item"><span class="fq-num">04</span><span class="fq-text">How bad would it be?</span></div>';
-    firstH2.parentNode.insertBefore(flow, firstH2);
-  }
 
   // 1. Wrap ASSET cards — find h3 matching "### AS-n: Name — LEVEL"
   card.querySelectorAll('h3').forEach(h3 => {
