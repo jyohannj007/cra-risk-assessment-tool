@@ -367,17 +367,6 @@
   }
   .scoring-box table { margin: .5rem 0 0; font-size: 12px; }
 
-  /* Concept illustration placeholder (2.3, 2.4, 2.5, 2.6) */
-  .concept-block {
-    background: var(--sand);
-    border: 1.5px dashed var(--sand3);
-    border-radius: var(--radius-lg);
-    margin: 1rem 0 1.25rem;
-    overflow: hidden;
-    text-align: center;
-  }
-  .concept-block svg { display: block; width: 100%; }
-
   /* IS / IS NOT table (2.8) */
   .report-card table.is-isnot th:first-child { color: var(--accent); }
   .report-card table.is-isnot th:last-child  { color: var(--danger); }
@@ -497,7 +486,6 @@
     body { font-size: 13px; }
     .asset-card { page-break-inside: avoid; }
     .scoring-box { page-break-inside: avoid; }
-    .concept-block { page-break-inside: avoid; }
     table { page-break-inside: avoid; }
     .report-card h2 { page-break-after: avoid; background: var(--sand) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     .report-card h3 { page-break-after: avoid; }
@@ -1210,8 +1198,6 @@ The attack surface is every entry point an attacker could use to reach the produ
 
 *Note: Sometimes the network type and the interface are the same thing — Bluetooth is both the medium and the entry point. When they differ — Wi-Fi is the medium, the REST API is the interface — the table row always uses the interface.*
 
-*Diagram: attack surface overview*
-
 *Each row below maps one entry point identified for this product.*
 
 **Exposure levels:**
@@ -1296,8 +1282,6 @@ For each priority asset, this section walks through who could attack it, how, an
 | **Risk Level** | LOW 1–4 · MEDIUM 5–9 · HIGH 10–16 · CRITICAL 17–25 |
 | **Residual Risk** | The risk that remains even after existing controls are applied |
 | **Recommended Control** | A specific action to reduce residual risk, with a deadline |
-
-*Diagram: threat assessment flow*
 
 **Risk Scoring Model**
 
@@ -1408,7 +1392,7 @@ CRITICAL RULES — DO NOT DEVIATE:
 6. Recommended Control is a specific action + timeframe — no vague labels
 7. Section 2.6 MUST follow this exact structure: intro sentence → summary statement (X CRITICAL, X HIGH) → summary table (Asset | STRIDE | Score | Level | Primary Threat | Action Required — one row per priority asset from 2.5, using AS-n IDs) → pre/post control note → bridge sentence. NO STRIDE completeness table.
 8. Section 2.4 MUST follow this exact structure: intro sentence → summary statement → CIA key table (3 rows H/M/L × C/I/A) → italic priority rule sentence → asset table (ID | Asset | C | I | A | Priority | Notes — AS-1 etc., top 3 get Priority 1/2/3, rest get "—" in Priority with reason in Notes) → "Why this score" blocks for AS-1, AS-2, AS-3 → "Why these assets were selected" paragraph → bridge sentence. NO old three-criteria format (CIA Severity / Damage Severity / Attack Reachability)
-9. Section 2.5 MUST follow this exact structure: intro sentence → summary statement (listing AS-n IDs) → key terms table (6 rows) → *Diagram: threat assessment flow* (output this exact text as an italic line) → Risk Scoring Model table → asset cards → bridge sentence
+9. Section 2.5 MUST follow this exact structure: intro sentence → summary statement (listing AS-n IDs) → key terms table (6 rows) → Risk Scoring Model table → asset cards → bridge sentence
 10. Asset cards MUST use: ### [AS-n]: [NAME] — [RISK LEVEL]
 11. Each asset card MUST start with: **What this means:** [one jargon-free sentence]
 12. "What Could Go Wrong" MUST be 3 bullets: 🎯 Who · ⚡ What they do · 💥 What happens — NO paragraphs
@@ -1418,7 +1402,7 @@ CRITICAL RULES — DO NOT DEVIATE:
 15. Be specific to this product — name it, reference its actual interfaces and deployment context
 16. Keep all text lean — this report is for non-experts. Short sentences. No jargon.
 21. All summary statements MUST be output as markdown blockquotes using "> " prefix (a greater-than sign followed by a space) — e.g. "> SecureLock One has 11 confirmed attack vectors..." This applies to every section that has a summary statement (2.3, 2.4, 2.5, 2.6, 2.7).
-17. Section 2.3 MUST follow this exact structure: intro sentence → summary statement (counting vectors by zone) → key terms table (4 rows) → italic note on network/interface distinction → *Diagram: attack surface overview* (output this exact text as an italic line) → 'Each row below...' italic sentence → exposure levels table → Attack Vectors table (# | Attack Vector | Attacker Position | Exposure | Notes — vectors as AV-1 etc., ordered High→Medium→Low) → absent interfaces note → bridge sentence. NO old three-table format (Networks/External Interfaces/Deployment Environment).
+17. Section 2.3 MUST follow this exact structure: intro sentence → summary statement (counting vectors by zone) → key terms table (4 rows) → italic note on network/interface distinction → 'Each row below...' italic sentence → exposure levels table → Attack Vectors table (# | Attack Vector | Attacker Position | Exposure | Notes — vectors as AV-1 etc., ordered High→Medium→Low) → absent interfaces note → bridge sentence. NO old three-table format (Networks/External Interfaces/Deployment Environment).
 18. Section 2.3 Attack Vectors MUST include: all interfaces from e1 (internet-facing=High, local network=Medium, physical=Low); Wi-Fi as Medium; Bluetooth as Medium; physical entry methods from product description (PIN/RFID/fingerprint) as Low; physical device body as Low; OTA channel as High-unconfirmed if update mechanism exists and separate channel is unknown; Internal network pivot as Medium if stepping stone risk (c2) is Yes. Notes column: "—" if none; add accessibility notes for public-facing physical vectors; RFID note about targeting cardholder; OTA "see 2.7" cross-reference.
 19. Section 2.4 asset IDs MUST be AS-1, AS-2 … AS-N. EXACTLY 3 assets get Priority 1, 2, 3 (highest combined CIA first). Every other asset MUST get "—" in Priority with a one-sentence reason in Notes. EXACTLY 3 "Why this score" blocks MUST appear below the table — one per priority asset — each with C/I/A rationale on a single line.`;
 }
@@ -1740,23 +1724,7 @@ function enhanceReport() {
     else if (t === 'LOW') td.classList.add('rLOW');
   });
 
-  // 6. Inject concept SVGs
-  // 2.3 + 2.4: marker-based replacement at exact position placed by AI
-  card.querySelectorAll('em').forEach(em => {
-    const txt = em.textContent.trim();
-    let svg = null;
-    if (txt === 'Diagram: attack surface overview') svg = svgAttackSurface();
-    else if (txt === 'Diagram: threat assessment flow') svg = svgThreatAssessment();
-    if (svg) {
-      const p = em.closest('p') || em.parentElement;
-      const block = document.createElement('div');
-      block.className = 'concept-block';
-      block.innerHTML = svg;
-      p.parentNode.replaceChild(block, p);
-    }
-  });
-
-  // 7. Style IS/IS NOT table in 2.8
+  // 6. Style IS/IS NOT table in 2.8
   card.querySelectorAll('h2').forEach(h2 => {
     if (!h2.textContent.includes('2.8')) return;
     let el = h2.nextElementSibling;
@@ -1773,109 +1741,6 @@ function enhanceReport() {
     else if (t === 'Needs Testing') td.innerHTML = '<span class="gap-type needs-testing">Needs Testing</span>';
     else if (t === 'Future Scope') td.innerHTML = '<span class="gap-type future-scope">Future Scope</span>';
   });
-}
-
-// ── Concept SVGs ──
-function svgAttackSurface() {
-  // Option B: Attacker position → vector → product (left-to-right flow)
-  const rows = [
-    { label: 'INTERNET', sub: 'Anywhere online', color: '#c0392b', bg: '#fef2f2', border: '#fecaca', y: 18 },
-    { label: 'LOCAL NETWORK', sub: 'Same network', color: '#c2410c', bg: '#fff7ed', border: '#fed7aa', y: 55 },
-    { label: 'PROXIMITY', sub: 'Within ~10m', color: '#92400e', bg: '#fffbeb', border: '#fde68a', y: 92 },
-    { label: 'PHYSICAL', sub: 'Physical contact', color: '#2f6b4f', bg: '#f0fdf4', border: '#86efac', y: 129 }
-  ];
-  const rH = 32, lX = 5, lW = 120, pX = 415, pW = 118;
-  const aEnd = pX - 6;
-  const pCY = 89;
-  const svgRows = rows.map(r => {
-    const cy = r.y + rH / 2;
-    return `<rect x="${lX}" y="${r.y}" width="${lW}" height="${rH}" rx="4" fill="${r.bg}" stroke="${r.border}" stroke-width="1.5"/>
-    <text x="${lX + lW/2}" y="${r.y + 13}" font-size="8.5" font-weight="700" fill="${r.color}" text-anchor="middle" font-family="Inter,sans-serif">${r.label}</text>
-    <text x="${lX + lW/2}" y="${r.y + 25}" font-size="7.5" fill="${r.color}" text-anchor="middle" font-family="Inter,sans-serif">${r.sub}</text>
-    <line x1="${lX + lW}" y1="${cy}" x2="${aEnd - 6}" y2="${cy}" stroke="${r.color}" stroke-width="1.5" opacity=".5"/>
-    <polygon points="${aEnd - 6},${cy - 4} ${aEnd + 2},${cy} ${aEnd - 6},${cy + 4}" fill="${r.color}" opacity=".5"/>`;
-  }).join('\n  ');
-  return `<svg viewBox="0 0 560 170" xmlns="http://www.w3.org/2000/svg" style="max-height:170px;display:block;width:100%">
-  <rect width="560" height="170" fill="#f7f4ef"/>
-  <text x="${lX + lW/2}" y="11" font-size="7" font-weight="700" fill="#6b5f4f" text-anchor="middle" letter-spacing=".08em" font-family="Inter,sans-serif">WHERE THE ATTACKER IS</text>
-  <text x="${Math.round((lX + lW + 6 + aEnd) / 2)}" y="11" font-size="7" font-weight="700" fill="#6b5f4f" text-anchor="middle" letter-spacing=".08em" font-family="Inter,sans-serif">HOW THEY GET IN</text>
-  <text x="${pX + pW/2}" y="11" font-size="7" font-weight="700" fill="#6b5f4f" text-anchor="middle" letter-spacing=".08em" font-family="Inter,sans-serif">WHAT THEY REACH</text>
-  ${svgRows}
-  <rect x="${pX}" y="${pCY - 44}" width="${pW}" height="88" rx="6" fill="white" stroke="#3d2f1f" stroke-width="2"/>
-  <text x="${pX + pW/2}" y="${pCY - 4}" font-size="11" font-weight="700" fill="#3d2f1f" text-anchor="middle" font-family="Inter,sans-serif">PRODUCT</text>
-  <text x="${pX + pW/2}" y="${pCY + 11}" font-size="7.5" fill="#6b5f4f" text-anchor="middle" font-family="Inter,sans-serif">The entry point</text>
-  <text x="${pX + pW/2}" y="${pCY + 22}" font-size="7.5" fill="#6b5f4f" text-anchor="middle" font-family="Inter,sans-serif">being mapped</text>
-</svg>`;
-}
-
-function svgAssetRegister() {
-  // Horizontal priority bars — clear and accurate
-  return `<svg viewBox="0 0 560 145" xmlns="http://www.w3.org/2000/svg" style="max-height:145px;display:block;width:100%">
-    <rect width="560" height="145" fill="#f7f4ef"/>
-    <text x="10" y="27" font-size="9.5" font-weight="600" fill="#6b5f4f" font-family="Inter,sans-serif">Priority 1</text>
-    <rect x="78" y="13" width="350" height="20" rx="4" fill="#c0392b" opacity=".75"/>
-    <text x="436" y="27" font-size="9" fill="#c0392b" font-family="Inter,sans-serif">Fully assessed</text>
-    <text x="10" y="57" font-size="9.5" font-weight="600" fill="#6b5f4f" font-family="Inter,sans-serif">Priority 2</text>
-    <rect x="78" y="43" width="250" height="20" rx="4" fill="#e67e22" opacity=".65"/>
-    <text x="336" y="57" font-size="9" fill="#e67e22" font-family="Inter,sans-serif">Fully assessed</text>
-    <text x="10" y="87" font-size="9.5" font-weight="600" fill="#6b5f4f" font-family="Inter,sans-serif">Priority 3</text>
-    <rect x="78" y="73" width="170" height="20" rx="4" fill="#b8860b" opacity=".55"/>
-    <text x="256" y="87" font-size="9" fill="#b8860b" font-family="Inter,sans-serif">Fully assessed</text>
-    <text x="10" y="117" font-size="9.5" fill="#a8997f" font-family="Inter,sans-serif">Other assets</text>
-    <rect x="78" y="103" width="80" height="20" rx="4" fill="#a8997f" opacity=".35"/>
-    <text x="166" y="117" font-size="9" fill="#a8997f" font-family="Inter,sans-serif">Listed, not assessed in depth</text>
-    <line x1="8" y1="129" x2="552" y2="129" stroke="#ddd8cc" stroke-width="1"/>
-    <text x="280" y="137" text-anchor="middle" font-size="8.5" fill="#a8997f" font-family="Inter,sans-serif">Ranked by combined CIA impact (Confidentiality · Integrity · Availability)</text>
-  </svg>`;
-}
-
-function svgThreatAssessment() {
-  // 4-step attack flow — clean boxes, proper markers
-  return `<svg viewBox="0 0 560 78" xmlns="http://www.w3.org/2000/svg" style="max-height:78px;display:block;width:100%">
-    <defs><marker id="arrowT" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="#a8997f"/></marker></defs>
-    <rect width="560" height="78" fill="#f7f4ef"/>
-    <rect x="12" y="14" width="112" height="38" rx="6" fill="#e8f5ee" stroke="#2f6b4f" stroke-width="1.5"/>
-    <text x="68" y="30" text-anchor="middle" font-size="9" font-weight="700" fill="#2f6b4f" font-family="Inter,sans-serif">1 · ENTER</text>
-    <text x="68" y="44" text-anchor="middle" font-size="8.5" fill="#2f6b4f" font-family="Inter,sans-serif">Initial access</text>
-    <line x1="125" y1="33" x2="146" y2="33" stroke="#a8997f" stroke-width="1.5" marker-end="url(#arrowT)"/>
-    <rect x="148" y="14" width="112" height="38" rx="6" fill="#fff7ed" stroke="#e67e22" stroke-width="1.5"/>
-    <text x="204" y="30" text-anchor="middle" font-size="9" font-weight="700" fill="#c2410c" font-family="Inter,sans-serif">2 · MOVE</text>
-    <text x="204" y="44" text-anchor="middle" font-size="8.5" fill="#c2410c" font-family="Inter,sans-serif">Progress deeper</text>
-    <line x1="261" y1="33" x2="282" y2="33" stroke="#a8997f" stroke-width="1.5" marker-end="url(#arrowT)"/>
-    <rect x="284" y="14" width="112" height="38" rx="6" fill="#fff7ed" stroke="#e67e22" stroke-width="1.5"/>
-    <text x="340" y="30" text-anchor="middle" font-size="9" font-weight="700" fill="#c2410c" font-family="Inter,sans-serif">3 · REACH</text>
-    <text x="340" y="44" text-anchor="middle" font-size="8.5" fill="#c2410c" font-family="Inter,sans-serif">Target the asset</text>
-    <line x1="397" y1="33" x2="418" y2="33" stroke="#a8997f" stroke-width="1.5" marker-end="url(#arrowT)"/>
-    <rect x="420" y="14" width="128" height="38" rx="6" fill="#fef2f2" stroke="#c0392b" stroke-width="1.5"/>
-    <text x="484" y="30" text-anchor="middle" font-size="9" font-weight="700" fill="#c0392b" font-family="Inter,sans-serif">4 · HARM</text>
-    <text x="484" y="44" text-anchor="middle" font-size="8.5" fill="#c0392b" font-family="Inter,sans-serif">Real-world impact</text>
-    <text x="280" y="70" text-anchor="middle" font-size="8.5" fill="#a8997f" font-family="Inter,sans-serif">Every asset card below maps a realistic attack through these 4 steps</text>
-  </svg>`;
-}
-
-function svgStride() {
-  // 2×3 clean grid — simple, readable, accurate
-  const items = [
-    ['S','Spoofing','Pretending to be someone else'],
-    ['T','Tampering','Changing data without permission'],
-    ['R','Repudiation','Denying an action happened'],
-    ['I','Info Disclosure','Leaking private data'],
-    ['D','Denial of Service','Making the product unavailable'],
-    ['E','Priv Escalation','Gaining more access than allowed']
-  ];
-  const cells = items.map(([l,n,d], i) => {
-    const col = i % 3, row = Math.floor(i / 3);
-    const x = 10 + col * 182, y = 10 + row * 52;
-    return `<rect x="${x}" y="${y}" width="172" height="44" rx="5" fill="white" stroke="#ddd8cc" stroke-width="1.2"/>
-      <text x="${x+10}" y="${y+19}" font-size="14" font-weight="700" fill="#2f6b4f" font-family="Inter,sans-serif">${l}</text>
-      <text x="${x+30}" y="${y+18}" font-size="9.5" font-weight="600" fill="#2c2416" font-family="Inter,sans-serif">${n}</text>
-      <text x="${x+30}" y="${y+32}" font-size="8.5" fill="#6b5f4f" font-family="Inter,sans-serif">${d}</text>`;
-  }).join('');
-  return `<svg viewBox="0 0 560 120" xmlns="http://www.w3.org/2000/svg" style="max-height:120px;display:block;width:100%">
-    <rect width="560" height="120" fill="#f7f4ef"/>
-    ${cells}
-    <text x="280" y="115" text-anchor="middle" font-size="8.5" fill="#a8997f" font-family="Inter,sans-serif">All 6 categories are checked below — confirms no attack type was overlooked</text>
-  </svg>`;
 }
 
 function fixListNumbering() {
@@ -2006,7 +1871,7 @@ ${styles}
 <style>
   body { background: white !important; padding: 2.5rem 3.5rem; max-width: 900px; margin: 0 auto; font-family: 'Inter', sans-serif; font-size: 15px; line-height: 1.55; color: #2c2416; }
   .report-card { box-shadow: none !important; border: none !important; padding: 0 !important; }
-  .concept-block { border: 1.5px solid #ddd8cc; }
+
 </style>
 </head>
 <body>
