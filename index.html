@@ -559,6 +559,7 @@
   .lp-features {
     display: flex; gap: 8px; flex-wrap: wrap;
     justify-content: center; margin-bottom: 2.25rem;
+    max-width: 400px; margin-left: auto; margin-right: auto;
   }
   .lp-feat {
     font-size: 12.5px; color: var(--text2); background: white;
@@ -581,6 +582,22 @@
     box-shadow: 0 6px 20px rgba(47,107,79,.4);
     transform: translateY(-1px);
   }
+  .lp-author {
+    display: flex; align-items: center; justify-content: center;
+    gap: 8px; margin-top: 1.375rem;
+  }
+  .lp-author-label {
+    font-size: 10.5px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .1em; color: var(--text3);
+  }
+  .lp-author-link {
+    font-size: 12.5px; font-weight: 500; color: var(--text2);
+    text-decoration: none; display: flex; align-items: center; gap: 5px;
+    transition: color .15s;
+  }
+  .lp-author-link:hover { color: var(--accent); }
+  .lp-author-link svg { opacity: .5; transition: opacity .15s; }
+  .lp-author-link:hover svg { opacity: 1; }
   .lp-footer {
     position: absolute; bottom: 1.75rem;
     font-size: 11.5px; color: var(--text3); text-align: center;
@@ -606,6 +623,13 @@
       <div class="lp-feat">PDF export ready</div>
     </div>
     <button class="lp-cta" onclick="startAssessment()">Start Assessment →</button>
+    <div class="lp-author">
+      <span class="lp-author-label">Built by</span>
+      <a href="https://www.linkedin.com/in/jyohan-joglekar-754240184/" target="_blank" rel="noopener" class="lp-author-link">
+        Jyohan Joglekar · Cybersecurity &amp; CRA Consultant
+        <svg width="11" height="11" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 10L10 2M10 2H4M10 2V8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
   </div>
 
   <div class="lp-footer">
