@@ -1310,7 +1310,7 @@ For each priority asset, this section walks through who could attack it, how, an
 
 [Repeat the ASSET block for each of the 3 priority assets]
 
-[One bridge sentence — e.g. "The following section proves that the assessments above cover every major category of attack — not just the ones most obviously relevant to this product."]
+[One bridge sentence to 2.6 — e.g. "The following section distils all three risk findings into a single table — the bottom line for anyone who needs the conclusions without the full threat detail."]
 
 ---
 
@@ -1356,6 +1356,23 @@ This section defines what this document is, what it covers, and what it does not
 | Valid for the assessed product version | A substitute for ongoing monitoring |
 | Actionable — includes specific recommended controls | A complete CRA technical file |
 
+**CRA Annex I — Essential Requirements Applicability:**
+
+*Article 13(3) requires this assessment to indicate whether and how Annex I Part I requirements apply to this product.*
+
+| Requirement (Annex I Part I) | Applicable | Finding / Status |
+|---|---|---|
+| No known exploitable vulnerabilities at market placement | Yes | [State whether any known vulnerabilities were identified or flagged in 2.5/2.7] |
+| Secure by default — no default credentials, minimal configuration | Yes | [State current status from questionnaire — cross-reference AS-1 if relevant] |
+| Access control and authentication | Yes | [Cross-reference AS-1 recommended control and current auth mechanism] |
+| Data confidentiality and integrity in transit and at rest | Yes | [Encryption status from 2.2; flag any unconfirmed gaps from 2.7] |
+| Minimal attack surface — no unnecessary interfaces or services | Yes | [Cross-reference 2.3 attack vector count and absent interfaces note] |
+| Resilience against denial of service | Yes | [Cross-reference A:H assets and DoS resilience from questionnaire] |
+| Security event logging and audit trail | Yes | [Cross-reference logging completeness finding — AS-2 if assessed] |
+| Security updates with cryptographic signature verification | Yes | [OTA signing status — cross-reference 2.7 gap if unconfirmed] |
+
+*Requirements not listed above were assessed as not applicable to this product type or are addressed implicitly within the findings above.*
+
 **Methodology:** ISO/IEC 27005 risk scoring (5×5 likelihood × impact matrix), STRIDE threat categorisation across all 6 categories.
 
 **Scope boundary:** Software, firmware and connectivity attack surface as documented. Hardware physical security, supply chain, and third-party cloud component internals not assessed.
@@ -1387,7 +1404,10 @@ CRITICAL RULES — DO NOT DEVIATE:
 21. All summary statements MUST be output as markdown blockquotes using "> " prefix (a greater-than sign followed by a space) — e.g. "> SecureLock One has 11 confirmed attack vectors..." This applies to every section that has a summary statement (2.3, 2.4, 2.5, 2.6, 2.7).
 17. Section 2.3 MUST follow this exact structure: intro sentence → summary statement (counting vectors by zone) → key terms table (4 rows) → italic note on network/interface distinction → 'Each row below...' italic sentence → exposure levels table → Attack Vectors table (# | Attack Vector | Attacker Position | Exposure | Notes — vectors as AV-1 etc., ordered High→Medium→Low) → absent interfaces note → bridge sentence. NO old three-table format (Networks/External Interfaces/Deployment Environment).
 18. Section 2.3 Attack Vectors MUST include: all interfaces from e1 (internet-facing=High, local network=Medium, physical=Low); Wi-Fi as Medium; Bluetooth as Medium; physical entry methods from product description (PIN/RFID/fingerprint) as Low; physical device body as Low; OTA channel as High-unconfirmed if update mechanism exists and separate channel is unknown; Internal network pivot as Medium if stepping stone risk (c2) is Yes. Notes column: "—" if none; add accessibility notes for public-facing physical vectors; RFID note about targeting cardholder; OTA "see 2.7" cross-reference.
-19. Section 2.4 asset IDs MUST be AS-1, AS-2 … AS-N. EXACTLY 3 assets get Priority 1, 2, 3 (highest combined CIA first). Every other asset MUST get "—" in Priority with a one-sentence reason in Notes. EXACTLY 3 "Why this score" blocks MUST appear below the table — one per priority asset — each with C/I/A rationale on a single line.`;
+19. Section 2.4 asset IDs MUST be AS-1, AS-2 … AS-N. EXACTLY 3 assets get Priority 1, 2, 3 (highest combined CIA first). Every other asset MUST get "—" in Priority with a one-sentence reason in Notes. EXACTLY 3 "Why this score" blocks MUST appear below the table — one per priority asset — each with C/I/A rationale on a single line.
+22. CRA CLASSIFICATION CHECK: If the product type is a smart door lock, security camera, alarm system, baby monitor, access control device, or any smart home product with a security function, add a row in 2.7: Gap = "CRA classification stated as Default/self-assessment — product type may qualify as Annex III Class I (important product with digital elements), which requires a different conformity assessment path"; Type = NOT DISCLOSED; Assumed Worst Case = "Self-assessment route may be non-compliant; product may require application of harmonised standards or third-party conformity assessment before market placement"; Owner = Manufacturer. Do this regardless of what the questionnaire states.
+23. SAFETY-CRITICAL LIKELIHOOD CONSISTENCY: When an asset has direct physical safety implications (e.g. physical access control, lock/unlock command, safety-critical function), its likelihood MUST reflect the easiest available attack path identified in the assessment — not only the most constrained path. If that asset is reachable via a root cause already scored at likelihood 4 or 5 in another asset card, this asset's likelihood must match or exceed that score. State the primary path used in the likelihood rationale sentence.
+24. STRIDE COMPLETENESS: Across all 3 priority asset cards in 2.5, all 6 STRIDE categories must be represented. For any asset with Availability: H, at least one card must assess a Denial of Service (D) scenario. If a STRIDE category is genuinely not applicable across all three assets, state "Not applicable — [one-sentence reason]" as a bullet under the last asset card before the bridge sentence.`;
 }
 
 function userPrompt(a) {
