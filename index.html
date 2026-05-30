@@ -507,9 +507,113 @@
     .attack-steps { display: grid !important; grid-template-columns: repeat(4,1fr) !important; page-break-inside: avoid; }
     .attack-step { border: 1px solid var(--sand2) !important; border-top-width: 2px !important; }
   }
+
+  /* ── Landing Page ── */
+  #landing {
+    min-height: 100vh;
+    background: var(--cream);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 2rem;
+    position: relative;
+    transition: opacity .3s ease;
+  }
+  #landing.fade-out { opacity: 0; pointer-events: none; }
+  .lp-nav {
+    position: absolute; top: 2rem; left: 2.5rem;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .lp-nav-icon {
+    width: 34px; height: 34px; background: var(--accent);
+    border-radius: 9px; display: flex; align-items: center;
+    justify-content: center; font-size: 17px;
+    box-shadow: 0 2px 8px rgba(47,107,79,.3);
+  }
+  .lp-nav-name {
+    font-family: 'Fraunces', serif; font-size: 15px;
+    font-weight: 600; color: var(--text);
+  }
+  .lp-hero { max-width: 600px; text-align: center; }
+  .lp-tag {
+    font-size: 11px; font-weight: 700; letter-spacing: .13em;
+    text-transform: uppercase; color: var(--accent);
+    margin-bottom: 1.25rem;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .lp-tag::before {
+    content: ''; width: 6px; height: 6px;
+    background: var(--accent); border-radius: 50%;
+  }
+  .lp-h1 {
+    font-family: 'Fraunces', serif; font-size: 44px;
+    font-weight: 600; color: var(--text); line-height: 1.15;
+    margin-bottom: 1.125rem;
+  }
+  .lp-sub {
+    font-size: 16px; color: var(--text2); line-height: 1.65;
+    margin-bottom: 2rem; max-width: 480px;
+    margin-left: auto; margin-right: auto;
+  }
+  .lp-features {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    justify-content: center; margin-bottom: 2.25rem;
+  }
+  .lp-feat {
+    font-size: 12.5px; color: var(--text2); background: white;
+    border: 1.5px solid var(--sand3); border-radius: 20px;
+    padding: 6px 14px; display: flex; align-items: center; gap: 7px;
+  }
+  .lp-feat::before {
+    content: ''; width: 6px; height: 6px; flex-shrink: 0;
+    background: var(--accent); border-radius: 50%;
+  }
+  .lp-cta {
+    background: var(--accent); color: white; border: none;
+    padding: 14px 32px; border-radius: 30px;
+    font-size: 15px; font-weight: 600; font-family: 'Inter', sans-serif;
+    cursor: pointer; box-shadow: 0 4px 16px rgba(47,107,79,.3);
+    transition: all .2s; display: inline-flex; align-items: center; gap: 8px;
+  }
+  .lp-cta:hover {
+    background: var(--accent2);
+    box-shadow: 0 6px 20px rgba(47,107,79,.4);
+    transform: translateY(-1px);
+  }
+  .lp-footer {
+    position: absolute; bottom: 1.75rem;
+    font-size: 11.5px; color: var(--text3); text-align: center;
+  }
+  .lp-footer a { color: var(--text3); text-decoration: underline; text-underline-offset: 3px; }
 </style>
 </head>
 <body>
+<div id="landing">
+  <div class="lp-nav">
+    <div class="lp-nav-icon">🛡️</div>
+    <span class="lp-nav-name">CRA Drafting Tool</span>
+  </div>
+
+  <div class="lp-hero">
+    <div class="lp-tag">Regulation (EU) 2024/2847 · Article 13(3)</div>
+    <h1 class="lp-h1">Draft CRA Risk Assessments<br>in 20 minutes</h1>
+    <p class="lp-sub">Answer 10 questions about your product. Get a structured, compliance-ready risk assessment — Annex I mapped, STRIDE covered, PDF export ready.</p>
+    <div class="lp-features">
+      <div class="lp-feat">Annex I &amp; III mapping</div>
+      <div class="lp-feat">STRIDE threat coverage</div>
+      <div class="lp-feat">5×5 risk scoring</div>
+      <div class="lp-feat">PDF export ready</div>
+    </div>
+    <button class="lp-cta" onclick="startAssessment()">Start Assessment →</button>
+  </div>
+
+  <div class="lp-footer">
+    For CRA consultants and regulated manufacturers ·
+    <a href="https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R2847" target="_blank" rel="noopener">Regulation (EU) 2024/2847</a>
+  </div>
+</div>
+
 <div class="shell">
 
   <!-- SIDEBAR -->
@@ -2063,9 +2167,25 @@ function checkMS(id, values) {
   });
 }
 
+function startAssessment() {
+  localStorage.setItem('seen_landing', '1');
+  const lp = document.getElementById('landing');
+  lp.classList.add('fade-out');
+  setTimeout(() => {
+    lp.style.display = 'none';
+    document.querySelector('.shell').style.display = 'grid';
+  }, 300);
+}
+
 window.addEventListener('DOMContentLoaded', () => {
   loadProgress();
   document.getElementById('version-label').textContent = VERSION;
+  if (localStorage.getItem('seen_landing')) {
+    document.getElementById('landing').style.display = 'none';
+    document.querySelector('.shell').style.display = 'grid';
+  } else {
+    document.querySelector('.shell').style.display = 'none';
+  }
 });
 </script>
 </body>
