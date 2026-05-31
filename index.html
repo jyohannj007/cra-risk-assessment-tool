@@ -1729,7 +1729,7 @@ async function generate() {
     // In demo mode (no lock yet), show the Lock button so you can save this run
     if (window._demoMode) {
       const lockBtn = document.getElementById('lockDemoBtn');
-      lockBtn.style.display = '';
+      lockBtn.style.display = 'inline-block';
       lockBtn.textContent = '📌 Lock as Demo';
     }
   } catch(e) {
