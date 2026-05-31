@@ -2190,7 +2190,6 @@ function checkMS(id, values) {
 }
 
 function startAssessment() {
-  localStorage.setItem('seen_landing', '1');
   const lp = document.getElementById('landing');
   lp.classList.add('fade-out');
   setTimeout(() => {
@@ -2202,12 +2201,8 @@ function startAssessment() {
 window.addEventListener('DOMContentLoaded', () => {
   loadProgress();
   document.getElementById('version-label').textContent = VERSION;
-  if (localStorage.getItem('seen_landing')) {
-    document.getElementById('landing').style.display = 'none';
-    document.querySelector('.shell').style.display = 'grid';
-  } else {
-    document.querySelector('.shell').style.display = 'none';
-  }
+  // Always start on the landing page
+  document.querySelector('.shell').style.display = 'none';
 });
 </script>
 </body>
